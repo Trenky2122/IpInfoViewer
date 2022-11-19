@@ -1,0 +1,11 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/IpInfoViewer/DesignTimeBuild/.dtbcache.v2
+/.vs/IpInfoViewer/FileContentIndex
+/.vs/IpInfoViewer/v17
+/.vs/ProjectEvaluation
+/IpInfoViewer/bin/Debug/net6.0
+/IpInfoViewer/obj
+/IpInfoViewer.Web/obj/Debug
