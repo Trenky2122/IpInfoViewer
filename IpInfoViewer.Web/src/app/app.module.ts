@@ -4,10 +4,12 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+import { IpAdressesMapComponent } from './ip-adresses-map/ip-adresses-map.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    IpAdressesMapComponent
   ],
   imports: [
     BrowserModule, HttpClientModule, LeafletModule

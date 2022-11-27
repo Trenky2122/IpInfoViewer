@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IpInfoViewer.Api", "IpInfoV
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "IpInfoViewer.Web", "IpInfoViewer.Web\IpInfoViewer.Web.esproj", "{897D833D-B63A-4D36-BA36-781E9D8AB319}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IpInfoViewer.Seed", "IpInfoViewer.Seed\IpInfoViewer.Seed.csproj", "{CF391119-785B-4938-8AD1-A0AD0B974D4B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IpInfoViewer.Libs", "IpInfoViewer.Libs\IpInfoViewer.Libs.csproj", "{2B2F5413-DA35-49AD-9283-B8733B0625EE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +27,14 @@ Global
 		{897D833D-B63A-4D36-BA36-781E9D8AB319}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{897D833D-B63A-4D36-BA36-781E9D8AB319}.Release|Any CPU.Build.0 = Release|Any CPU
 		{897D833D-B63A-4D36-BA36-781E9D8AB319}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{CF391119-785B-4938-8AD1-A0AD0B974D4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF391119-785B-4938-8AD1-A0AD0B974D4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF391119-785B-4938-8AD1-A0AD0B974D4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF391119-785B-4938-8AD1-A0AD0B974D4B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B2F5413-DA35-49AD-9283-B8733B0625EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B2F5413-DA35-49AD-9283-B8733B0625EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B2F5413-DA35-49AD-9283-B8733B0625EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B2F5413-DA35-49AD-9283-B8733B0625EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
