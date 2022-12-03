@@ -15,11 +15,6 @@ export class IpAdressesMapComponent {
 
   async ngOnInit(){
     this.service.GetIpAddresses().subscribe(value => {
-      this.options = {
-        layers: this.getLayers(value),
-        zoom: 1,
-        center: new Leaflet.LatLng(0, 0)
-      };
       this.layers = this.getLayers(value);
       console.log(this.options);
     })

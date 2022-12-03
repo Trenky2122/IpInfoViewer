@@ -15,7 +15,7 @@ namespace IpInfoViewer.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<IpAddress>>> GetIpAddresses()
+        public async Task<ActionResult<IEnumerable<IpAddressInfo>>> GetIpAddresses()
         {
             return Ok(await _dbRepository.GetIpAddresses(0, 500));
         }

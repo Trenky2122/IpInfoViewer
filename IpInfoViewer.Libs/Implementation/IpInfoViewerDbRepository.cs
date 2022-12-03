@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Dapper;
@@ -48,7 +49,7 @@ namespace IpInfoViewer.Libs.Implementation
             var command = connection.CreateCommand();
             string sql = "CREATE TABLE IF NOT EXISTS IpAddresses (" +
                          "Id SERIAL PRIMARY KEY," +
-                         "IpValue varchar(15)," +
+                         "IpValue cidr," +
                          "CountryCode varchar(2)," +
                          "City varchar(80)," +
                          "Latitude float," +
@@ -67,8 +68,8 @@ namespace IpInfoViewer.Libs.Implementation
             string sql = "INSERT INTO IpAddresses (IpValue, CountryCode, City, Latitude, Longitude) " +
                          "VALUES (@IpValue, @CountryCode, @City, @Latitude, @Longitude)";
             var command = connection.CreateCommand();
-            command.Parameters.Add("@IpValue", NpgsqlDbType.Varchar);
-            command.Parameters["@IpValue"].Value = fields[0];
+            command.Parameters.Add("@IpValue", NpgsqlDbType.Cidr);
+            command.Parameters["@IpValue"].Value = (IPAddress.Parse(fields[0]), 32);
             command.Parameters.Add("@CountryCode", NpgsqlDbType.Varchar);
             command.Parameters["@CountryCode"].Value = fields[3];
             command.Parameters.Add("@City", NpgsqlDbType.Varchar);
@@ -81,10 +82,10 @@ namespace IpInfoViewer.Libs.Implementation
             await command.ExecuteNonQueryAsync();
         }
 
-        public async Task<IEnumerable<IpAddress>> GetIpAddresses(int offset = 0, int limit = Int32.MaxValue)
+        public async Task<IEnumerable<IpAddressInfo>> GetIpAddresses(int offset = 0, int limit = Int32.MaxValue)
         {
             await using var connection = CreateConnection();
-            return await connection.QueryAsync<IpAddress>("SELECT * FROM IpAddresses LIMIT @limit OFFSET @offset", new {limit, offset});
+            return await connection.QueryAsync<IpAddressInfo>("SELECT * FROM IpAddresses LIMIT @limit OFFSET @offset", new {limit, offset});
         }
 
         static string RemoveDiacritics(string text)

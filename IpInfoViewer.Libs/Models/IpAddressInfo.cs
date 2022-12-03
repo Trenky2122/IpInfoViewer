@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IpInfoViewer.Libs.Models
 {
-    public class IpAddress
+    public class IpAddressInfo
     {
         public int Id { get; set; }
         public string CountryCode { get; set; }

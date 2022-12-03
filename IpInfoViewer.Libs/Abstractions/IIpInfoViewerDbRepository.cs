@@ -10,6 +10,6 @@ namespace IpInfoViewer.Libs.Abstractions
     public interface IIpInfoViewerDbRepository
     {
         Task SeedTables();
-        Task<IEnumerable<IpAddress>> GetIpAddresses(int offset = 0, int limit = Int32.MaxValue);
+        Task<IEnumerable<IpAddressInfo>> GetIpAddresses(int offset = 0, int limit = Int32.MaxValue);
     }
 }
