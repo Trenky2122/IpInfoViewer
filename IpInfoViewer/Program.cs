@@ -10,7 +10,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IIpInfoViewerDbRepository>(
-    new IpInfoViewerDbRepository("Server=127.0.0.1;Port=5432;Database=ipinfoviewerprocesseddb;User Id=postgres;Password=0000;Include Error Detail=true"));
+    new IpInfoViewerDbRepository(builder.Configuration["IpInfoViewerProcessedConnectionString"]));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
