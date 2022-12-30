@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Dapper;
 using IpInfoViewer.Libs.Abstractions;
 using IpInfoViewer.Libs.Models;
+using IpInfoViewer.Libs.Utilities;
 using Npgsql;
 using NpgsqlTypes;
 
@@ -42,6 +43,7 @@ namespace IpInfoViewer.Libs.Implementation
             await using var connection = CreateConnection();
             connection.Open();
             await CreateIpTable(connection);
+            await CreateMapIpRepresentationTable(connection);
         }
 
         private Task CreateIpTable(NpgsqlConnection connection)
@@ -53,39 +55,56 @@ namespace IpInfoViewer.Libs.Implementation
                          "CountryCode varchar(2)," +
                          "City varchar(80)," +
                          "Latitude float," +
-                         "Longitude float)";
+                         "Longitude float);" +
+                         "CREATE UNIQUE INDEX IF NOT EXISTS index1 ON IpAddresses (IpValue);";
+            command.CommandText = sql;
+            return command.ExecuteNonQueryAsync();
+        }
+
+        private Task CreateMapIpRepresentationTable(NpgsqlConnection connection)
+        {
+            var command = connection.CreateCommand();
+            string sql = "CREATE TABLE IF NOT EXISTS MapIpRepresentation (" +
+                         "Id SERIAL PRIMARY KEY," +
+                         "Latitude float," +
+                         "Longitude float," +
+                         "IpAddressesCount int, " +
+                         "AveragePingRtT int, " +
+                         "ValidFrom Date, " +
+                         "ValidTo Date);" +
+                         "CREATE UNIQUE INDEX IF NOT EXISTS index2 ON MapIpRepresentation (Latitude, Longitude, ValidFrom, ValidTo);";
             command.CommandText = sql;
             return command.ExecuteNonQueryAsync();
         }
 
         #endregion
 
-        public async Task SaveIpAddressInfo(string csvLine)
+        public async Task SaveIpAddressInfo(IpAddressInfo address)
         {
-            var fields = csvLine.Split(',');
             await using var connection = CreateConnection();
-            connection.Open();
             string sql = "INSERT INTO IpAddresses (IpValue, CountryCode, City, Latitude, Longitude) " +
                          "VALUES (@IpValue, @CountryCode, @City, @Latitude, @Longitude)";
-            var command = connection.CreateCommand();
-            command.Parameters.Add("@IpValue", NpgsqlDbType.Cidr);
-            command.Parameters["@IpValue"].Value = (IPAddress.Parse(fields[0]), 32);
-            command.Parameters.Add("@CountryCode", NpgsqlDbType.Varchar);
-            command.Parameters["@CountryCode"].Value = fields[3];
-            command.Parameters.Add("@City", NpgsqlDbType.Varchar);
-            command.Parameters["@City"].Value = RemoveDiacritics(fields[5]);
-            command.Parameters.Add("@Latitude", NpgsqlDbType.Numeric);
-            command.Parameters["@Latitude"].Value = Convert.ToDouble(fields[6], CultureInfo.InvariantCulture);
-            command.Parameters.Add("@Longitude", NpgsqlDbType.Numeric);
-            command.Parameters["@Longitude"].Value = Convert.ToDouble(fields[7], CultureInfo.InvariantCulture);
-            command.CommandText = sql;
-            await command.ExecuteNonQueryAsync();
+            await connection.ExecuteAsync(sql, address);
         }
 
-        public async Task<IEnumerable<IpAddressInfo>> GetIpAddresses(int offset = 0, int limit = Int32.MaxValue)
+        public async Task SaveMapIpAddressRepresentation(MapIpAddressesRepresentation representation)
+        {
+            await using var connection = CreateConnection();
+            string sql = "INSERT INTO MapIpRepresentation (Latitude, Longitude, IpAddressesCount, AveragePingRtT, ValidFrom, ValidTo) " +
+                         "VALUES (@Latitude, @Longitude, @IpAddressesCount, @AveragePingRtT, @ValidFrom, @ValidTo)";
+            await connection.ExecuteAsync(sql, representation);
+        }
+
+        public async Task<IEnumerable<IpAddressInfo>> GetIpAddresses(int offset = 0, int limit = int.MaxValue)
         {
             await using var connection = CreateConnection();
             return await connection.QueryAsync<IpAddressInfo>("SELECT * FROM IpAddresses LIMIT @limit OFFSET @offset", new {limit, offset});
+        }
+
+        public async Task<IEnumerable<MapIpAddressesRepresentation>> GetMapForWeek(Week week)
+        {
+            await using var connection = CreateConnection();
+            return await connection.QueryAsync<MapIpAddressesRepresentation>("SELECT * FROM MapIpRepresentation WHERE @Tuesday BETWEEN ValidFrom AND ValidTo", new {tuesday = week.Tuesday });
         }
 
         static string RemoveDiacritics(string text)
