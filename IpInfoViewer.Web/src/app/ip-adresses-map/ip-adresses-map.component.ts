@@ -1,22 +1,21 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import * as Leaflet from "leaflet";
 import {IpAddressInfoViewerService} from "../ip-address-info-viewer.service";
-import {IpAdress} from "../models";
+import {IpAdress, MapIpAddressRepresentation} from "../models";
 
 @Component({
   selector: 'app-ip-adresses-map',
   templateUrl: './ip-adresses-map.component.html',
   styleUrls: ['./ip-adresses-map.component.css']
 })
-export class IpAdressesMapComponent {
+export class IpAdressesMapComponent implements OnInit{
 
   constructor(private service: IpAddressInfoViewerService) {
   }
 
   async ngOnInit(){
-    this.service.GetIpAddresses().subscribe(value => {
+    this.service.GetMapPoints().subscribe(value => {
       this.layers = this.getLayers(value);
-      console.log(this.options);
     })
   }
 
@@ -27,42 +26,23 @@ export class IpAdressesMapComponent {
   };
   layers: Leaflet.Layer[] = [];
 
-  getLayers(addresses: IpAdress[]): Leaflet.Layer[]{
+  getLayers(mapPoints: MapIpAddressRepresentation[]): Leaflet.Layer[]{
     let result = [
       new Leaflet.TileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png',
-        {attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'}),
-      ...this.getMarkers(addresses)
+        {attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors', minZoom: 3}),
+      ...this.getMarkers(mapPoints)
     ] as Leaflet.Layer[];
     return result
   };
 
-  getMarkers(addresses: IpAdress[]): Leaflet.Marker[]{
-    return addresses?.map(address => new Leaflet.Marker(new Leaflet.LatLng(address.latitude, address.longitude), {
+  getMarkers(mapPoints: MapIpAddressRepresentation[]): Leaflet.Marker[] {
+    return mapPoints?.map(point => new Leaflet.Marker(new Leaflet.LatLng(point.latitude, point.longitude), {
       icon: new Leaflet.Icon({
-        iconSize: [50, 41],
+        iconSize: [15 * Math.log(point.ipAddressesCount), 12* Math.log(point.ipAddressesCount)],
         iconAnchor: [13, 41],
         iconUrl: 'assets/place.webp',
       }),
-      title: address.ipValue
+      title: point.latitude +" " + point.longitude +" " + point.ipAddressesCount.toString()
     } as Leaflet.MarkerOptions)) as Leaflet.Marker[];
-    // return [
-    //
-    //   new Leaflet.Marker(new Leaflet.LatLng(43.5121264, 16.4700729), {
-    //     icon: new Leaflet.Icon({
-    //       iconSize: [50, 41],
-    //       iconAnchor: [13, 41],
-    //       iconUrl: 'assets/place.webp',
-    //     }),
-    //     title: 'Workspace'
-    //   } as Leaflet.MarkerOptions),
-    //   new Leaflet.Marker(new Leaflet.LatLng(43.5074826, 16.4390046), {
-    //     icon: new Leaflet.Icon({
-    //       iconSize: [50, 41],
-    //       iconAnchor: [13, 41],
-    //       iconUrl: 'assets/place.webp',
-    //     }),
-    //     title: 'Riva'
-    //   } as Leaflet.MarkerOptions),
-    // ] as Leaflet.Marker[];
-  };
+  }
 }
