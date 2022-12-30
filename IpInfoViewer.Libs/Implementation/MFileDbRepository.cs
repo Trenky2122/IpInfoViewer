@@ -95,7 +95,7 @@ namespace IpInfoViewer.Libs.Implementation
 
         public async Task<IEnumerable<Tuple<(IPAddress, int), double>>> GetAverageRtTForIpForWeek(Week week)
         {
-            string sql = $"SELECT ip_addr as Item1, AVG(ping_rttavg) as Item2 FROM ping WHERE ping_ploss BETWEEN 0 AND 100 AND ping_date BETWEEN @from AND @to GROUP BY ip_addr";
+            string sql = $"SELECT ip_addr as Item1, AVG(ping_rttavg) as Item2 FROM ping WHERE ping_ploss BETWEEN 0 AND 100 AND ping_rttavg IS NOT NULL AND ping_date BETWEEN @from AND @to GROUP BY ip_addr";
             var parameters = new{from = week.Monday, to = week.Next().Monday.AddTicks(-1)};
             await using var connection = CreateConnection();
             return await connection.QueryAsync<Tuple<(IPAddress, int), double>>(sql, parameters, commandTimeout:1800);

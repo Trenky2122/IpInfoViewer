@@ -20,6 +20,8 @@ foreach (var week in DateTimeUtilities.GetWeeksFromTo(new DateTime(2008, 4, 26),
     var mapPoints = addressesGroupedByLocation.Select(x =>
     {
         var pings = x.Select(addr => ipAveragePings.FirstOrDefault(p => p.Item1.Item1.Equals(addr.IpValue.Item1))?.Item2);
+        if (!pings.Any(p => p.HasValue))
+            return null;
         var result = new MapIpAddressesRepresentation()
         {
             Latitude = x.Key.Item1,
@@ -30,7 +32,7 @@ foreach (var week in DateTimeUtilities.GetWeeksFromTo(new DateTime(2008, 4, 26),
             ValidTo = week.Next().Monday.AddTicks(-1)
         };
         return result;
-    });
+    }).Where(x => x != null);
     foreach (var point in mapPoints)
     {
         await repository.SaveMapIpAddressRepresentation(point);
