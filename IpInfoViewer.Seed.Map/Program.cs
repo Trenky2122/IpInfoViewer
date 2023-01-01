@@ -13,32 +13,36 @@ IpInfoViewerDbRepository repository = new(config["IpInfoViewerProcessedConnectio
 await repository.SeedTables();
 MFileDbRepository mfileRepo = new(config["MFileConnectionString"]);
 var allAddresses = await repository.GetIpAddresses();
-var addressesGroupedByLocation = allAddresses.GroupBy(GetApproximateLocation); 
-foreach (var week in DateTimeUtilities.GetWeeksFromTo(new DateTime(2008, 4, 26), DateTime.Today))
-{
-    var ipAveragePings = await mfileRepo.GetAverageRtTForIpForWeek(week);
-    var mapPoints = addressesGroupedByLocation.Select(x =>
+var addressesGroupedByLocation = allAddresses.GroupBy(GetApproximateLocation);
+await Parallel.ForEachAsync(DateTimeUtilities.GetWeeksFromTo(new DateTime(2011, 10, 3), DateTime.Today),
+    async (week, token) =>
     {
-        var pings = x.Select(addr => ipAveragePings.FirstOrDefault(p => p.Item1.Item1.Equals(addr.IpValue.Item1))?.Item2);
-        if (!pings.Any(p => p.HasValue))
-            return null;
-        var result = new MapIpAddressesRepresentation()
+        var ipAveragePings = await mfileRepo.GetAverageRtTForIpForWeek(week);
+        var mapPoints = addressesGroupedByLocation.Select(x =>
         {
-            Latitude = x.Key.Item1,
-            Longitude = x.Key.Item2,
-            IpAddressesCount = x.Count(),
-            AveragePingRtT = Convert.ToSingle(pings.Where(p => p is > 0).Average(p => p??0)),
-            ValidFrom = week.Monday,
-            ValidTo = week.Next().Monday.AddTicks(-1)
-        };
-        return result;
-    }).Where(x => x != null);
-    foreach (var point in mapPoints)
-    {
-        await repository.SaveMapIpAddressRepresentation(point);
+            var pings = x.Select(addr =>
+                ipAveragePings.FirstOrDefault(p => p.Item1.Item1.Equals(addr.IpValue.Item1))?.Item2);
+            if (!pings.Any(p => p.HasValue))
+                return null;
+            var result = new MapIpAddressesRepresentation()
+            {
+                Latitude = x.Key.Item1,
+                Longitude = x.Key.Item2,
+                IpAddressesCount = x.Count(),
+                AveragePingRtT = Convert.ToSingle(pings.Where(p => p is > 0).Average(p => p ?? 0)),
+                ValidFrom = week.Monday,
+                ValidTo = week.Next().Monday.AddTicks(-1)
+            };
+            return result;
+        }).Where(x => x != null);
+        foreach (var point in mapPoints)
+        {
+            await repository.SaveMapIpAddressRepresentation(point);
+        }
+
+        Console.WriteLine($"{DateTime.Now} Week from {week.Monday} processed.");
     }
-    Console.WriteLine($"{DateTime.Now} Week from {week.Monday} processed.");
-}
+);
 
 
 Console.WriteLine("done");
