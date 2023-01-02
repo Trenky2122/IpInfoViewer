@@ -27,6 +27,31 @@ namespace IpInfoViewer.Libs.Utilities
         {
             Monday = day.AddDays(-((7 + ((int)day.DayOfWeek - 1)) % 7)).Date;
         }
+
+        public Week(string week)
+        {
+            var splitWeek = week.Split('W');
+            if (splitWeek.Length != 2)
+                throw new ArgumentException($"Bad format: {week}");
+            bool isNumericYear = int.TryParse(splitWeek[0], out int year);
+            bool isNumericWeek = int.TryParse(splitWeek[1], out int weekNumber);
+            if (!isNumericWeek || !isNumericYear || !(weekNumber is > 0 and <= 53))
+                throw new ArgumentException($"Bad format: {week}");
+            DateTime fourthJanuaryThatYear = new(year, 1, 4);
+            DateTime day = fourthJanuaryThatYear.AddDays(7 * (weekNumber-1));
+            /*
+             * Definition of ISO_8601 first week of year according to Wikipedia:
+             *
+             * There are several mutually equivalent and compatible descriptions of week 01:
+             * - the week with the first business day in the starting year (considering that Saturdays, Sundays and 1st January are non-working days),
+             * - the week with the starting year's first Thursday in it (the formal ISO definition),
+             * - the week with 4 January in it,
+             * - the first week with the majority (four or more) of its days in the starting year, and
+             * - the week starting with the Monday in the period 29 December - 4 January.
+             */
+            Monday = day.AddDays(-((7 + ((int)day.DayOfWeek - 1)) % 7)).Date;
+        }
+
         public DateTime Monday { get; }
 
         public DateTime Tuesday => Monday.AddDays(1);

@@ -1,4 +1,5 @@
-﻿using IpInfoViewer.Libs.Abstractions;
+﻿using System.Globalization;
+using IpInfoViewer.Libs.Abstractions;
 using IpInfoViewer.Libs.Models;
 using IpInfoViewer.Libs.Utilities;
 using Microsoft.AspNetCore.Mvc;
@@ -15,10 +16,26 @@ namespace IpInfoViewer.Api.Controllers
             _dbRepository = dbRepository;
         }
 
-        [HttpGet("mapForWeek/{dayFromWeek}")]
-        public async Task<ActionResult<IEnumerable<MapIpAddressesRepresentation>>> GetMapForWeek(DateTime dayFromWeek)
+        /// <summary>
+        /// Gets map points for week of input date
+        /// </summary>
+        /// <param name="dayFromWeek">Date from wanted week</param>
+        /// <returns>Map points</returns>
+        [HttpGet("ForDayOfWeek/{dayFromWeek}")]
+        public async Task<ActionResult<IEnumerable<MapIpAddressesRepresentation>>> GetMapForDayOfWeek(DateTime dayFromWeek)
         {
             return Ok(await _dbRepository.GetMapForWeek(new Week(dayFromWeek)));
+        }
+
+        /// <summary>
+        /// Gets map points for week
+        /// </summary>
+        /// <param name="week">Week in HTML (ISO_8601) format e.g. (2023W25)</param>
+        /// <returns>Map points</returns>
+        [HttpGet("ForWeek/{week}")]
+        public async Task<ActionResult<IEnumerable<MapIpAddressesRepresentation>>> GetMapForWeek(string week)
+        {
+            return Ok(await _dbRepository.GetMapForWeek(new Week(week)));
         }
     }
 }
