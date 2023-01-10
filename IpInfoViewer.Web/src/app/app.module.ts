@@ -5,15 +5,16 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { IpAdressesMapComponent } from './ip-adresses-map/ip-adresses-map.component';
+import {FormsModule} from "@angular/forms";
 
 @NgModule({
   declarations: [
     AppComponent,
     IpAdressesMapComponent
   ],
-  imports: [
-    BrowserModule, HttpClientModule, LeafletModule
-  ],
+    imports: [
+        BrowserModule, HttpClientModule, LeafletModule, FormsModule
+    ],
   providers: [],
   bootstrap: [AppComponent]
 })

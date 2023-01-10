@@ -14,7 +14,7 @@ export class IpAddressInfoViewerService {
     return this.http.get<IpAdress[]>(this.baseUrl+"IpAddresses");
   }
 
-  public GetMapPoints(): Observable<MapIpAddressRepresentation[]>{
-    return this.http.get<MapIpAddressRepresentation[]>(this.baseUrl + "Map")
+  public GetMapPointsForWeek(week: string): Observable<MapIpAddressRepresentation[]>{
+    return this.http.get<MapIpAddressRepresentation[]>(this.baseUrl + "Map/ForWeek/" + week);
   }
 }

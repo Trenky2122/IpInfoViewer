@@ -30,7 +30,7 @@ namespace IpInfoViewer.Api.Controllers
         /// <summary>
         /// Gets map points for week
         /// </summary>
-        /// <param name="week">Week in HTML (ISO_8601) format e.g. (2023W25)</param>
+        /// <param name="week">Week in HTML (ISO_8601) format e.g. (2023-W25)</param>
         /// <returns>Map points</returns>
         [HttpGet("ForWeek/{week}")]
         public async Task<ActionResult<IEnumerable<MapIpAddressesRepresentation>>> GetMapForWeek(string week)

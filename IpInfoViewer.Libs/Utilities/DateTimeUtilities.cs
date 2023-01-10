@@ -30,7 +30,7 @@ namespace IpInfoViewer.Libs.Utilities
 
         public Week(string week)
         {
-            var splitWeek = week.Split('W');
+            var splitWeek = week.Split("-W");
             if (splitWeek.Length != 2)
                 throw new ArgumentException($"Bad format: {week}");
             bool isNumericYear = int.TryParse(splitWeek[0], out int year);
