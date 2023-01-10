@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output, Pipe} from '@angular/cor
 import * as Leaflet from "leaflet";
 import {IpAddressInfoViewerService} from "../ip-address-info-viewer.service";
 import {IpAdress, MapIpAddressRepresentation} from "../models";
+import {point} from "leaflet";
 
 @Component({
   selector: 'app-ip-adresses-map',
@@ -38,7 +39,9 @@ export class IpAdressesMapComponent implements OnInit{
     return mapPoints?.map(point => new Leaflet.CircleMarker(new Leaflet.LatLng(point.latitude, point.longitude), {
       fillColor:  this.pingToColor(point.averagePingRtT),
       color:  this.pingToColor(point.averagePingRtT),
-      radius: 3 * Math.log(point.ipAddressesCount)
+      fillOpacity: 1,
+      radius: 2.5 * Math.log(point.ipAddressesCount),
+
     }));
   }
 
@@ -51,19 +54,18 @@ export class IpAdressesMapComponent implements OnInit{
   }
 
   pingToColor(ping: number) {
-    let perc = Math.log(ping)/0.093;
-    let r, g, b = 0;
-    if(perc < 50) {
-      r = 255;
-      g = Math.round(5.1 * perc);
-    }
-    else {
-      g = 255;
-      r = Math.round(510 - 5.10 * perc);
-    }
-    let h = r * 0x10000 + g * 0x100 + b * 0x1;
+    let upperBound = 500;
+    let lowerBound = 20;
+    let pingInBounds = ping;
+    if(pingInBounds < lowerBound)
+      pingInBounds = lowerBound;
+    if(pingInBounds > upperBound)
+      pingInBounds = upperBound;
+    let percent = (pingInBounds - lowerBound)/(upperBound - lowerBound);
+    let r = Math.round(255*percent), g = Math.round((1-percent)*255), b = 0;
+    let h = r * 0x10000 + g * 0x100;
     let result = '#' + ('000000' + h.toString(16)).slice(-6);
-    console.log(ping, Math.log(ping), perc, result);
+    console.log(percent, ping, result)
     return result;
   }
 }
