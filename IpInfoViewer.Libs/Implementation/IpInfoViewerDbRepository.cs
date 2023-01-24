@@ -44,11 +44,11 @@ namespace IpInfoViewer.Libs.Implementation
             connection.Open();
             await CreateIpTable(connection);
             await CreateMapIpRepresentationTable(connection);
+            await CreateChartsTable(connection);
         }
 
         private Task CreateIpTable(NpgsqlConnection connection)
         {
-            var command = connection.CreateCommand();
             string sql = "CREATE TABLE IF NOT EXISTS IpAddresses (" +
                          "Id SERIAL PRIMARY KEY," +
                          "IpValue cidr," +
@@ -57,13 +57,11 @@ namespace IpInfoViewer.Libs.Implementation
                          "Latitude float," +
                          "Longitude float);" +
                          "CREATE UNIQUE INDEX IF NOT EXISTS index1 ON IpAddresses (IpValue);";
-            command.CommandText = sql;
-            return command.ExecuteNonQueryAsync();
+            return connection.ExecuteAsync(sql);
         }
 
         private Task CreateMapIpRepresentationTable(NpgsqlConnection connection)
         {
-            var command = connection.CreateCommand();
             string sql = "CREATE TABLE IF NOT EXISTS MapIpRepresentation (" +
                          "Id SERIAL PRIMARY KEY," +
                          "Latitude float," +
@@ -73,8 +71,18 @@ namespace IpInfoViewer.Libs.Implementation
                          "ValidFrom Date, " +
                          "ValidTo Date);" +
                          "CREATE UNIQUE INDEX IF NOT EXISTS index2 ON MapIpRepresentation (Latitude, Longitude, ValidFrom, ValidTo);";
-            command.CommandText = sql;
-            return command.ExecuteNonQueryAsync();
+            return connection.ExecuteAsync(sql);
+        }
+
+        private Task CreateChartsTable(NpgsqlConnection connection)
+        {
+            string sql = "CREATE TABLE IF NOT EXISTS Charts (" +
+                         "Id SERIAL PRIMARY KEY," +
+                         "Name Varchar(50)," +
+                         "XAxis Varchar(50)," +
+                         "YAxis Varchar(50)," +
+                         "ChartType int);";
+            return connection.ExecuteAsync(sql);
         }
 
         #endregion
