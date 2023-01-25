@@ -1,0 +1,20 @@
+\chapter{Možnosti implementácie}
+
+\label{kap:moznosti_implementacie}
+
+Každý softvér si musí určiť, pre aké platformu je vyvíjaný. Samozrejme, čím väčšiu škálu platforiem pokryje,
+tým je dostupnejší pre väčšie množstvo používateľov. Dnes drvivá väčšina používateľov používa istú podmnožinu
+zo systémov Android, Linux, Windows, iOS a MacOS X. Spoločnou črtou týchto platforiem je, že medzi nimi neexistuje taká dvojica,
+z ktorej by jedna platforma natívne podporovala programy napísané pre druhú platformu. Vyvíjať aplikáciu päťkrát,
+pre každú platformu v jej natívnom prostredí, však nie je veľmi efektívne. 
+
+Namiesto toho dnes existuje niekoľko riešení umožňujúcich zdieľať časti zdrojového kódu medzi riešeniami pre rôzne systémy.
+Ako príklad môžme uviesť frameworky Flutter, React Native alebo MAUI pre .NET.
+
+Ako univerzálne riešenie sa dnes používajú webové aplikácie.
+Takéto aplikácie majú niekoľko dôležitých výhod, ako napríklad rýchla dostupnosť, žiadna nutnosť inštalácie a jednoduché spustenie
+na všetkých platformách, na ktorých je dostupný webový prehliadač (napríklad Firefox, Chrome alebo Opera).
+Webové aplikácie zvyknú mávať dve oddelené časti - frontend, bežiaci vo webovom prehliadači klienta a backend,
+bežiaci na serveri. Tieto dve časti spolu komunikujú pomocou siete, najčastejšie pomocou protokolov HTTP(S) alebo WebSocket.
+Úlohou frontendu je poskytovať prívetivé rozhranie s ktorým môže používateľ pracovať, úlohou backendu je zase spracovávať dáta,
+komunikovať s databázou a poskytovať dáta frontendu. 
