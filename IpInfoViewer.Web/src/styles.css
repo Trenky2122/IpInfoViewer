@@ -13,3 +13,4 @@ body {
 div[ng-view]{
   height: 100%;
 }
+@import "~ngx-chart/styles.scss";
