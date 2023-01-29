@@ -11,6 +11,7 @@ using Dapper;
 using IpInfoViewer.Libs.Abstractions;
 using IpInfoViewer.Libs.Models;
 using IpInfoViewer.Libs.Utilities;
+using Microsoft.Extensions.Configuration;
 using Npgsql;
 using NpgsqlTypes;
 
@@ -23,6 +24,11 @@ namespace IpInfoViewer.Libs.Implementation
         public IpInfoViewerDbRepository(string connectionString)
         {
             _connectionString = connectionString;
+        }
+
+        public IpInfoViewerDbRepository(IConfiguration configuration)
+        {
+            _connectionString = configuration["IpInfoViewerProcessedConnectionString"];
         }
 
         #region Private helpers
@@ -113,6 +119,12 @@ namespace IpInfoViewer.Libs.Implementation
         {
             await using var connection = CreateConnection();
             return await connection.QueryAsync<MapIpAddressesRepresentation>("SELECT * FROM MapIpRepresentation WHERE @Tuesday BETWEEN ValidFrom AND ValidTo", new {tuesday = week.Tuesday });
+        }
+
+        public async Task<DateTime?> GetLastDateWhenMapIsProcessed()
+        {
+            await using var connection = CreateConnection();
+            return await connection.QueryFirstOrDefaultAsync<DateTime?>("SELECT ValidTo FROM MapIpRepresentation LIMIT 1");
         }
 
         static string RemoveDiacritics(string text)

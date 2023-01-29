@@ -2,6 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 using IpInfoViewer.Libs.Implementation;
+using IpInfoViewer.Libs.Implementation.Map;
 using IpInfoViewer.Libs.Models;
 using IpInfoViewer.Libs.Utilities;
 using Microsoft.Extensions.Configuration;
@@ -12,33 +13,13 @@ var config = configBuilder.Build();
 IpInfoViewerDbRepository repository = new(config["IpInfoViewerProcessedConnectionString"]);
 await repository.SeedTables();
 MFileDbRepository mfileRepo = new(config["MFileConnectionString"]);
+MapFacade mapFacadde = new(repository, mfileRepo);
 var allAddresses = await repository.GetIpAddresses();
 var addressesGroupedByLocation = allAddresses.GroupBy(GetApproximateLocation);
 await Parallel.ForEachAsync(DateTimeUtilities.GetWeeksFromTo(new DateTime(2011, 10, 3), DateTime.Today),
     async (week, token) =>
     {
-        var ipAveragePings = await mfileRepo.GetAverageRtTForIpForWeek(week);
-        var mapPoints = addressesGroupedByLocation.Select(x =>
-        {
-            var pings = x.Select(addr =>
-                ipAveragePings.FirstOrDefault(p => p.Item1.Item1.Equals(addr.IpValue.Item1))?.Item2);
-            if (!pings.Any(p => p.HasValue))
-                return null;
-            var result = new MapIpAddressesRepresentation()
-            {
-                Latitude = x.Key.Item1,
-                Longitude = x.Key.Item2,
-                IpAddressesCount = x.Count(),
-                AveragePingRtT = Convert.ToSingle(pings.Where(p => p is > 0).Average(p => p ?? 0)),
-                ValidFrom = week.Monday,
-                ValidTo = week.Next().Monday.AddTicks(-1)
-            };
-            return result;
-        }).Where(x => x != null);
-        foreach (var point in mapPoints)
-        {
-            await repository.SaveMapIpAddressRepresentation(point);
-        }
+        await mapFacadde.ProcessWeekAsync(week, addressesGroupedByLocation);
 
         Console.WriteLine($"{DateTime.Now} Week from {week.Monday} processed.");
     }
