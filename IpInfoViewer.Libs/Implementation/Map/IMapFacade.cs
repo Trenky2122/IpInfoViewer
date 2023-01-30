@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IpInfoViewer.Libs.Abstractions.Map
+namespace IpInfoViewer.Libs.Implementation.Map
 {
     public interface IMapFacade
     {

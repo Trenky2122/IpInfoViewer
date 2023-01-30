@@ -6,15 +6,16 @@ using System.Threading.Tasks;
 using IpInfoViewer.Libs.Models;
 using IpInfoViewer.Libs.Utilities;
 
-namespace IpInfoViewer.Libs.Abstractions
+namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
 {
     public interface IIpInfoViewerDbRepository
     {
         Task SeedTables();
-        Task<IEnumerable<IpAddressInfo>> GetIpAddresses(int offset = 0, int limit = Int32.MaxValue);
+        Task<IEnumerable<IpAddressInfo>> GetIpAddresses(int offset = 0, int limit = int.MaxValue);
         Task<IEnumerable<MapIpAddressesRepresentation>> GetMapForWeek(Week week);
         Task<DateTime?> GetLastDateWhenMapIsProcessed();
         Task SaveMapIpAddressRepresentation(MapIpAddressesRepresentation representation);
+        Task SaveIpAddressInfo(IpAddressInfo address);
 
     }
 }

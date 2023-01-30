@@ -8,14 +8,13 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Dapper;
-using IpInfoViewer.Libs.Abstractions;
 using IpInfoViewer.Libs.Models;
 using IpInfoViewer.Libs.Utilities;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
 using NpgsqlTypes;
 
-namespace IpInfoViewer.Libs.Implementation
+namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
 {
     public class IpInfoViewerDbRepository : IIpInfoViewerDbRepository
     {
@@ -112,13 +111,13 @@ namespace IpInfoViewer.Libs.Implementation
         public async Task<IEnumerable<IpAddressInfo>> GetIpAddresses(int offset = 0, int limit = int.MaxValue)
         {
             await using var connection = CreateConnection();
-            return await connection.QueryAsync<IpAddressInfo>("SELECT * FROM IpAddresses LIMIT @limit OFFSET @offset", new {limit, offset});
+            return await connection.QueryAsync<IpAddressInfo>("SELECT * FROM IpAddresses LIMIT @limit OFFSET @offset", new { limit, offset });
         }
 
         public async Task<IEnumerable<MapIpAddressesRepresentation>> GetMapForWeek(Week week)
         {
             await using var connection = CreateConnection();
-            return await connection.QueryAsync<MapIpAddressesRepresentation>("SELECT * FROM MapIpRepresentation WHERE @Tuesday BETWEEN ValidFrom AND ValidTo", new {tuesday = week.Tuesday });
+            return await connection.QueryAsync<MapIpAddressesRepresentation>("SELECT * FROM MapIpRepresentation WHERE @Tuesday BETWEEN ValidFrom AND ValidTo", new { tuesday = week.Tuesday });
         }
 
         public async Task<DateTime?> GetLastDateWhenMapIsProcessed()

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IpInfoViewer.Libs.Abstractions;
-using IpInfoViewer.Libs.Abstractions.Map;
+using IpInfoViewer.Libs.Implementation.Database.IpInfoViewer;
+using IpInfoViewer.Libs.Implementation.Database.MFile;
 using IpInfoViewer.Libs.Models;
 using IpInfoViewer.Libs.Utilities;
 
