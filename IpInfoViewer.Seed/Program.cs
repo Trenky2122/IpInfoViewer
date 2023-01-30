@@ -1,7 +1,8 @@
 ﻿using System.Globalization;
 using System.Net;
 using System.Text.Json.Serialization;
-using IpInfoViewer.Libs.Implementation;
+using IpInfoViewer.Libs.Implementation.Database.IpInfoViewer;
+using IpInfoViewer.Libs.Implementation.Database.MFile;
 using IpInfoViewer.Libs.Models;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;

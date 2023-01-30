@@ -1,7 +1,8 @@
 ﻿using System.Net;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
-using IpInfoViewer.Libs.Implementation;
+using IpInfoViewer.Libs.Implementation.Database.IpInfoViewer;
+using IpInfoViewer.Libs.Implementation.Database.MFile;
 using IpInfoViewer.Libs.Implementation.Map;
 using IpInfoViewer.Libs.Models;
 using IpInfoViewer.Libs.Utilities;
