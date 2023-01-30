@@ -1,4 +1,4 @@
-﻿using IpInfoViewer.Libs.Abstractions;
+﻿using IpInfoViewer.Libs.Implementation.Database.IpInfoViewer;
 using IpInfoViewer.Libs.Models;
 using Microsoft.AspNetCore.Mvc;
 

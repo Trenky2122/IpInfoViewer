@@ -1,5 +1,5 @@
-using IpInfoViewer.Libs.Abstractions;
 using IpInfoViewer.Libs.Implementation;
+using IpInfoViewer.Libs.Implementation.Database.IpInfoViewer;
 
 var builder = WebApplication.CreateBuilder(args);
 
