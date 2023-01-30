@@ -1,6 +1,5 @@
 using System.Runtime.CompilerServices;
-using IpInfoViewer.Libs.Abstractions;
-using IpInfoViewer.Libs.Implementation;
+using IpInfoViewer.Libs.Implementation.Database.IpInfoViewer;
 using IpInfoViewer.MapPointsService;
 
 IHost host = Host.CreateDefaultBuilder(args)

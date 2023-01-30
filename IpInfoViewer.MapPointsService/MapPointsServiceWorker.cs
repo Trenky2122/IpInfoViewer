@@ -1,5 +1,5 @@
-using IpInfoViewer.Libs.Abstractions;
-using IpInfoViewer.Libs.Abstractions.Map;
+using IpInfoViewer.Libs.Implementation.Database.IpInfoViewer;
+using IpInfoViewer.Libs.Implementation.Map;
 using IpInfoViewer.Libs.Models;
 using IpInfoViewer.Libs.Utilities;
 
