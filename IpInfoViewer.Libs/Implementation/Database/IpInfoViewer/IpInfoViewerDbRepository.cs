@@ -123,7 +123,7 @@ namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
         public async Task<DateTime?> GetLastDateWhenMapIsProcessed()
         {
             await using var connection = CreateConnection();
-            return await connection.QueryFirstOrDefaultAsync<DateTime?>("SELECT ValidTo FROM MapIpRepresentation LIMIT 1");
+            return await connection.QueryFirstOrDefaultAsync<DateTime?>("SELECT ValidTo FROM MapIpRepresentation ORDER BY ValidTo DESC LIMIT 1");
         }
 
         static string RemoveDiacritics(string text)

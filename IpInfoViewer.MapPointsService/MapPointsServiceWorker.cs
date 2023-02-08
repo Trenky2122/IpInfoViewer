@@ -21,12 +21,12 @@ namespace IpInfoViewer.MapPointsService
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             _logger.LogInformation("MapPointsServiceWorker running at: {time}", DateTimeOffset.Now);
-
+            await _dbRepository.SeedTables();
             var allAddresses = await _dbRepository.GetIpAddresses();
             var addressesGroupedByLocation = allAddresses.GroupBy(GetApproximateLocation);
             var lastProcessedDate = await _dbRepository.GetLastDateWhenMapIsProcessed();
             if (!lastProcessedDate.HasValue)
-                lastProcessedDate = new DateTime(2008, 5, 1); //first data from mfile database are by this date, TODO: find exact date;
+                lastProcessedDate = new DateTime(2008, 4, 26); //first data from mfile database are by this date
             Week lastProcessedWeek = new(lastProcessedDate.Value);
             // parallel foreach used in case of first run or first run after weeks
             await Parallel.ForEachAsync(DateTimeUtilities.GetWeeksFromTo(lastProcessedWeek.Next().Monday, DateTime.Today.AddDays(-7) /* only already finished weeks*/),

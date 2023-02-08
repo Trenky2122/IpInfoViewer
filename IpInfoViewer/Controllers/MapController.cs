@@ -1,5 +1,7 @@
 ﻿using System.Globalization;
+using System.Net.Mime;
 using IpInfoViewer.Libs.Implementation.Database.IpInfoViewer;
+using IpInfoViewer.Libs.Implementation.Map;
 using IpInfoViewer.Libs.Models;
 using IpInfoViewer.Libs.Utilities;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +13,11 @@ namespace IpInfoViewer.Api.Controllers
     public class MapController: ControllerBase
     {
         private readonly IIpInfoViewerDbRepository _dbRepository;
-        public MapController(IIpInfoViewerDbRepository dbRepository)
+        private readonly IMapFacade _mapFacade;
+        public MapController(IIpInfoViewerDbRepository dbRepository, IMapFacade mapFacade)
         {
             _dbRepository = dbRepository;
+            _mapFacade = mapFacade;
         }
 
         /// <summary>
@@ -36,6 +40,12 @@ namespace IpInfoViewer.Api.Controllers
         public async Task<ActionResult<IEnumerable<MapIpAddressesRepresentation>>> GetMapForWeek(string week)
         {
             return Ok(await _dbRepository.GetMapForWeek(new Week(week)));
+        }
+
+        [HttpGet("ColoredMap")]
+        public async Task<ActionResult> GetColoredSvgMapAsync()
+        {
+            return Content(_mapFacade.GetColoredSvgMap(), "image/svg+xml");
         }
     }
 }

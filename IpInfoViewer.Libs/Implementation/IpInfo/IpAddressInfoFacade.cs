@@ -11,7 +11,7 @@ using IpInfoViewer.Libs.Implementation.Database.MFile;
 
 namespace IpInfoViewer.Libs.Implementation.IpInfo
 {
-    public class IpAddressInfoFacade
+    public class IpAddressInfoFacade: IIpAddressInfoFacade
     {
         private readonly IMFileDbRepository _mFileDb;
         private readonly IIpInfoViewerDbRepository _localDb;
@@ -20,11 +20,11 @@ namespace IpInfoViewer.Libs.Implementation.IpInfo
             _mFileDb = mFileDb;
             _localDb = localDb;
         }
-        public async Task ProcessLine(string line)
+        public async Task<int> ProcessLine(string line)
         {
-            if (line.Contains("\"")) return;
+            if (line.Contains("\"")) return 0;
             var fields = line.Split(',');
-            var pingsInRange = await _mFileDb.GetHostsInRange(IPAddress.Parse(fields[0]), IPAddress.Parse(fields[1]));
+            var pingsInRange = (await _mFileDb.GetHostsInRange(IPAddress.Parse(fields[0]), IPAddress.Parse(fields[1]))).ToList();
             foreach (var ping in pingsInRange)
             {
                 var ipInfo = new IpAddressInfo()
@@ -37,6 +37,8 @@ namespace IpInfoViewer.Libs.Implementation.IpInfo
                 };
                 await _localDb.SaveIpAddressInfo(ipInfo);
             }
+
+            return pingsInRange.Count;
         }
     }
 }

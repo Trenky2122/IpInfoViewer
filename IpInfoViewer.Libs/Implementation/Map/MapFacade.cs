@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GrapeCity.Documents.Svg;
 using IpInfoViewer.Libs.Implementation.Database.IpInfoViewer;
 using IpInfoViewer.Libs.Implementation.Database.MFile;
 using IpInfoViewer.Libs.Models;
@@ -38,11 +39,19 @@ namespace IpInfoViewer.Libs.Implementation.Map
                     ValidTo = week.Next().Monday.AddTicks(-1)
                 };
                 return result;
-            }).Where(x => x != null);
+            }).Where(x => x != null).ToList();
             foreach (var point in mapPoints)
             {
                 await _localDb.SaveMapIpAddressRepresentation(point);
             }
+        }
+
+        public string GetColoredSvgMap()
+        {
+            var svg = GcSvgDocument.FromFile(@"Assets/world.svg");
+            StringBuilder resultBuilder = new();
+            svg.Save(resultBuilder);
+            return resultBuilder.ToString();
         }
     }
 }

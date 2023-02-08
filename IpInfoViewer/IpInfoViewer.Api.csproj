@@ -17,4 +17,10 @@
     <ProjectReference Include="..\IpInfoViewer.Libs\IpInfoViewer.Libs.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Assets\world.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
