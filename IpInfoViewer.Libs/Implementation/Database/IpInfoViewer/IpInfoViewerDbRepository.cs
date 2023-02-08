@@ -39,7 +39,7 @@ namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
 
         #endregion
 
-        #region Seed Tables
+        #region Create Tables
 
 
         public async Task SeedTables()
@@ -50,6 +50,7 @@ namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
             await CreateIpTable(connection);
             await CreateMapIpRepresentationTable(connection);
             await CreateChartsTable(connection);
+            await CreateCountryPingInfoTable(connection);
         }
 
         private Task CreateIpTable(NpgsqlConnection connection)
@@ -90,6 +91,19 @@ namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
             return connection.ExecuteAsync(sql);
         }
 
+        private Task CreateCountryPingInfoTable(NpgsqlConnection connection)
+        {
+            string sql = "CREATE TABLE IF NOT EXISTS CountryPingInfo (" +
+                         "Id SERIAL PRIMARY KEY," +
+                         "CountryCode varchar(2)," +
+                         "IpAddressesCount int, " +
+                         "AveragePingRtT int, " +
+                         "ValidFrom Date, " +
+                         "ValidTo Date);" +
+                         "CREATE UNIQUE INDEX IF NOT EXISTS index3 ON CountryPingInfo (CountryCode ValidFrom, ValidTo);";
+            return connection.ExecuteAsync(sql);
+        }
+
         #endregion
 
         public async Task SaveIpAddressInfo(IpAddressInfo address)
@@ -106,6 +120,14 @@ namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
             string sql = "INSERT INTO MapIpRepresentation (Latitude, Longitude, IpAddressesCount, AveragePingRtT, ValidFrom, ValidTo) " +
                          "VALUES (@Latitude, @Longitude, @IpAddressesCount, @AveragePingRtT, @ValidFrom, @ValidTo)";
             await connection.ExecuteAsync(sql, representation);
+        }
+
+        public async Task SaveCountryPingInfo(CountryPingInfo countryPingInfo)
+        {
+            await using var connection = CreateConnection();
+            string sql = "INSERT INTO CountryPingInfo (CountryCode, IpAddressesCount, AveragePingRtT, ValidFrom, ValidTo) " +
+                         "VALUES (@CountryCode, @IpAddressesCount, @AveragePingRtT, @ValidFrom, @ValidTo)";
+            await connection.ExecuteAsync(sql, countryPingInfo);
         }
 
         public async Task<IEnumerable<IpAddressInfo>> GetIpAddresses(int offset = 0, int limit = int.MaxValue)

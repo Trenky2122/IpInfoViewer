@@ -7,9 +7,8 @@ using IpInfoViewer.Libs.Models.BaseModels;
 
 namespace IpInfoViewer.Libs.Models
 {
-    public class MapIpAddressesRepresentation: BaseMapModel
+    public class CountryPingInfo: BaseMapModel
     {
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
+        public string CountryCode { get; set; }
     }
 }
