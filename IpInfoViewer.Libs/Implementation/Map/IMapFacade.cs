@@ -12,7 +12,6 @@ namespace IpInfoViewer.Libs.Implementation.Map
     {
         Task ProcessWeekAsync(Week week,
             IEnumerable<IGrouping<(int latitude, int longitude), IpAddressInfo>> addressesGroupedByLocation);
-
-        string GetColoredSvgMap();
+        
     }
 }

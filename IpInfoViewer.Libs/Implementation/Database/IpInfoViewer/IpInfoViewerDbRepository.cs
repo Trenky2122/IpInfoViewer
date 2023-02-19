@@ -100,7 +100,7 @@ namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
                          "AveragePingRtT int, " +
                          "ValidFrom Date, " +
                          "ValidTo Date);" +
-                         "CREATE UNIQUE INDEX IF NOT EXISTS index3 ON CountryPingInfo (CountryCode ValidFrom, ValidTo);";
+                         "CREATE UNIQUE INDEX IF NOT EXISTS index3 ON CountryPingInfo (CountryCode, ValidFrom, ValidTo);";
             return connection.ExecuteAsync(sql);
         }
 
@@ -148,6 +148,16 @@ namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
             return await connection.QueryFirstOrDefaultAsync<DateTime?>("SELECT ValidTo FROM MapIpRepresentation ORDER BY ValidTo DESC LIMIT 1");
         }
 
+        public async Task<DateTime?> GetLastDateWhenCountriesAreProcessed()
+        {
+            await using var connection = CreateConnection();
+            return await connection.QueryFirstOrDefaultAsync<DateTime?>("SELECT ValidTo FROM CountryPingInfo ORDER BY ValidTo DESC LIMIT 1");
+        }
+        public async Task<IEnumerable<CountryPingInfo>> GetCountryPingInfoForWeek(Week week)
+        {
+            await using var connection = CreateConnection();
+            return await connection.QueryAsync<CountryPingInfo>("SELECT * FROM CountryPingInfo WHERE @Tuesday BETWEEN ValidFrom AND ValidTo", new { tuesday = week.Tuesday });
+        }
         static string RemoveDiacritics(string text)
         {
             var normalizedString = text.Normalize(NormalizationForm.FormD);

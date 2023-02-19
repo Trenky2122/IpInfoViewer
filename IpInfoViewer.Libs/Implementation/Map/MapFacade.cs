@@ -45,13 +45,5 @@ namespace IpInfoViewer.Libs.Implementation.Map
                 await _localDb.SaveMapIpAddressRepresentation(point);
             }
         }
-
-        public string GetColoredSvgMap()
-        {
-            var svg = GcSvgDocument.FromFile(@"Assets/world.svg");
-            StringBuilder resultBuilder = new();
-            svg.Save(resultBuilder);
-            return resultBuilder.ToString();
-        }
     }
 }

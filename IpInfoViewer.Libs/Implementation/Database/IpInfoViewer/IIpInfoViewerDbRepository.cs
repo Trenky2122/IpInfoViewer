@@ -16,6 +16,8 @@ namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
         Task<DateTime?> GetLastDateWhenMapIsProcessed();
         Task SaveMapIpAddressRepresentation(MapIpAddressesRepresentation representation);
         Task SaveIpAddressInfo(IpAddressInfo address);
-
+        Task SaveCountryPingInfo(CountryPingInfo countryPingInfo);
+        Task<DateTime?> GetLastDateWhenCountriesAreProcessed();
+        Task<IEnumerable<CountryPingInfo>> GetCountryPingInfoForWeek(Week week);
     }
 }

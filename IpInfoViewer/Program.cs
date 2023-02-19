@@ -1,4 +1,5 @@
 using IpInfoViewer.Libs.Implementation;
+using IpInfoViewer.Libs.Implementation.CountryPing;
 using IpInfoViewer.Libs.Implementation.Database.IpInfoViewer;
 using IpInfoViewer.Libs.Implementation.Database.MFile;
 using IpInfoViewer.Libs.Implementation.Map;
@@ -14,7 +15,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IIpInfoViewerDbRepository>(
     new IpInfoViewerDbRepository(builder.Configuration["IpInfoViewerProcessedConnectionString"]));
 builder.Services.AddSingleton<IMFileDbRepository, MFileDbRepository>();
-builder.Services.AddSingleton<IMapFacade, MapFacade>();
+builder.Services.AddSingleton<ICountryPingInfoFacade, CountryPingInfoFacade>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

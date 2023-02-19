@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Net.Mime;
+using IpInfoViewer.Libs.Implementation.CountryPing;
 using IpInfoViewer.Libs.Implementation.Database.IpInfoViewer;
 using IpInfoViewer.Libs.Implementation.Map;
 using IpInfoViewer.Libs.Models;
@@ -13,11 +14,11 @@ namespace IpInfoViewer.Api.Controllers
     public class MapController: ControllerBase
     {
         private readonly IIpInfoViewerDbRepository _dbRepository;
-        private readonly IMapFacade _mapFacade;
-        public MapController(IIpInfoViewerDbRepository dbRepository, IMapFacade mapFacade)
+        private readonly ICountryPingInfoFacade _countryFacade;
+        public MapController(IIpInfoViewerDbRepository dbRepository, ICountryPingInfoFacade countryFacade)
         {
             _dbRepository = dbRepository;
-            _mapFacade = mapFacade;
+            _countryFacade = countryFacade;
         }
 
         /// <summary>
@@ -42,10 +43,10 @@ namespace IpInfoViewer.Api.Controllers
             return Ok(await _dbRepository.GetMapForWeek(new Week(week)));
         }
 
-        [HttpGet("ColoredMap")]
-        public async Task<ActionResult> GetColoredSvgMapAsync()
+        [HttpGet("ColoredMap/{week}")]
+        public async Task<ContentResult> GetColoredSvgMapAsync(string week)
         {
-            return Content(_mapFacade.GetColoredSvgMap(), "image/svg+xml");
+            return Content(await _countryFacade.GetColoredSvgMapForWeek(new Week(week)), "image/svg+xml");
         }
     }
 }
