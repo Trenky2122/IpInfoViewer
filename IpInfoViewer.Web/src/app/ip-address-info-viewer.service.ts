@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {IpAdress, MapIpAddressRepresentation} from "./models";
+import {IpAdress, MapIpAddressRepresentation, SvgWrapper} from "./models";
 
 @Injectable({
   providedIn: 'root'
@@ -16,5 +16,9 @@ export class IpAddressInfoViewerService {
 
   public GetMapPointsForWeek(week: string): Observable<MapIpAddressRepresentation[]>{
     return this.http.get<MapIpAddressRepresentation[]>(this.baseUrl + "Map/ForWeek/" + week);
+  }
+
+  public GetCountryPingInfoMapLink(week: string): string{
+    return this.baseUrl + "Map/ColoredMap/" + week;
   }
 }

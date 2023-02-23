@@ -14,3 +14,7 @@ export interface MapIpAddressRepresentation{
   latitude: number;
   longitude: number;
 }
+
+export interface SvgWrapper{
+  svg: string;
+}

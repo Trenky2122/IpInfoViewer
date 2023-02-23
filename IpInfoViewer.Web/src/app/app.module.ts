@@ -10,12 +10,14 @@ import {NgxChartModule} from "ngx-chart";
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { AppRoutingModule } from './app-routing.module';
 import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
+import { CountryPingMapComponent } from './country-ping-map/country-ping-map.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     IpAdressesMapComponent,
-    NavMenuComponent
+    NavMenuComponent,
+    CountryPingMapComponent
   ],
     imports: [
       BrowserModule,
