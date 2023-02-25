@@ -17,4 +17,24 @@ na všetkých platformách, na ktorých je dostupný webový prehliadač (naprí
 Webové aplikácie zvyknú mávať dve oddelené časti - frontend, bežiaci vo webovom prehliadači klienta a backend,
 bežiaci na serveri. Tieto dve časti spolu komunikujú pomocou siete, najčastejšie pomocou protokolov HTTP(S) alebo WebSocket.
 Úlohou frontendu je poskytovať prívetivé rozhranie s ktorým môže používateľ pracovať, úlohou backendu je zase spracovávať dáta,
-komunikovať s databázou a poskytovať dáta frontendu. 
+komunikovať s databázou a poskytovať dáta frontendu. Práve pre takýto model som sa rozhodol.
+
+\section{Možnosti vývoja frontendového riešenia}
+Programovanie webových stránok sa dnes nezaobíde bez programovacieho jazyka JavaScript, ktorý používajú webové prehliadače. Alternatívne 
+sa dajú použiť prekladače iných jazykov do WebAssembly (napríklad framework Blazor pre .NET) alebo jazyk TypeScript, ktorý je rozšírením JavaScriptu o typový 
+systém a iné užitočné konštrukcie, zároveň je plne kompatibilný s JavaScriptom (je jeho nadmnožinou) a vo webových prehliadačoch sa spúšťa pomocou 
+prekladu do JavaScriptu. Na vývoj webového frontendu je možnosť používať webové frameworky, ktoré umožňujú delenie stránok na moduly, 
+ktoré sa dajú jednotlivo znovupoužívať a paranetrizovať na rôznych podstránkach aplikácie, čím zjednodušujú spravovanie a čitateľnosť aplikácie. 
+V súčasnej dobe sú najpopulárnejšie frameworky React, Vue a Angular. Kým React a Vue umožňujú prácu v JavaScripte ale volitelne je možné vyvíjať 
+aj v TypeScripte, Angular prácu v TypeScripte vyžaduje. Tieto frameworky sú podporované vo všetkých nových verziách moderných prehliadačov. 
+Keďže všetky tieto frameworky fungujú na veľmi podobnom princípe, je veľmi ťažké povedať, ktorý by bola pre moju aplikáciu najvhodnejší. Vzhľadom 
+na to som sa rozhodol pre Angular, v ktorom mám naviac praktických skúseností.
+
+\section{Možnosti vývoja backendového riešenia}
+Pre vývoj backendového riešenia je vhodné vybrať taký programovací jazyk, pre ktorý existuje framework umožňujúci vývoj API, ktoré bude podporovať 
+protokol HTTP(s). Takýchto jazykov existuje veľmi veľa, dokonca pre niektoré jazyky existuje viacero rôznych knižníc umožňujúcich výstavbu 
+takýchto API. Ako príklad môžme uviesť jazyk Python a knižnice FastAPI alebo Flask a mnohé iné, jazyk Java a framework Spring Boot, jazyk C\# a 
+framework ASP.NET Core a mnohé iné. Všetky tieto možnosti majú dostatočné nástroje a je ťažké určiť, ktorý z nich je objektívne najvhodnejší, 
+preto som sa rozhodol pre jazyk C\# a ASP.NET Core, s ktorým mám najviac skúseností.
+
+\subsection{Možnosti implementácie vo vybranom jazyku}
