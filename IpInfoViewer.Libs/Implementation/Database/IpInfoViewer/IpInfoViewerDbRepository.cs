@@ -136,6 +136,30 @@ namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
             return await connection.QueryAsync<IpAddressInfo>("SELECT * FROM IpAddresses LIMIT @limit OFFSET @offset", new { limit, offset });
         }
 
+        public async Task<IEnumerable<IpAddressInfo>> GetIpAddresses2(int offset = 0, int limit = int.MaxValue)
+        {
+            await using var connection = CreateConnection();
+            await connection.OpenAsync();
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM IpAddresses LIMIT @limit OFFSET @offset";
+            command.Parameters.AddWithValue("@limit", limit);
+            command.Parameters.AddWithValue("@offset", offset);
+            var reader = await command.ExecuteReaderAsync();
+            var result = new List<IpAddressInfo>();
+            while (await reader.ReadAsync())
+            {
+                result.Add(new IpAddressInfo()
+                {
+                    City = reader["City"] as string,
+                    CountryCode = reader["CountryCode"] as string,
+                    Id = Convert.ToInt32(reader["Id"]),
+                    IpStringValue = reader["IpStringValue"] as string,
+                });
+            }
+
+            return result;
+        }
+
         public async Task<IEnumerable<MapIpAddressesRepresentation>> GetMapForWeek(Week week)
         {
             await using var connection = CreateConnection();

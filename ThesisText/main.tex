@@ -23,7 +23,61 @@
 % mozete pridat aj language=...
 % na nastavenie najcastejsie pouzivaneho prog. jazyka
 % takisto sa da zapnut cislovanie riadkov
-\lstset{frame=lines}
+\usepackage{color}
+\lstloadlanguages{C,C++,csh,Java}
+
+\definecolor{red}{rgb}{0.6,0,0} 
+\definecolor{blue}{rgb}{0,0,0.6}
+\definecolor{green}{rgb}{0,0.8,0}
+\definecolor{cyan}{rgb}{0.0,0.6,0.6}
+
+\lstset{
+language=csh,
+basicstyle=\footnotesize\ttfamily,
+numbers=left,
+numberstyle=\tiny,
+numbersep=5pt,
+tabsize=2,
+extendedchars=true,
+breaklines=true,
+frame=b,
+stringstyle=\color{blue}\ttfamily,
+showspaces=false,
+showtabs=false,
+xleftmargin=17pt,
+framexleftmargin=17pt,
+framexrightmargin=5pt,
+framexbottommargin=4pt,
+commentstyle=\color{green},
+morecomment=[l]{//}, %use comment-line-style!
+morecomment=[s]{/*}{*/}, %for multiline comments
+showstringspaces=false,
+emph={  async, await, 
+var, abstract, event, new, struct,
+as, explicit, null, switch,
+base, extern, object, this,
+bool, false, operator, throw,
+break, finally, out, true,
+byte, fixed, override, try,
+case, float, params, typeof,
+catch, for, private, uint,
+char, foreach, protected, ulong,
+checked, goto, public, unchecked,
+class, if, readonly, unsafe,
+const, implicit, ref, ushort,
+continue, in, return, using,
+decimal, int, sbyte, virtual,
+default, interface, sealed, volatile,
+delegate, internal, short, void,
+do, is, sizeof, while,
+double, lock, stackalloc,
+else, long, static,
+enum, namespace, string},
+emphstyle={\color{cyan}\bfseries},
+keywordstyle=\color{cyan},
+identifierstyle=\color{red},
+}
+
 
 % balicek na vkladanie obrazkov
 \usepackage{graphicx}
@@ -240,7 +294,7 @@ Slovak language).
 
 \input moznosti_implementacie.tex
 
-\input kapitola.tex
+\input navrh_riesenia.tex
 
 \input latex.tex
 

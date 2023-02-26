@@ -20,6 +20,7 @@ bežiaci na serveri. Tieto dve časti spolu komunikujú pomocou siete, najčaste
 komunikovať s databázou a poskytovať dáta frontendu. Práve pre takýto model som sa rozhodol.
 
 \section{Možnosti vývoja frontendového riešenia}
+
 Programovanie webových stránok sa dnes nezaobíde bez programovacieho jazyka JavaScript, ktorý používajú webové prehliadače. Alternatívne 
 sa dajú použiť prekladače iných jazykov do WebAssembly (napríklad framework Blazor pre .NET) alebo jazyk TypeScript, ktorý je rozšírením JavaScriptu o typový 
 systém a iné užitočné konštrukcie, zároveň je plne kompatibilný s JavaScriptom (je jeho nadmnožinou) a vo webových prehliadačoch sa spúšťa pomocou 
@@ -31,6 +32,7 @@ Keďže všetky tieto frameworky fungujú na veľmi podobnom princípe, je veľm
 na to som sa rozhodol pre Angular, v ktorom mám naviac praktických skúseností.
 
 \section{Možnosti vývoja backendového riešenia}
+
 Pre vývoj backendového riešenia je vhodné vybrať taký programovací jazyk, pre ktorý existuje framework umožňujúci vývoj API, ktoré bude podporovať 
 protokol HTTP(s). Takýchto jazykov existuje veľmi veľa, dokonca pre niektoré jazyky existuje viacero rôznych knižníc umožňujúcich výstavbu 
 takýchto API. Ako príklad môžme uviesť jazyk Python a knižnice FastAPI alebo Flask a mnohé iné, jazyk Java a framework Spring Boot, jazyk C\# a 
@@ -38,3 +40,74 @@ framework ASP.NET Core a mnohé iné. Všetky tieto možnosti majú dostatočné
 preto som sa rozhodol pre jazyk C\# a ASP.NET Core, s ktorým mám najviac skúseností.
 
 \subsection{Možnosti implementácie vo vybranom jazyku}
+
+Napriek tomu, že už sme si vybrali jazyk, stále máme niekoľko rôznych možností, ako poňať vývoj aplikácie, najmä čo sa týka organizácie kódu 
+alebo knižníc. Na komunikáciu s databázou sa dá použiť buď priamo knižnica ADO.NET, ktorá umožňuje manuálne vykonávanie SQL dotazov a ich ručné 
+mapovanie do objektov, alebo knižnice typu ORM (Object Relational Mapping), ktoré pôsobia ako wrapper pre ADO.NET a sú schopné istú časť mapovania 
+vykonať za nás. Najpoužívanejšie ORM v C\# sú Entity Framework Core (ďalej len EFC) a Dapper. Kým Dapper mapuje len výsledky dopytov na objekty (tzv. micro-ORM), 
+EFC je schopné mapovať kód v jazyku C\# a knižnicy LINQ na SQL príkazy, čím v jednoduchších aplikáciách dokáže úplne odbúrať nutnosť písania 
+SQL dopytov ručne.
+
+\begin{lstlisting}[float,language={[Sharp]C},caption={Ukážka kódu pre ten istý dopyt pomocou rôznych knižníc - ADO.NET},label=alg:Ukazka_ADO]
+    private NpgsqlConnection CreateConnection()
+    {
+        return new NpgsqlConnection(_connectionString);
+    }
+
+    public async Task<IEnumerable<IpAddressInfo>> GetIpAddresses2(int offset = 0, int limit = int.MaxValue)
+    {
+        await using var connection = CreateConnection();
+        await connection.OpenAsync();
+        var command = connection.CreateCommand();
+        command.CommandText = "SELECT * FROM IpAddresses LIMIT @limit OFFSET @offset";
+        command.Parameters.AddWithValue("@limit", limit);
+        command.Parameters.AddWithValue("@offset", offset);
+        var reader = await command.ExecuteReaderAsync();
+        var result = new List<IpAddressInfo>();
+        while (await reader.ReadAsync())
+        {
+            result.Add(new IpAddressInfo()
+            {
+                City = reader["City"] as string,
+                CountryCode = reader["CountryCode"] as string,
+                Id = Convert.ToInt32(reader["Id"]),
+                IpStringValue = reader["IpStringValue"] as string,
+            });
+        }
+
+        return result;
+    }
+\end{lstlisting}
+\begin{lstlisting}[float,language={[Sharp]C},caption={Ukážka kódu pre ten istý dopyt pomocou rôznych knižníc - Dapper},label=alg:Ukazka_Dapper]
+    private NpgsqlConnection CreateConnection()
+    {
+        return new NpgsqlConnection(_connectionString);
+    }
+
+    public async Task<IEnumerable<IpAddressInfo>> GetIpAddresses(int offset = 0, int limit = int.MaxValue)
+    {
+        await using var connection = CreateConnection();
+        return await connection.QueryAsync<IpAddressInfo>("SELECT * FROM IpAddresses LIMIT @limit OFFSET @offset", new { limit, offset });
+    }
+\end{lstlisting}
+\begin{lstlisting}[float,language={[Sharp]C},caption={Ukážka kódu pre ten istý dopyt pomocou rôznych knižníc - EFC},label=alg:Ukazka_EFC]
+    private ApplicationDbContext _dbContext;
+
+    public async Task<IEnumerable<IpAddressInfo>> GetIpAddresses(int offset = 0, int limit = int.MaxValue)
+    {
+        return await _dbContext.IpAddresses.Skip(offset).Take(limit).ToListAsync();
+    }
+\end{lstlisting}
+
+Vzhľadom na možnú zložitosť dopytov som sa rozhodol nepoužiť EFC, no použijem Dapper ako skratku pre odbúranie opakujúceho sa kódu vznikajúceho 
+pri používaní ADO.NET (otváranie a zatváranie spojenia, definície paramterov, mapovanie výsledkov na objekty).
+
+Pri štruktúre kódu je nutné sa rozhodnúť, či budeme endpointy deliť do controllerov alebo nie (tzv. minimal API). Kým vyhodou controllerov je lepšia 
+štrukturovateľnosť a väčšia prehľadnosť pri väčšom množstve endpointov, výhodou mimal API je mierne menej kódu a potenciálny kratší čas písania. Keďže 
+aplikácia môže mať väčšie množstvo endpointov, rozhodol som sa použiť controllery.
+
+\subsection{Databáza}
+
+S backendovým riešením úzko súvisí aj výber databázového providera pre ukladanie spracovaných dát. V dnešnej dobe sa používajú dva základné typy databáz 
+- SQL a NoSQL. Keďže naše dáta budú mať jasnú štruktúru, bude vhodné použiť jedného z mnohých SQL providerov, napríklad PostgreSQL, MySQL, MS SQL SQLite atď. 
+Keďže databáza s údajmi o meraniach je PostgreSQL, rozhodol som sa použiť tiež PostgreSQL pre zachovanie uniformity.
