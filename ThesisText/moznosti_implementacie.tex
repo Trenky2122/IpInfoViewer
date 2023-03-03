@@ -41,6 +41,12 @@ preto som sa rozhodol pre jazyk C\# a ASP.NET Core, s ktorým mám najviac skús
 
 \subsection{Možnosti implementácie vo vybranom jazyku}
 
+Najprv sa musíme rozhodnúť, ktorú verziu frameworku .NET použijeme. Momentálne sú podporované dve verzie - .NET 6.0 a .NET 7.0. Kým .NET 6.0 
+používa verziu jazyka C\# 10, .NET 7.0 používa verziu jazyka C\# 11. Verzia jazyka C\# 11 obsahuje oproti verzii 10 viaceré nové funkcionality,
+ako napríklad generické atribúty, povinné členy alebo vylepšenú prácu s konštantnými reťazcami. .NET 6.0 je však LTS verzia kým .NET 7.0 nie je, 
+čo má za následok, že podpora .NET 6.0 časovo prekračuje podporu .NET 7.0 (máj 2024 oproti november 2024). Keďže sa viem zaobísť bez nových 
+funkcionalít, rozhodol som sa použiť C\# 10 a .NET 6.0.
+
 Napriek tomu, že už sme si vybrali jazyk, stále máme niekoľko rôznych možností, ako poňať vývoj aplikácie, najmä čo sa týka organizácie kódu 
 alebo knižníc. Na komunikáciu s databázou sa dá použiť buď priamo knižnica ADO.NET, ktorá umožňuje manuálne vykonávanie SQL dotazov a ich ručné 
 mapovanie do objektov, alebo knižnice typu ORM (Object Relational Mapping), ktoré pôsobia ako wrapper pre ADO.NET a sú schopné istú časť mapovania 
