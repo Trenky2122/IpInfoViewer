@@ -14,6 +14,9 @@ export class CountryPingMapComponent {
 
   ngOnInit(){
     this.changeWeek();
+    this.ipAddressInfoService.GetLastProcessedTimeForMapPoints().subscribe(
+      value => this.week = value
+    )
   }
   changeWeek(){
     this.svgLink = this.ipAddressInfoService.GetCountryPingInfoMapLink(this.week);

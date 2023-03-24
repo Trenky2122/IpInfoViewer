@@ -107,5 +107,11 @@ namespace IpInfoViewer.Libs.Utilities
         {
             return Monday.GetHashCode();
         }
+
+        public override string ToString()
+        {
+
+            return $"{Thursday.Year}-W{Convert.ToInt32(Math.Ceiling(Thursday.DayOfYear * 1.0 / 7))}";
+        }
     }
 }

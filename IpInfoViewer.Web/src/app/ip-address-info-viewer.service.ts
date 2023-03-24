@@ -21,4 +21,12 @@ export class IpAddressInfoViewerService {
   public GetCountryPingInfoMapLink(week: string): string{
     return this.baseUrl + "Map/ColoredMap/" + week;
   }
+
+  public GetLastProcessedTimeForMapPoints(): Observable<string>{
+    return this.http.get<string>(this.baseUrl + "IpAddresses/lastProcessedDate");
+  }
+
+  public GetLastProcessedTimeForCountryPingInfo(): Observable<string>{
+    return this.http.get<string>(this.baseUrl + "Map/lastProcessedDate");
+  }
 }

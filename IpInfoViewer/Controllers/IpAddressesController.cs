@@ -1,5 +1,6 @@
 ﻿using IpInfoViewer.Libs.Implementation.Database.IpInfoViewer;
 using IpInfoViewer.Libs.Models;
+using IpInfoViewer.Libs.Utilities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IpInfoViewer.Api.Controllers
@@ -18,6 +19,15 @@ namespace IpInfoViewer.Api.Controllers
         public async Task<ActionResult<IEnumerable<IpAddressInfo>>> GetIpAddresses()
         {
             return Ok(await _dbRepository.GetIpAddresses(0, 500));
+        }
+
+        [HttpGet("lastProcessedDate")]
+        public async Task<ActionResult<string?>> GetLatestProcessedWeek()
+        {
+            DateTime? lastProcessedDate = await _dbRepository.GetLastDateWhenMapIsProcessed();
+            if (!lastProcessedDate.HasValue)
+                return Ok(null);
+            return Ok(new Week(lastProcessedDate.Value).ToString());
         }
     }
 }

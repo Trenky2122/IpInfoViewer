@@ -48,5 +48,14 @@ namespace IpInfoViewer.Api.Controllers
         {
             return Content(await _countryFacade.GetColoredSvgMapForWeek(new Week(week)), "image/svg+xml");
         }
+
+        [HttpGet("lastProcessedDate")]
+        public async Task<ActionResult<string?>> GetLatestProcessedWeek()
+        {
+            DateTime? lastProcessedDate = await _dbRepository.GetLastDateWhenCountriesAreProcessed();
+            if (!lastProcessedDate.HasValue)
+                return Ok(null);
+            return Ok(new Week(lastProcessedDate.Value).ToString());
+        }
     }
 }

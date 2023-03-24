@@ -2,6 +2,8 @@
 <div class="map"
      leaflet
      [leafletOptions]="options"
-     [leafletLayers]="layers" >
+     [leafletLayers]="layers"
+     (leafletMapZoom)="zoomChanged($event)"
+>
 </div>
 
