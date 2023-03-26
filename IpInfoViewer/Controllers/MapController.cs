@@ -26,7 +26,7 @@ namespace IpInfoViewer.Api.Controllers
         /// </summary>
         /// <param name="dayFromWeek">Date from wanted week</param>
         /// <returns>Map points</returns>
-        [HttpGet("ForDayOfWeek/{dayFromWeek}")]
+        [HttpGet("forDayOfWeek/{dayFromWeek}")]
         public async Task<ActionResult<IEnumerable<MapIpAddressesRepresentation>>> GetMapForDayOfWeek(DateTime dayFromWeek)
         {
             return Ok(await _dbRepository.GetMapForWeek(new Week(dayFromWeek)));
@@ -37,25 +37,34 @@ namespace IpInfoViewer.Api.Controllers
         /// </summary>
         /// <param name="week">Week in HTML (ISO_8601) format e.g. (2023-W25)</param>
         /// <returns>Map points</returns>
-        [HttpGet("ForWeek/{week}")]
+        [HttpGet("forWeek/{week}")]
         public async Task<ActionResult<IEnumerable<MapIpAddressesRepresentation>>> GetMapForWeek(string week)
         {
             return Ok(await _dbRepository.GetMapForWeek(new Week(week)));
         }
 
-        [HttpGet("ColoredMap/{week}")]
-        public async Task<ContentResult> GetColoredSvgMapAsync(string week)
+        [HttpGet("coloredMap/{week}")]
+        public async Task<ContentResult> GetColoredSvgMapAsync(string week, bool fullScale)
         {
-            return Content(await _countryFacade.GetColoredSvgMapForWeek(new Week(week)), "image/svg+xml");
+            return Content(await _countryFacade.GetColoredSvgMapForWeek(new Week(week), fullScale), "image/svg+xml");
         }
 
-        [HttpGet("lastProcessedDate")]
-        public async Task<ActionResult<string?>> GetLatestProcessedWeek()
+        [HttpGet("lastProcessedDate/countryPing")]
+        public async Task<ActionResult<StringResponse?>> GetLatestProcessedWeekCountryPing()
         {
             DateTime? lastProcessedDate = await _dbRepository.GetLastDateWhenCountriesAreProcessed();
             if (!lastProcessedDate.HasValue)
                 return Ok(null);
-            return Ok(new Week(lastProcessedDate.Value).ToString());
+            return Ok(new StringResponse(new Week(lastProcessedDate.Value).ToString()));
+        }
+
+        [HttpGet("lastProcessedDate/ipInfo")]
+        public async Task<ActionResult<StringResponse?>> GetLatestProcessedWeekIpInfo()
+        {
+            DateTime? lastProcessedDate = await _dbRepository.GetLastDateWhenMapIsProcessed();
+            if (!lastProcessedDate.HasValue)
+                return Ok(null);
+            return Ok(new StringResponse(new Week(lastProcessedDate.Value).ToString()));
         }
     }
 }

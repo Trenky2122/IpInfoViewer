@@ -21,13 +21,5 @@ namespace IpInfoViewer.Api.Controllers
             return Ok(await _dbRepository.GetIpAddresses(0, 500));
         }
 
-        [HttpGet("lastProcessedDate")]
-        public async Task<ActionResult<string?>> GetLatestProcessedWeek()
-        {
-            DateTime? lastProcessedDate = await _dbRepository.GetLastDateWhenMapIsProcessed();
-            if (!lastProcessedDate.HasValue)
-                return Ok(null);
-            return Ok(new Week(lastProcessedDate.Value).ToString());
-        }
     }
 }

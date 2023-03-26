@@ -9,16 +9,19 @@ import {IpAddressInfoViewerService} from "../ip-address-info-viewer.service";
 export class CountryPingMapComponent {
   protected week: string = "2022-W04";
   protected svgLink: string = "";
+  protected fullScale: boolean = false;
   constructor(private ipAddressInfoService: IpAddressInfoViewerService) {
   }
 
   ngOnInit(){
-    this.changeWeek();
-    this.ipAddressInfoService.GetLastProcessedTimeForMapPoints().subscribe(
-      value => this.week = value
+    this.ipAddressInfoService.GetLastProcessedTimeForCountryPingInfo().subscribe(
+      value => {
+        this.week = value?.response;
+        this.changeWeek();
+      }
     )
   }
   changeWeek(){
-    this.svgLink = this.ipAddressInfoService.GetCountryPingInfoMapLink(this.week);
+    this.svgLink = this.ipAddressInfoService.GetCountryPingInfoMapLink(this.week, this.fullScale);
   }
 }

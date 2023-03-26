@@ -11,6 +11,6 @@ namespace IpInfoViewer.Libs.Implementation.CountryPing
     public interface ICountryPingInfoFacade
     {
         Task ProcessWeekAsync(Week week, IEnumerable<IGrouping<string, IpAddressInfo>> addressesGroupedByCountry);
-        Task<string> GetColoredSvgMapForWeek(Week week);
+        Task<string> GetColoredSvgMapForWeek(Week week, bool fullScale);
     }
 }

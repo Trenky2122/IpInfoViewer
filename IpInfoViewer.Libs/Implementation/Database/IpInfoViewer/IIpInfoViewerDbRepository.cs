@@ -19,5 +19,6 @@ namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
         Task SaveCountryPingInfo(CountryPingInfo countryPingInfo);
         Task<DateTime?> GetLastDateWhenCountriesAreProcessed();
         Task<IEnumerable<CountryPingInfo>> GetCountryPingInfoForWeek(Week week);
+        Task<int> GetMaximumCountryPingForWeek(Week week);
     }
 }

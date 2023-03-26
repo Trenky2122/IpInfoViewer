@@ -50,15 +50,16 @@ namespace IpInfoViewer.Libs.Implementation.CountryPing
             }
         }
 
-        public async Task<string> GetColoredSvgMapForWeek(Week week)
+        public async Task<string> GetColoredSvgMapForWeek(Week week, bool fullScale)
         {
             var svg = GcSvgDocument.FromFile(@"/app/bin/debug/net6.0/Assets/world.svg");
             var countryPingInfo = await _localDb.GetCountryPingInfoForWeek(week);
             foreach (var country in countryPingInfo)
             {
                 var countriesSvg = svg.GetElementsByClass(country.CountryCode);
-
-                var color = CalculateColor(country.AveragePingRtT);
+                const int defaultUpperBound = 500;
+                int upperBound = fullScale ? await _localDb.GetMaximumCountryPingForWeek(week) : defaultUpperBound;
+                var color = CalculateColor(country.AveragePingRtT, upperBound);
                 foreach (var countrySvg in countriesSvg)
                 {
                     countrySvg.Fill = new SvgPaint(Color.FromArgb(color.Red, color.Green, 0));
@@ -69,9 +70,8 @@ namespace IpInfoViewer.Libs.Implementation.CountryPing
             return resultBuilder.ToString();
         }
 
-        private (int Red, int Green) CalculateColor(double ping)
+        private (int Red, int Green) CalculateColor(double ping, int upperBound)
         {
-            const int upperBound = 500;
             const int lowerBound = 20;
             int pingInBounds = Convert.ToInt32(ping);
             if (pingInBounds < lowerBound)

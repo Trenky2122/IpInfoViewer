@@ -15,6 +15,6 @@ export interface MapIpAddressRepresentation{
   longitude: number;
 }
 
-export interface SvgWrapper{
-  svg: string;
+export interface StringResponse{
+  response: string;
 }

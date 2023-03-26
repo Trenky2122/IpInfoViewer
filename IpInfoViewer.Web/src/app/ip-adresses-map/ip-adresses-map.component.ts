@@ -31,7 +31,7 @@ export class IpAdressesMapComponent implements OnInit{
   async ngOnInit(){
     this.setMapPointsForWeek();
     this.service.GetLastProcessedTimeForMapPoints().subscribe(
-      value => this.week = value
+      value => this.week = value?.response
     )
   }
 
