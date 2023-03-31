@@ -54,16 +54,23 @@ namespace IpInfoViewer.Libs.Implementation.CountryPing
         {
             var svg = GcSvgDocument.FromFile(@"/app/bin/debug/net6.0/Assets/world.svg");
             var countryPingInfo = await _localDb.GetCountryPingInfoForWeek(week);
+            const int defaultUpperBound = 500;
+            int upperBound = fullScale ? await _localDb.GetMaximumCountryPingForWeek(week) : defaultUpperBound;
             foreach (var country in countryPingInfo)
             {
                 var countriesSvg = svg.GetElementsByClass(country.CountryCode);
-                const int defaultUpperBound = 500;
-                int upperBound = fullScale ? await _localDb.GetMaximumCountryPingForWeek(week) : defaultUpperBound;
                 var color = CalculateColor(country.AveragePingRtT, upperBound);
                 foreach (var countrySvg in countriesSvg)
                 {
                     countrySvg.Fill = new SvgPaint(Color.FromArgb(color.Red, color.Green, 0));
                 }
+            }
+
+            var legendPingValues = GetLegendPingValues(upperBound);
+            for (int i = 1; i <= 5; i++)
+            {
+                var legendPlaceholderContent = svg.GetElementByID($"ph{i}").Children[0] as SvgContentElement;
+                legendPlaceholderContent.Content = $"Ping {legendPingValues[i-1]}";
             }
             StringBuilder resultBuilder = new();
             svg.Save(resultBuilder);
@@ -77,11 +84,24 @@ namespace IpInfoViewer.Libs.Implementation.CountryPing
             if (pingInBounds < lowerBound)
                 pingInBounds = lowerBound;
             if (pingInBounds > upperBound)
-                pingInBounds = upperBound;
+                pingInBounds = upperBound; 
             double percent = (pingInBounds - lowerBound*1.0) / (upperBound - lowerBound);
             int red = Convert.ToInt32(255 * percent);
             int green = Convert.ToInt32((1 - percent) * 255);
             return (red, green);
+        }
+
+        private List<int> GetLegendPingValues(int upperBound)
+        {
+            const int lowerBound = 20;
+            return new List<int>
+            {
+                lowerBound, 
+                Convert.ToInt32((upperBound - lowerBound) * 0.25 + lowerBound),
+                Convert.ToInt32((upperBound - lowerBound) * 0.5 + lowerBound),
+                Convert.ToInt32((upperBound - lowerBound) * 0.75 + lowerBound),
+                upperBound
+            };
         }
     }
 }
