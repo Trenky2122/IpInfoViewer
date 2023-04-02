@@ -1,9 +1,10 @@
 <input type="week" [(ngModel)]="week" (change)="setMapPointsForWeek()">
-<div class="map"
+<div class="map" style="position: relative"
      leaflet
      [leafletOptions]="options"
      [leafletLayers]="layers"
      (leafletMapZoom)="zoomChanged($event)"
 >
+  <img [src]="legendLink" style="position: fixed; z-index: 100000; bottom: 30px; left: 30px; width: 30em" alt="map legend">
 </div>
 

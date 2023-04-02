@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -44,6 +46,43 @@ namespace IpInfoViewer.Libs.Implementation.Map
             {
                 await _localDb.SaveMapIpAddressRepresentation(point);
             }
+        }
+
+        public string GetIpMapLegend(
+            List<(float Radius, int Count)> sizeInformation,
+            int pingUpperBound)
+        {
+            var svg = GcSvgDocument.FromFile(@"/app/bin/debug/net6.0/Assets/ipInfoLegend.svg");
+            var legendPingValues = GetLegendPingValues(pingUpperBound);
+            for (int i = 1; i <= 5; i++)
+            {
+                var legendPlaceholderContent = svg.GetElementByID($"ph{i}").Children[0] as SvgContentElement;
+                legendPlaceholderContent.Content = $"Ping {legendPingValues[i - 1]}";
+
+                var circle = svg.GetElementByID($"size{i}") as SvgEllipseElement;
+                var radiusLength = new SvgLength(sizeInformation[i-1].Radius, SvgLengthUnits.Pixels);
+                circle.RadiusX = radiusLength;
+                circle.RadiusY = radiusLength;
+                var text = svg.GetElementByID($"size{i}text").Children[0] as SvgContentElement;
+                text.Content = $"{sizeInformation[i-1].Count} addresses";
+            }
+
+            StringBuilder resultBuilder = new();
+            svg.Save(resultBuilder);
+            return resultBuilder.ToString();
+        }
+
+        private List<int> GetLegendPingValues(int upperBound)
+        {
+            const int lowerBound = 20;
+            return new List<int>
+            {
+                lowerBound,
+                Convert.ToInt32((upperBound - lowerBound) * 0.25 + lowerBound),
+                Convert.ToInt32((upperBound - lowerBound) * 0.5 + lowerBound),
+                Convert.ToInt32((upperBound - lowerBound) * 0.75 + lowerBound),
+                upperBound
+            };
         }
     }
 }

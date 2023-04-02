@@ -12,6 +12,11 @@ namespace IpInfoViewer.Libs.Implementation.Map
     {
         Task ProcessWeekAsync(Week week,
             IEnumerable<IGrouping<(int latitude, int longitude), IpAddressInfo>> addressesGroupedByLocation);
-        
+
+        string GetIpMapLegend(
+            List<(float Radius, int Count)> sizeInformation,
+            int pingUpperBound);
+
+
     }
 }

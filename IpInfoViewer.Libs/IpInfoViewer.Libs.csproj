@@ -16,6 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Assets\ipInfoLegend.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Assets\world.svg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

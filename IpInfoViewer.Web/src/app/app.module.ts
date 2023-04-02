@@ -13,6 +13,7 @@ import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
 import { CountryPingMapComponent } from './country-ping-map/country-ping-map.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
+import {NgOptimizedImage} from "@angular/common";
 
 @NgModule({
   declarations: [
@@ -21,17 +22,18 @@ import {MatSlideToggleModule} from "@angular/material/slide-toggle";
     NavMenuComponent,
     CountryPingMapComponent
   ],
-    imports: [
-        BrowserModule,
-        HttpClientModule,
-        LeafletModule,
-        FormsModule,
-        NgxChartModule,
-        AppRoutingModule,
-        NgbModule,
-        BrowserAnimationsModule,
-        MatSlideToggleModule
-    ],
+  imports: [
+    BrowserModule,
+    HttpClientModule,
+    LeafletModule,
+    FormsModule,
+    NgxChartModule,
+    AppRoutingModule,
+    NgbModule,
+    BrowserAnimationsModule,
+    MatSlideToggleModule,
+    NgOptimizedImage
+  ],
   providers: [],
   bootstrap: [AppComponent]
 })

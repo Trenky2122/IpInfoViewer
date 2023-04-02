@@ -25,6 +25,7 @@ namespace IpInfoViewer.Libs.Implementation.CountryPing
             _localDb = localDb;
             _mFileDb = mFileDb;
         }
+
         public async Task ProcessWeekAsync(Week week, IEnumerable<IGrouping<string, IpAddressInfo>> addressesGroupedByCountry)
         {
             var ipAveragePings = await _mFileDb.GetAverageRtTForIpForWeek(week);
@@ -70,7 +71,7 @@ namespace IpInfoViewer.Libs.Implementation.CountryPing
             for (int i = 1; i <= 5; i++)
             {
                 var legendPlaceholderContent = svg.GetElementByID($"ph{i}").Children[0] as SvgContentElement;
-                legendPlaceholderContent.Content = $"Ping {legendPingValues[i-1]}";
+                legendPlaceholderContent.Content = $"Ping {legendPingValues[i - 1]}";
             }
             StringBuilder resultBuilder = new();
             svg.Save(resultBuilder);
