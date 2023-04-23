@@ -1,0 +1,120 @@
+\chapter{Implementácia}
+
+\label{kap:implementacia}
+
+Systém je implementovaný ako súbor programov bežiacich v kontaineroch. Každý program má svoju úlohu.
+\begin{enumerate}
+    \item Open Street Maps tile server
+    \item Webový server pre frontend
+    \item Webový server pre backed
+    \item Konzolová aplikácia Seed
+    \item Background service IpInfoMap
+    \item Background service CountryPingInfo
+\end{enumerate}
+
+\section{Nástroje používané na implementáciu}
+
+Na písanie kódu sa dajú používať rôzne nástroje v závislosti od jazyka, v ktorom chceme kód písať. Na písanie backendového kódu v C\# 
+sa najčastejšie používajú nástroje Visual Studio alebo Rider. Vzhľadom na osobnú preferenciu sme sa rozhodli použiť nástroj Visual Studio 2022, 
+ktorého Community verzia je zadarmo na stiahnutie.
+
+Na písanie frontendového kódu v TypeScript, HTML a CSS sa najčastejšie používajú nástroje Visual Studio Code, WebStorm alebo aj rôzne iné. 
+Vzhľadom na osobnú preferenciu sme sa rozhodoli použiť WebStorm, na ktorý máme udelenú študentskú licenciu.
+
+\section{Štruktúra backendového riešenia}
+
+V jazyku C\# je možnosť zoskupovať viacero aplikácií do jedného riešenia. V praxi to vyzerá tak, že riešenie je znázornené ako súbor .sln a každá 
+aplikácia alebo knižnica je znázornená ako súbor .csproj. Aplikáciám a knižniciam sa vnútorne hovorí projekty. V našom riešení sa nachádzajú nasledovné 
+projekty:
+
+\begin{itemize}
+    \item IpInfoViewer.Web
+    - projekt, v ktorom je obsiahnuté riešenie frontendovej časti aplikácie
+    \item IpInfoViewer.Api
+    - projekt slúžiaci ako API pre komunikáciu medzi backendom a frontendom
+    \item IpInfoViewer.IpInfoService
+    - projekt, ktorý slúži ako servis bežiaci na pozadí ktorý vytvorí v lokálnom dátovom sklade zoznam všetkých ip adries s ich lokalitami a krajinami
+    \item IpInfoViewer.CountryPingInfoService
+    - projekt, ktorý slúži ako servis bežiaci na pozadí spracovávajúci údaje v týždenných intervaloch o priemernom pingu pre danú krajinu
+    \item IpInfoViewer.MapPointsService
+    - projekt, ktorý slúži ako servis bežiaci na pozadí spracovávajúci údaje v týždenných intervaloch o priemernom pingu pre dané geografické 
+    okolie (zemepisnú šírku a dĺžku)
+    \item IpInfoViewer.Libs
+    - knižnica obsahujúca väčšinu aplikačnej logiky, tak aby bola zahrnuteľná zo všetkých ostatných projektov
+\end{itemize}
+
+\subsection{IpInfoViewer.Api}
+Tento projekt je ASP.NET Core 6.0 aplikácia bežiaca na webovom serveri Kestrel. Obsahuje nasledujúce triedy: 
+\begin{itemize}
+    \item Program
+    - Základná trieda každého spustiteľného programu. Jej metóda Main je vstupným bodom každého C\# programu, teda po spustení programu sa automaticky 
+    začne vykonávať. Registrujú sa v nej triedy do DI kontainera (Dependency Injection), z ktorého sa potom vyberajú z iných tried vrámci behu programu. 
+    Tiež tu prebieha inicializácia potrebných nastavení programu. Od verzie .NET 6.0 je podporovaná upravená syntax tejto triedy na tzv. top-level statements. 
+    To znamená, že v súbore Program.cs je vynechaná inicializácia triedy Program a metódy Main, nakoľko bola v každom 
+    programe rovnaká. Vnútorne sú však tieto triedy stále používané, ide len o syntaktickú skratku. Používanie top-level statements 
+    je dobrovoľné, vrámci čistoty kódu ich ale využívame.
+    \begin{lstlisting}[float,language={[Sharp]C},caption={Ukážka kódu triedy Program bez použitia top-level statements},label=alg:Program_Old]
+        class Program 
+        {
+            public static void Main(string[] args) 
+            {
+                System.Console.WriteLine("Hello World");
+            }
+        }
+    \end{lstlisting}
+    \begin{lstlisting}[float,language={[Sharp]C},caption={Ukážka kódu triedy Program s použitím top-level statements},label=alg:Program_New]
+        System.Console.WriteLine("Hello World");
+    \end{lstlisting}
+    \item MapPointsController
+    - Trieda slúži ako súbor metód, ktoré sa dajú volať cez protokol HTTP z frontendovej časti aplikácie. Obsahuje metódy pre získavanie 
+    dát zoskupených podľa zemepisnej dĺžky a šírky.
+    \item CountryPingInfoController
+    - Súbor metód volateľných cez HTTP. Obsahuje metódy pre dáta zoskupené podľa krajiny.
+\end{itemize}
+\subsection{IpInfoViewer.IpInfoService}
+Projekt je konzolová aplikácia bežiaca ako servis na pozadí. Obsahuje nasledovné triedy:
+\begin{itemize}
+    \item Program
+    \item IpInfoServiceWorker
+    - Treida reprezentujúca samotný servis. Trieda je zadefinovaná v triede Program ako "Hosted Service", teda pri spustení sa vykoná jej metóda ExecuteAsync. 
+    Načíta súbor s priradením medzi IP adresou a geografickými dátami a paralelne pošle každý jeho riadok na spracovanie.
+\end{itemize}
+\subsection{IpInfoViewer.CountryPingInfoService}
+Projekt je rovnako konzolová aplikácia bežiaca ako servis na pozadí. Obsahuje nasledovné triedy:
+\begin{itemize}
+    \item Program
+    \item CountryPingInfoServiceWorker
+    - Hosted service tohto servisu.
+    Načita všetky známe IP adresy spracované servisom IpInfoService. Následne ich zoskupí podľa krajín prislúchajúcich daným adresám. 
+    Nakoniec ešte zistí, kedy boli dáta naposledy spracovávané a pošle na spracovanie dáta paralelne pre každý týždeň od posledného spracovania 
+    až po súčasnosť.
+\end{itemize}
+\subsection{IpInfoViewer.MapPointsService}
+Taktiež servis na pozadí. Obsahuje nasledovné triedy:
+\begin{itemize}
+    \item Program
+    \item MapPointsServiceWorker
+    - Hosted service tohto servisu.
+    Funguje rovnako ako CountryPingInfoServiceWorker, ale adresy zoskupuje podľa geografických súradníc. Adresy sú rozdelené do stabilných sektorov 
+    na mape. Mapa je rozdelená do 23x60 sektorov rovnomerne podľa geografickej šírky a dĺžky. 
+\end{itemize}
+\subsection{IpInfoViewer.Libs}
+Knižnica zoskupujúca logiku všetkých C\# programov. Ostatné programy ju využívajú ako referenciu. Je tomu tak preto, lebo programy navzájom zdieľajú 
+časť logiky a bolo by nesprávne túto logiku písať do každého programu zvlášť. Tiež sme sa chceli vyhnúť referencovaniu ostatných spustiteľných programov navzájom 
+priamo, pretože sa to ukázalo ako nepraktické. Dôvodov je niekoľko, najvážnejší s ktorým sme sa stretli je konflikt mien konfiguračných súborov. Pri C\# 
+projektoch je zaužívané používať konfiguračné súbory s menami appsettings.json a appsettings.{environmentName}.json. Tiež je pravidlo, že keď referencujeme 
+iný projekt, do priečinka s výstupom kompilácie idú všetky súbory rovnako, ako keď kompilujeme projekt samotný. Keďže aj pôvodný projekt aj referencovaný projekt 
+obshujú súbory appsettings.json, nastane konflikt a do výstupného priečinka sa nakopíruje len jeden z nich, a podľa skúseností to bol vždy ten z referencovaného projektu, 
+čo je ten nesprávny. Tomuto sa dá vyhnúť tým, že spustiteľné projekty sa navzájom nereferencujú a namiesto toho všetky referencujú jednu knižnicu. Knižnica nemá takéto 
+konfiguračné súbory, preto ku konfliktu nedochádza. Knižnica IpInfoViewer.Libs obsahuje nasledovné triedy: 
+\begin{itemize}
+    \item BaseModel
+    - Abstraktná trieda z ktorej dedia všetky modely, teda triedy predstavujúce dáta. Obsahuje všetky parametre ktoré by mali zdieľať všetky modely v riešení. V súčasnosti 
+    je jediným takýmto parametrom Id, teda primárny kľúč v databázovej tabuľke, v našom riešení znázornené ako 64-bitové celé číslo.
+    \item BaseWeeklyProcessedModel
+    - Abstraktná trieda, ktorá je rozšírením triedy BaseModel o vlastnosti ValidFrom a ValidTo reprezentované časovou pečiatkou. Tieto vlastnosti 
+    sa opakovali vo všetkých časovo spracovávaných triedach.
+    \item BaseMapModel 
+    - Abstraktná trieda ktorá je rozšírením BaseMapModel o vlastnosti IpAddressesCount a AveragePingRtT. Ide o pre nás zaujímavé vlastnosti ktoré sa vyskytovali vo 
+    viacerých modeloch. Prvá znázorňuje počet IP adries ktoré daný záznam znázorňuje, druhá ich priemerný ping v milisekundách.
+\end{itemize}

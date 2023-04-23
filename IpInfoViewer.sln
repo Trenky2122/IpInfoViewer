@@ -7,21 +7,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IpInfoViewer.Api", "IpInfoV
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "IpInfoViewer.Web", "IpInfoViewer.Web\IpInfoViewer.Web.esproj", "{897D833D-B63A-4D36-BA36-781E9D8AB319}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IpInfoViewer.Seed", "IpInfoViewer.Seed\IpInfoViewer.Seed.csproj", "{CF391119-785B-4938-8AD1-A0AD0B974D4B}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IpInfoViewer.Libs", "IpInfoViewer.Libs\IpInfoViewer.Libs.csproj", "{2B2F5413-DA35-49AD-9283-B8733B0625EE}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IpInfoViewer.Seed.Map", "IpInfoViewer.Seed.Map\IpInfoViewer.Seed.Map.csproj", "{E0D63747-64B3-4494-A12B-AEC2A294909C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{6CAB4F10-1BC1-4CD2-8965-A63B6BCDCFF7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IpInfoViewer.MapPointsService", "IpInfoViewer.MapPointsService\IpInfoViewer.MapPointsService.csproj", "{F01B3F53-2A64-4B64-851F-B1DBB6A717A3}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Seeders", "Seeders", "{D24314B1-BBF0-4540-9D5B-57684BB0EC67}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IpInfoViewer.IpInfoService", "IpInfoViewer.IpInfoService\IpInfoViewer.IpInfoService.csproj", "{99A0FD46-F71F-4EC5-AD87-AD1F5E402F65}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IpInfoViewer.CountryPingInfoService", "IpInfoViewer.CountryPingInfoService\IpInfoViewer.CountryPingInfoService.csproj", "{C70EC585-16FD-475C-AD0F-84D395F2534C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IpInfoViewer.CountryPingInfoService", "IpInfoViewer.CountryPingInfoService\IpInfoViewer.CountryPingInfoService.csproj", "{C70EC585-16FD-475C-AD0F-84D395F2534C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,18 +33,10 @@ Global
 		{897D833D-B63A-4D36-BA36-781E9D8AB319}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{897D833D-B63A-4D36-BA36-781E9D8AB319}.Release|Any CPU.Build.0 = Release|Any CPU
 		{897D833D-B63A-4D36-BA36-781E9D8AB319}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{CF391119-785B-4938-8AD1-A0AD0B974D4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CF391119-785B-4938-8AD1-A0AD0B974D4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CF391119-785B-4938-8AD1-A0AD0B974D4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CF391119-785B-4938-8AD1-A0AD0B974D4B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2B2F5413-DA35-49AD-9283-B8733B0625EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2B2F5413-DA35-49AD-9283-B8733B0625EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B2F5413-DA35-49AD-9283-B8733B0625EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B2F5413-DA35-49AD-9283-B8733B0625EE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E0D63747-64B3-4494-A12B-AEC2A294909C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E0D63747-64B3-4494-A12B-AEC2A294909C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E0D63747-64B3-4494-A12B-AEC2A294909C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E0D63747-64B3-4494-A12B-AEC2A294909C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F01B3F53-2A64-4B64-851F-B1DBB6A717A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F01B3F53-2A64-4B64-851F-B1DBB6A717A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F01B3F53-2A64-4B64-851F-B1DBB6A717A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -68,8 +54,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{CF391119-785B-4938-8AD1-A0AD0B974D4B} = {D24314B1-BBF0-4540-9D5B-57684BB0EC67}
-		{E0D63747-64B3-4494-A12B-AEC2A294909C} = {D24314B1-BBF0-4540-9D5B-57684BB0EC67}
 		{F01B3F53-2A64-4B64-851F-B1DBB6A717A3} = {6CAB4F10-1BC1-4CD2-8965-A63B6BCDCFF7}
 		{99A0FD46-F71F-4EC5-AD87-AD1F5E402F65} = {6CAB4F10-1BC1-4CD2-8965-A63B6BCDCFF7}
 		{C70EC585-16FD-475C-AD0F-84D395F2534C} = {6CAB4F10-1BC1-4CD2-8965-A63B6BCDCFF7}

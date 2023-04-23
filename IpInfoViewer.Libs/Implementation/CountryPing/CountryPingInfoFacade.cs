@@ -71,7 +71,7 @@ namespace IpInfoViewer.Libs.Implementation.CountryPing
             for (int i = 1; i <= 5; i++)
             {
                 var legendPlaceholderContent = svg.GetElementByID($"ph{i}").Children[0] as SvgContentElement;
-                legendPlaceholderContent.Content = $"Ping {legendPingValues[i - 1]}";
+                legendPlaceholderContent.Content = $"Ping {legendPingValues[i - 1]}ms";
             }
             StringBuilder resultBuilder = new();
             svg.Save(resultBuilder);

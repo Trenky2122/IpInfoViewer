@@ -20,7 +20,7 @@ namespace IpInfoViewer.IpInfoService
             _logger.LogInformation("IpInfoServiceWorker running at: {time}", DateTimeOffset.Now);
 
             await Parallel.ForEachAsync(
-                File.ReadLines(@"C:\Users\Peter\Downloads\dbip-city-lite-2022-11.csv\dbip-city-lite-2022-11.csv"),
+                File.ReadLines(_pathToCsvDatabase),
                 async (line, token) =>
                 {
                     int ipAdressesSeeded = await _ipAddressInfoFacade.ProcessLine(line);
