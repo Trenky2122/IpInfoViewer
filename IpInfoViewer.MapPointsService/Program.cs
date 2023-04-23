@@ -9,7 +9,7 @@ IHost host = Host.CreateDefaultBuilder(args)
     {
         services.AddSingleton<IMFileDbRepository, MFileDbRepository>();
         services.AddSingleton<IIpInfoViewerDbRepository, IpInfoViewerDbRepository>();
-        services.AddSingleton<IMapFacade, MapFacade>();
+        services.AddSingleton<IMapPointsFacade, MapPointsFacade>();
         services.AddHostedService<MapPointsServiceWorker>();
     })
     .Build();

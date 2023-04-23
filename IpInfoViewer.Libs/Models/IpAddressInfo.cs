@@ -5,12 +5,12 @@ using System.Net;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using IpInfoViewer.Libs.Models.BaseModels;
 
 namespace IpInfoViewer.Libs.Models
 {
-    public class IpAddressInfo
+    public class IpAddressInfo: BaseModel
     {
-        public int Id { get; set; }
         public string CountryCode { get; set; }
         public string City { get; set; }
         [JsonIgnore]

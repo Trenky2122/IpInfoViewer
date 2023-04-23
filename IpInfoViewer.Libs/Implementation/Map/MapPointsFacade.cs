@@ -13,11 +13,11 @@ using IpInfoViewer.Libs.Utilities;
 
 namespace IpInfoViewer.Libs.Implementation.Map
 {
-    public class MapFacade: IMapFacade
+    public class MapPointsFacade: IMapPointsFacade
     {
         private readonly IIpInfoViewerDbRepository _localDb;
         private readonly IMFileDbRepository _mFileDb;
-        public MapFacade(IIpInfoViewerDbRepository localDb, IMFileDbRepository mFileDb)
+        public MapPointsFacade(IIpInfoViewerDbRepository localDb, IMFileDbRepository mFileDb)
         {
             _localDb = localDb;
             _mFileDb = mFileDb;
@@ -31,7 +31,7 @@ namespace IpInfoViewer.Libs.Implementation.Map
                     ipAveragePings.FirstOrDefault(p => p.Item1.Item1.Equals(addr.IpValue.Item1))?.Item2).ToList();
                 if (!pings.Any(p => p.HasValue))
                     return null;
-                var result = new MapIpAddressesRepresentation()
+                var result = new MapPoint()
                 {
                     Latitude = x.Average(x => x.Latitude),
                     Longitude = x.Average(x => x.Longitude),

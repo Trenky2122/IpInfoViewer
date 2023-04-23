@@ -9,13 +9,13 @@ namespace IpInfoViewer.MapPointsService
     {
         private readonly ILogger<MapPointsServiceWorker> _logger;
         private readonly IIpInfoViewerDbRepository _dbRepository;
-        private readonly IMapFacade _mapFacade;
+        private readonly IMapPointsFacade _mapPointsFacade;
 
-        public MapPointsServiceWorker(ILogger<MapPointsServiceWorker> logger, IIpInfoViewerDbRepository dbRepository, IMapFacade mapFacade)
+        public MapPointsServiceWorker(ILogger<MapPointsServiceWorker> logger, IIpInfoViewerDbRepository dbRepository, IMapPointsFacade mapPointsFacade)
         {
             _logger = logger;
             _dbRepository = dbRepository;
-            _mapFacade = mapFacade;
+            _mapPointsFacade = mapPointsFacade;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -32,7 +32,7 @@ namespace IpInfoViewer.MapPointsService
             await Parallel.ForEachAsync(DateTimeUtilities.GetWeeksFromTo(lastProcessedWeek.Next().Monday, DateTime.Today.AddDays(-7) /* only already finished weeks*/),
                 async (week, token) =>
                 {
-                    await _mapFacade.ProcessWeekAsync(week, addressesGroupedByLocation);
+                    await _mapPointsFacade.ProcessWeekAsync(week, addressesGroupedByLocation);
 
                     Console.WriteLine($"{DateTime.Now} Week from {week.Monday} processed.");
                 }

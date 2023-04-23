@@ -117,4 +117,51 @@ konfiguračné súbory, preto ku konfliktu nedochádza. Knižnica IpInfoViewer.L
     \item BaseMapModel 
     - Abstraktná trieda ktorá je rozšírením BaseMapModel o vlastnosti IpAddressesCount a AveragePingRtT. Ide o pre nás zaujímavé vlastnosti ktoré sa vyskytovali vo 
     viacerých modeloch. Prvá znázorňuje počet IP adries ktoré daný záznam znázorňuje, druhá ich priemerný ping v milisekundách.
+    \item CountryPingInfo
+    - Model predstavujúci dáta pre konkétnu krajinu v konkrétny týždeň. Rozširuje BaseMapModel o vlastnosť CountryCode, ktorá predstavuje ISO skratku konkrétnej
+    krajiny.
+    \item IpAddressInfo
+    - Model predstavujúci jednu IP adresu s geografickými informáciami ako mesto, krajina a geografické súradnice.
+    \item MapPointsController
+    - Model predstavujúci dáta pre konkrétny geografický sektor v konkrétnom čase. Rozširuje BaseMapModel o geografickú šírku a dĺžku.
+    \item String response
+    - Model prestavujúci HTTP odpoveď pozostávajúcu z jediného reťazca. Takýto model je potrebný, pretože po správnosti by sa nemal vracať 
+    samotný reťazec ako telo odpovede, ale mal by byť zabalený do rodičovského objektu, pretože niektoré kižnice takéto odpovede nepodporujú.
+    \item Week
+    - Keďže dáta spracovávame po týždňoch, potrebovali sme si vedieť takýto týždeň znázorniť. Ako jeden týždeň sme si určili obdobie začínajúce v pondelok o polnoci a končiace 
+    v nedeľu toho istého týždňa tesne pred polnocou ako je definované v štandarde ISO 8601. Tento štandard určuje spôsob, ako vyjadriť konkrétny týždeň ako textový reťazec, 
+    a to vo formáte YYYY-'W'WW, teda napríklad deviaty týždeň roku 2023 by bol vyjadrený ako 2023-W09. Tento formát zápisu týždňa je podporovaný ako formát výstupu pre 
+    HTML input typu "week", preto je pre našu aplikáciu veľmi užitočný. V jazyku C\# však neexistuje žiadna vstavaná trieda reprezentujúca takýto týždeň, jednu sme napísali 
+    podľa našich potrieb. Trieda podporuje dva rôzne konštruktory, teda dva rôzne spôsoby ako definovať týždeň. Prvý spôsob je podľa už zmieneného ISO 8601 formátu. Druhý spôsob 
+    si vezme na vstup ľubovoľný čas reprezentovaný štandardnou triedou DateTime a určí týždeň, do ktorého daný čas patrí. Na základe definície ISO 8601 každý čas patrí do práve jedného 
+    dňa a každý deň patrí do práve jedného týždňa. 
+    \item DateTimeUtilities
+    - Trieda zoskupujúca pomocné metódy na prácu s časom. Momentálne má len jednu metódu GetWeeksFromTo, ktorá prijme dva dátumy a vráti zoznam týždňov 
+    medzi nimi.
+    \item Host
+    - Model predstavujúci jednu IP adresu v zdrojovej databáze.
+    \item Ping
+    - Model predstavujúci jedno volanie príkazu ping na konkrétnu IP adresu v zdrojovej databáze.
+    \item IIpInfoViewerDbRepository
+    - Rozhranie definujúce metódy, ktorými sa dajú vyťahovať dáta z lokálneho dátového skladu. 
+    \item IpInfoViewerDbRepository
+    - Trieda slúžiaca na vyťahovanie dát z lokálneho dátového skladu. Implementuje rozhranie IIpInfoViewerDbRepository.
+    \item IMFileDbRepository
+    - Rozhranie definujúce metódy určené na vyťahovanie dát zo zdrojovej databázy.
+    \item MFileDbRepository
+    - Trieda slúžiaca na výber dát zo zdrojovej databázy. Implementuje rozhranie IMFileDbRepository.
+    \item ICountryPingInfoFacade
+    - Rozhranie definujúce metódy obsahujúce logické manipulácie s dátami ohľadom IP adries zoskupených podľa krajín.
+    \item CountryPingInfoFacade
+    - Trieda obshujúca logickú manipuláciu s dátami ohľadom IP adries zoskupených podľa krajín. Implementuje rozhranie ICountryPingInfoFacade.
+    \item IIpAddressInfoFacade
+    - Rozhranie definujúce metódy využívané pri priraďovaní geografických informácií k databázam.
+    \item IpAddressInfoFacade
+    - Implementácia priraďovania IP adries ku geografickým dátam ako krajiny a súradnice. Implementuje rozhranie IIpAddressInfoFacade.
+    \item IMapPointsFacade
+    - Rozhranie definujúce metódy obsahujúce logické manipulácie s dátami ohľadom IP adries zoskupených podľa geografických súradníc.
+    \item MapPointsFacade
+    - Implementácia manipulácie s dátami zoskupenými podľa geografických súradníc. Implementuje rozhranie IMapFacade.
 \end{itemize}
+
+\section{Štruktúra frontendovej časti aplikácie}

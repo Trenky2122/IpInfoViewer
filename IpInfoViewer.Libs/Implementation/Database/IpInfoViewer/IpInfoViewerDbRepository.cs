@@ -114,7 +114,7 @@ namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
             await connection.ExecuteAsync(sql, address);
         }
 
-        public async Task SaveMapIpAddressRepresentation(MapIpAddressesRepresentation representation)
+        public async Task SaveMapIpAddressRepresentation(MapPoint representation)
         {
             await using var connection = CreateConnection();
             string sql = "INSERT INTO MapIpRepresentation (Latitude, Longitude, IpAddressesCount, AveragePingRtT, ValidFrom, ValidTo) " +
@@ -136,10 +136,10 @@ namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
             return await connection.QueryAsync<IpAddressInfo>("SELECT * FROM IpAddresses LIMIT @limit OFFSET @offset", new { limit, offset });
         }
         
-        public async Task<IEnumerable<MapIpAddressesRepresentation>> GetMapForWeek(Week week)
+        public async Task<IEnumerable<MapPoint>> GetMapForWeek(Week week)
         {
             await using var connection = CreateConnection();
-            return await connection.QueryAsync<MapIpAddressesRepresentation>("SELECT * FROM MapIpRepresentation WHERE @Tuesday BETWEEN ValidFrom AND ValidTo", new { tuesday = week.Tuesday });
+            return await connection.QueryAsync<MapPoint>("SELECT * FROM MapIpRepresentation WHERE @Tuesday BETWEEN ValidFrom AND ValidTo", new { tuesday = week.Tuesday });
         }
 
         public async Task<DateTime?> GetLastDateWhenMapIsProcessed()

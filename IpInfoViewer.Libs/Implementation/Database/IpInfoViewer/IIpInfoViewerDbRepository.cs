@@ -12,9 +12,9 @@ namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
     {
         Task SeedTables();
         Task<IEnumerable<IpAddressInfo>> GetIpAddresses(int offset = 0, int limit = int.MaxValue);
-        Task<IEnumerable<MapIpAddressesRepresentation>> GetMapForWeek(Week week);
+        Task<IEnumerable<MapPoint>> GetMapForWeek(Week week);
         Task<DateTime?> GetLastDateWhenMapIsProcessed();
-        Task SaveMapIpAddressRepresentation(MapIpAddressesRepresentation representation);
+        Task SaveMapIpAddressRepresentation(MapPoint representation);
         Task SaveIpAddressInfo(IpAddressInfo address);
         Task SaveCountryPingInfo(CountryPingInfo countryPingInfo);
         Task<DateTime?> GetLastDateWhenCountriesAreProcessed();

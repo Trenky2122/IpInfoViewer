@@ -16,7 +16,7 @@ builder.Services.AddSingleton<IIpInfoViewerDbRepository>(
     new IpInfoViewerDbRepository(builder.Configuration["IpInfoViewerProcessedConnectionString"]));
 builder.Services.AddSingleton<IMFileDbRepository, MFileDbRepository>();
 builder.Services.AddSingleton<ICountryPingInfoFacade, CountryPingInfoFacade>();
-builder.Services.AddSingleton<IMapFacade, MapFacade>();
+builder.Services.AddSingleton<IMapPointsFacade, MapPointsFacade>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
