@@ -44,7 +44,7 @@ namespace IpInfoViewer.Api.Controllers
         [HttpGet("LastProcessedDate")]
         public async Task<ActionResult<StringResponse?>> GetLatestProcessedWeekIpInfo()
         {
-            return Ok(await _mapPointsFacade.GetLastProcessedWeek());
+            return Ok(new StringResponse(await _mapPointsFacade.GetLastProcessedWeek()));
         }
 
 

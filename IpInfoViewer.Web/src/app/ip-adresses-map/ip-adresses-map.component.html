@@ -6,6 +6,6 @@
      [leafletLayers]="layers"
      (leafletMapZoom)="zoomChanged($event)"
 >
-  <img ngSrc="legendLink" style="position: fixed; z-index: 100000; bottom: 30px; left: 30px" alt="map legend">
+  <img [src]="legendLink" style="position: fixed; z-index: 100000; bottom: 30px; left: 30px" alt="map legend">
 </div>
 

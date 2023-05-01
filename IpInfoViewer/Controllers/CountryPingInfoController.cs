@@ -19,13 +19,13 @@ namespace IpInfoViewer.Api.Controllers
         [HttpGet("ColoredMap/{week}")]
         public async Task<ContentResult> GetColoredSvgMapAsync(string week, bool fullScale)
         {
-            return Content(await _countryFacade.GetColoredSvgMapForWeek(new Week(week), fullScale), "image/svg+xml");
+            return Content(await _countryFacade.GetColoredSvgMapForWeek(week, fullScale), "image/svg+xml");
         }
 
         [HttpGet("LastProcessedDate/")]
         public async Task<ActionResult<StringResponse?>> GetLatestProcessedWeekCountryPing()
         {
-            return Ok(_countryFacade.GetLastProcessedWeek());
+            return Ok(new StringResponse(await _countryFacade.GetLastProcessedWeek()));
         }
     }
 }

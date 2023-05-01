@@ -45,8 +45,9 @@ namespace IpInfoViewer.Libs.Implementation.CountryPing
             }
         }
 
-        public async Task<string> GetColoredSvgMapForWeek(Week week, bool fullScale)
+        public async Task<string> GetColoredSvgMapForWeek(string weekStr, bool fullScale)
         {
+            Week week = new(weekStr);
             var svg = GcSvgDocument.FromFile(@"/app/bin/debug/net6.0/Assets/world.svg");
             var countryPingInfo = await _localDb.GetCountryPingInfoForWeek(week);
             const int defaultUpperBound = 500;
