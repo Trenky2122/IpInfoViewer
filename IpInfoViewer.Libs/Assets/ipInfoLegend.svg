@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<svg viewBox="124.843 524.089 267.281 295.769" width="1000.281" height="295.769" xmlns="http://www.w3.org/2000/svg">
-  <rect x="124.843" y="524.089" width="267.281" height="295.769" style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0); stroke-width: 1px; fill-opacity: 0.9;"/>
-  <ellipse style="stroke: rgb(0, 0, 0); stroke-width: 1px; fill: rgb(0, 255, 0);" cx="183.696" cy="565.664" rx="16.304" ry="16.304"/>
-  <ellipse style="stroke: rgb(0, 0, 0); stroke-width: 1px; fill: rgb(64, 191, 0);" cx="183.696" cy="616.304" rx="16.304" ry="16.304"/>
-  <ellipse style="stroke: rgb(0, 0, 0); stroke-width: 1px; fill: rgb(247, 247, 0);" cx="183.696" cy="666.304" rx="16.304" ry="16.304"/>
-  <ellipse style="stroke: rgb(0, 0, 0); stroke-width: 1px; fill: rgb(191, 64, 0);" cx="183.696" cy="716.304" rx="16.304" ry="16.304"/>
-  <ellipse style="stroke: rgb(0, 0, 0); stroke-width: 1px; fill: rgb(255, 0, 0);" cx="183.696" cy="762.5" rx="16.304" ry="16.304"/>
-  <text style="white-space: pre; fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 22.8px;" x="255.646" y="565.664" id="ph1">PH1<tspan x="262.3429870605469" dy="1em">​</tspan></text>
-  <text style="white-space: pre; fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 22.8px;" x="255.646" y="616.304" id="ph2">PH2</text>
-  <text style="white-space: pre; fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 22.8px;" x="255.646" y="666.168" id="ph3">PH3</text>
-  <text style="white-space: pre; fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 22.8px;" x="255.646" y="716.633" id="ph4">PH4</text>
-  <text style="white-space: pre; fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 22.8px;" x="255.646" y="762.714" id="ph5">PH5</text>
-  <rect x="392.222" y="524.438" width="282.272" height="294.838" style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0);"/>
-  <ellipse style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0);" cx="443.301" cy="541.168" rx="7.563" ry="7.267" id="size1"/>
-  <ellipse style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0);" cx="444.584" cy="578.008" rx="11.639" ry="11.286" id="size2"/>
-  <ellipse style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0);" cx="444.698" cy="618.5" rx="14.544" ry="14.544" id="size3"/>
-  <ellipse style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0);" cx="445.279" cy="668.638" rx="20.71" ry="21.176" id="size4"/>
-  <ellipse style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0);" cx="445.628" cy="750.435" rx="33.859" ry="33.859" id="size5"/>
-  <text style="white-space: pre; fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 22.8px;" x="255.646" y="565.664" id="size1text" transform="matrix(1, 0, 0, 1, 300.00174, -16.17127)">PH1<tspan x="262.3429870605469" dy="1em">​</tspan></text>
-  <text style="white-space: pre; fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 22.8px;" x="255.646" y="565.664" id="size2text" transform="matrix(1, 0, 0, 1, 300.00174, 19.432713)">PH1<tspan x="262.3429870605469" dy="1em">​</tspan></text>
-  <text style="white-space: pre; fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 22.8px;" x="255.646" y="565.664" id="size3text" transform="matrix(1, 0, 0, 1, 300.00174, 59.225388)">PH1<tspan x="262.3429870605469" dy="1em">​</tspan></text>
-  <text style="white-space: pre; fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 22.8px;" x="255.646" y="565.664" id="size4text" transform="matrix(1, 0, 0, 1, 300.001709, 114.376656)">PH1<tspan x="262.3429870605469" dy="1em">​</tspan></text>
-  <text style="white-space: pre; fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 22.8px;" x="255.646" y="565.664" id="size5text" transform="matrix(1, 0, 0, 1, 300.001709, 198.383408)">PH1<tspan x="262.3429870605469" dy="1em">​</tspan></text>
+<svg viewBox="0 0 500 300" width="500" height="300" xmlns="http://www.w3.org/2000/svg">
+  <rect x="1.622" y="5.63" width="241.216" height="266.923" style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0); stroke-width: 1px; fill-opacity: 0.4;"/>
+  <ellipse style="stroke: rgb(0, 0, 0); stroke-width: 1px; fill: rgb(0, 255, 0);" cx="54.739" cy="43.151" rx="14.712" ry="14.712"/>
+  <ellipse style="stroke: rgb(0, 0, 0); stroke-width: 1px; fill: rgb(64, 191, 0);" cx="54.739" cy="88.857" rx="14.712" ry="14.712"/>
+  <ellipse style="stroke: rgb(0, 0, 0); stroke-width: 1px; fill: rgb(247, 247, 0);" cx="54.739" cy="133.972" rx="14.712" ry="14.712"/>
+  <ellipse style="stroke: rgb(0, 0, 0); stroke-width: 1px; fill: rgb(191, 64, 0);" cx="54.739" cy="179.094" rx="14.712" ry="14.712"/>
+  <ellipse style="stroke: rgb(0, 0, 0); stroke-width: 1px; fill: rgb(255, 0, 0);" cx="54.739" cy="220.796" rx="14.712" ry="14.712"/>
+  <text style="white-space: pre; fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 22.8px;" x="255.646" y="565.664" id="ph1" transform="matrix(0.90248, 0, 0, 0.90248, -111.047348, -467.350677)">PH1<tspan x="262.3429870605469" dy="1em">​</tspan></text>
+  <text style="white-space: pre; fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 20.7px;" x="119.666" y="88.857" id="ph2">PH2</text>
+  <text style="white-space: pre; fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 20.7px;" x="119.666" y="133.851" id="ph3">PH3</text>
+  <text style="white-space: pre; fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 20.7px;" x="119.666" y="179.398" id="ph4">PH4</text>
+  <text style="white-space: pre; fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 20.7px;" x="119.666" y="220.979" id="ph5">PH5</text>
+  <rect x="242.927" y="5.942" width="254.743" height="266.085" style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0); fill-opacity: 0.4;"/>
+  <ellipse style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0);" cx="289.02" cy="21.04" rx="6.826" ry="6.557" id="size1"/>
+  <ellipse style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0);" cx="290.181" cy="54.286" rx="10.5" ry="10.189" id="size2"/>
+  <ellipse style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0);" cx="290.278" cy="90.841" rx="13.126" ry="13.126" id="size3"/>
+  <ellipse style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0);" cx="290.808" cy="136.084" rx="18.686" ry="19.115" id="size4"/>
+  <ellipse style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0);" cx="291.12" cy="209.909" rx="30.554" ry="30.554" id="size5"/>
+  <text style="white-space: pre; fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 22.8px;" x="200.646" y="565.664" id="size1text" transform="matrix(0.90248, 0, 0, 0.90248, 159.698547, -481.944916)">PH1<tspan x="262.3429870605469" dy="1em">​</tspan></text>
+  <text style="white-space: pre; fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 22.8px;" x="200.646" y="565.664" id="size2text" transform="matrix(0.90248, 0, 0, 0.90248, 159.698547, -449.812897)">PH1<tspan x="262.3429870605469" dy="1em">​</tspan></text>
+  <text style="white-space: pre; fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 22.8px;" x="200.646" y="565.664" id="size3text" transform="matrix(0.90248, 0, 0, 0.90248, 159.698547, -413.901031)">PH1<tspan x="262.3429870605469" dy="1em">​</tspan></text>
+  <text style="white-space: pre; fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 22.8px;" x="200.646" y="565.664" id="size4text" transform="matrix(0.90248, 0, 0, 0.90248, 159.698364, -364.127991)">PH1<tspan x="262.3429870605469" dy="1em">​</tspan></text>
+  <text style="white-space: pre; fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 22.8px;" x="200.646" y="565.664" id="size5text" transform="matrix(0.90248, 0, 0, 0.90248, 159.698364, -288.313171)">PH1<tspan x="262.3429870605469" dy="1em">​</tspan></text>
 </svg>

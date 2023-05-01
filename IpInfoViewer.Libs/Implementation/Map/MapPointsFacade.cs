@@ -57,14 +57,14 @@ namespace IpInfoViewer.Libs.Implementation.Map
             for (int i = 1; i <= 5; i++)
             {
                 var legendPlaceholderContent = svg.GetElementByID($"ph{i}").Children[0] as SvgContentElement;
-                legendPlaceholderContent.Content = $"Ping {legendPingValues[i - 1]}";
+                legendPlaceholderContent.Content = $"Ping {legendPingValues[i - 1]} ms";
 
                 var circle = svg.GetElementByID($"size{i}") as SvgEllipseElement;
                 var radiusLength = new SvgLength(sizeInformation[i-1].Radius, SvgLengthUnits.Pixels);
                 circle.RadiusX = radiusLength;
                 circle.RadiusY = radiusLength;
                 var text = svg.GetElementByID($"size{i}text").Children[0] as SvgContentElement;
-                text.Content = $"{sizeInformation[i-1].Count} addresses";
+                text.Content = $"{sizeInformation[i-1].Count} addr.";
             }
 
             StringBuilder resultBuilder = new();

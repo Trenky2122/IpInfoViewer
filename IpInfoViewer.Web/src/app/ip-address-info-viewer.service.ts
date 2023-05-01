@@ -15,18 +15,27 @@ export class IpAddressInfoViewerService {
   }
 
   public GetMapPointsForWeek(week: string): Observable<MapIpAddressRepresentation[]>{
-    return this.http.get<MapIpAddressRepresentation[]>(this.baseUrl + "Map/ForWeek/" + week);
+    return this.http.get<MapIpAddressRepresentation[]>(this.baseUrl + "MapPoints/ForWeek/" + week);
   }
 
   public GetCountryPingInfoMapLink(week: string, fullScale: boolean): string{
-    return this.baseUrl + "map/ColoredMap/" + week +"?fullScale="+fullScale;
+    return this.baseUrl + "CountryPingInfo/ColoredMap/" + week +"?fullScale="+fullScale;
+  }
+
+  public GetMapPointsLegendLink(counts: number[], radii: number[], pingUpperBound: number): string{
+    let queryParams = new URLSearchParams({
+      pingUpperBound: pingUpperBound.toString()
+    });
+    counts.forEach(c => queryParams.append("counts", c.toString()));
+    radii.forEach(r => queryParams.append("radii", r.toString()));
+    return this.baseUrl + "MapPoints/MapPointsMapLegend?" + queryParams.toString();
   }
 
   public GetLastProcessedTimeForMapPoints(): Observable<StringResponse>{
-    return this.http.get<StringResponse>(this.baseUrl + "map/lastProcessedDate/ipInfo");
+    return this.http.get<StringResponse>(this.baseUrl + "MapPoints/LastProcessedDate");
   }
 
   public GetLastProcessedTimeForCountryPingInfo(): Observable<StringResponse>{
-    return this.http.get<StringResponse>(this.baseUrl + "map/lastProcessedDate/countryPing");
+    return this.http.get<StringResponse>(this.baseUrl + "CountryPingInfo/LastProcessedDate");
   }
 }

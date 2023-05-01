@@ -1,3 +1,4 @@
+<h1>Zobrazenie údajov za týždeň, zoskupených podľa geograficlej lokality</h1>
 <input type="week" [(ngModel)]="week" (change)="setMapPointsForWeek()">
 <div class="map" style="position: relative"
      leaflet
@@ -5,6 +6,6 @@
      [leafletLayers]="layers"
      (leafletMapZoom)="zoomChanged($event)"
 >
-  <img [src]="legendLink" style="position: fixed; z-index: 100000; bottom: 30px; left: 30px; width: 30em" alt="map legend">
+  <img ngSrc="legendLink" style="position: fixed; z-index: 100000; bottom: 30px; left: 30px" alt="map legend">
 </div>
 

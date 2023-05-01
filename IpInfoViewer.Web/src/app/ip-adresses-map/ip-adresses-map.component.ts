@@ -14,6 +14,8 @@ export class IpAdressesMapComponent implements OnInit{
   public zoom: number = 3;
   public legendLink: string="";
   public currentWeekData: MapIpAddressRepresentation[] = [];
+  public radii: number[] = [0, 0, 0, 0, 0];
+  public counts: number[] = [0, 0, 0, 0, 0];
   constructor(private service: IpAddressInfoViewerService) {
     this.week = "2022-W45"
   }
@@ -36,7 +38,8 @@ export class IpAdressesMapComponent implements OnInit{
     return [
       new Leaflet.TileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png',
         {attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors', minZoom: 3}),
-      ...this.getMarkers(mapPoints, zoom)
+      ...this.getMarkers(mapPoints, zoom),
+      ...this.getTooltips(mapPoints, zoom)
     ] as Leaflet.Layer[]
   };
 
@@ -46,15 +49,35 @@ export class IpAdressesMapComponent implements OnInit{
       color:  this.pingToColor(point.averagePingRtT),
       fillOpacity: 1,
       radius: this.ipCountToCircleRadius(point.ipAddressesCount, zoom),
+      className: "mapPoint " + point.id,
+      interactive: true,
+    }));
+  }
+
+  getTooltips(mapPoints: MapIpAddressRepresentation[], zoom: number): Leaflet.Tooltip[] {
+    return mapPoints?.map(point => new Leaflet.Tooltip(new Leaflet.LatLng(point.latitude, point.longitude), {
+      content: "<strong>lat</strong>: " + point.latitude.toFixed(4)
+        + "<br><strong>long</strong>: " + point.longitude.toFixed(4) + "<br>" +
+        "<strong>total</strong>: " + point.ipAddressesCount,
+      permanent: false,
+      className: "mapPointLabel " + point.id,
+      interactive: true,
+      direction: "auto",
+      sticky: true
     }));
   }
 
   setMapPointsForWeek(){
     this.service.GetMapPointsForWeek(this.week).subscribe(value => {
       this.currentWeekData = value;
-      this.layers = this.getLayers(value, this.zoom);
+      this.redrawLayers();
     })
-    this.legendLink = this.service.GetCountryPingInfoMapLink(this.week, true);
+  }
+
+  setLegendValuesForCurrentZoom(){
+    this.counts = [5, 50, 500, 5000, 50000];
+    this.counts.forEach((c, i) => this.radii[i] = Math.round(this.ipCountToCircleRadius(c, this.zoom)));
+    console.log(this.counts, this.radii);
   }
 
   pingToColor(ping: number) {
@@ -73,7 +96,13 @@ export class IpAdressesMapComponent implements OnInit{
 
   zoomChanged(value: LeafletEvent){
     this.zoom = value.sourceTarget._zoom;
+    this.redrawLayers();
+  }
+
+  redrawLayers(){
     this.layers = this.getLayers(this.currentWeekData, this.zoom);
+    this.setLegendValuesForCurrentZoom();
+    this.legendLink = this.service.GetMapPointsLegendLink(this.counts, this.radii, 500);
   }
 
   ipCountToCircleRadius(ipCount: number, zoom: number): number{

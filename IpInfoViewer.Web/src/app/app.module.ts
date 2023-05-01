@@ -14,6 +14,7 @@ import { CountryPingMapComponent } from './country-ping-map/country-ping-map.com
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import {NgOptimizedImage} from "@angular/common";
+import {SafePipeModule} from "safe-pipe";
 
 @NgModule({
   declarations: [
@@ -32,9 +33,10 @@ import {NgOptimizedImage} from "@angular/common";
     NgbModule,
     BrowserAnimationsModule,
     MatSlideToggleModule,
-    NgOptimizedImage
+    NgOptimizedImage,
+    SafePipeModule
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule { }

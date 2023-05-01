@@ -25,7 +25,7 @@ namespace IpInfoViewer.Api.Controllers
             return Content(await _countryFacade.GetColoredSvgMapForWeek(new Week(week), fullScale), "image/svg+xml");
         }
 
-        [HttpGet("LastProcessedDate/countryPing")]
+        [HttpGet("LastProcessedDate/")]
         public async Task<ActionResult<StringResponse?>> GetLatestProcessedWeekCountryPing()
         {
             DateTime? lastProcessedDate = await _dbRepository.GetLastDateWhenCountriesAreProcessed();
