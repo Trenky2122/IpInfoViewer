@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Metrics;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using GrapeCity.Documents.Svg;
 using IpInfoViewer.Libs.Implementation.Database.IpInfoViewer;
 using IpInfoViewer.Libs.Implementation.Database.MFile;
@@ -70,6 +64,24 @@ namespace IpInfoViewer.Libs.Implementation.Map
             StringBuilder resultBuilder = new();
             svg.Save(resultBuilder);
             return resultBuilder.ToString();
+        }
+
+        public async Task<string?> GetLastProcessedWeek()
+        {
+            DateTime? lastProcessedDate = await _localDb.GetLastDateWhenMapIsProcessed();
+            if (!lastProcessedDate.HasValue)
+                return null;
+            return new Week(lastProcessedDate.Value).ToString();
+        }
+
+        public async Task<IEnumerable<MapPoint>> GetMapPointsForDayOfWeek(DateTime dayFromWeek)
+        {
+            return await _localDb.GetMapForWeek(new Week(dayFromWeek));
+        }
+
+        public async Task<IEnumerable<MapPoint>> GetMapPoinsForWeek(string week)
+        {
+            return await _localDb.GetMapForWeek(new Week(week));
         }
 
         private List<int> GetLegendPingValues(int upperBound)

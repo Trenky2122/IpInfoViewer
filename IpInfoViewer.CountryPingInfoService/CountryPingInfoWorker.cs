@@ -1,6 +1,5 @@
 using IpInfoViewer.Libs.Implementation.CountryPing;
 using IpInfoViewer.Libs.Implementation.Database.IpInfoViewer;
-using IpInfoViewer.Libs.Implementation.IpInfo;
 using IpInfoViewer.Libs.Utilities;
 
 namespace IpInfoViewer.CountryPingInfoService

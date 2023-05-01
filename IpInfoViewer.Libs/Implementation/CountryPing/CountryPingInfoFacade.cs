@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Metrics;
-using System.Drawing;
-using System.Globalization;
-using System.Linq;
+﻿using System.Drawing;
 using System.Text;
-using System.Threading.Tasks;
 using GrapeCity.Documents.Svg;
 using IpInfoViewer.Libs.Implementation.Database.IpInfoViewer;
 using IpInfoViewer.Libs.Implementation.Database.MFile;
@@ -76,6 +70,14 @@ namespace IpInfoViewer.Libs.Implementation.CountryPing
             StringBuilder resultBuilder = new();
             svg.Save(resultBuilder);
             return resultBuilder.ToString();
+        }
+
+        public async Task<string?> GetLastProcessedWeek()
+        {
+            DateTime? lastProcessedDate = await _localDb.GetLastDateWhenCountriesAreProcessed();
+            if (!lastProcessedDate.HasValue)
+                return null;
+            return new Week(lastProcessedDate.Value).ToString();
         }
 
         private (int Red, int Green) CalculateColor(double ping, int upperBound)

@@ -1,11 +1,6 @@
 ﻿using IpInfoViewer.Libs.Models.MFile;
 using IpInfoViewer.Libs.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IpInfoViewer.Libs.Implementation.Database.MFile
 {

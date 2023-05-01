@@ -1,8 +1,5 @@
-﻿using IpInfoViewer.Libs.Implementation.CountryPing;
-using IpInfoViewer.Libs.Implementation.Database.IpInfoViewer;
-using IpInfoViewer.Libs.Implementation.Map;
+﻿using IpInfoViewer.Libs.Implementation.Map;
 using IpInfoViewer.Libs.Models;
-using IpInfoViewer.Libs.Utilities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IpInfoViewer.Api.Controllers
@@ -12,12 +9,10 @@ namespace IpInfoViewer.Api.Controllers
     [Route("[controller]")]
     public class MapPointsController: ControllerBase
     {
-        private readonly IIpInfoViewerDbRepository _dbRepository;
         private readonly IMapPointsFacade _mapPointsFacade;
 
-        public MapPointsController(IIpInfoViewerDbRepository dbRepository, IMapPointsFacade mapPointsFacade)
+        public MapPointsController(IMapPointsFacade mapPointsFacade)
         {
-            _dbRepository = dbRepository;
             _mapPointsFacade = mapPointsFacade;
         }
         /// <summary>
@@ -28,7 +23,7 @@ namespace IpInfoViewer.Api.Controllers
         [HttpGet("ForDayOfWeek/{dayFromWeek}")]
         public async Task<ActionResult<IEnumerable<MapPoint>>> GetMapPointsForDayOfWeek(DateTime dayFromWeek)
         {
-            return Ok(await _dbRepository.GetMapForWeek(new Week(dayFromWeek)));
+            return Ok(await _mapPointsFacade.GetMapPointsForDayOfWeek(dayFromWeek));
         }
 
         /// <summary>
@@ -39,7 +34,7 @@ namespace IpInfoViewer.Api.Controllers
         [HttpGet("ForWeek/{week}")]
         public async Task<ActionResult<IEnumerable<MapPoint>>> GetMapPoinsForWeek(string week)
         {
-            return Ok(await _dbRepository.GetMapForWeek(new Week(week)));
+            return Ok(await _mapPointsFacade.GetMapPoinsForWeek(week));
         }
 
         /// <summary>
@@ -49,10 +44,7 @@ namespace IpInfoViewer.Api.Controllers
         [HttpGet("LastProcessedDate")]
         public async Task<ActionResult<StringResponse?>> GetLatestProcessedWeekIpInfo()
         {
-            DateTime? lastProcessedDate = await _dbRepository.GetLastDateWhenMapIsProcessed();
-            if (!lastProcessedDate.HasValue)
-                return Ok(null);
-            return Ok(new StringResponse(new Week(lastProcessedDate.Value).ToString()));
+            return Ok(await _mapPointsFacade.GetLastProcessedWeek());
         }
 
 

@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Net;
 using Dapper;
 using IpInfoViewer.Libs.Models.MFile;
 using IpInfoViewer.Libs.Utilities;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
-using NpgsqlTypes;
 
 namespace IpInfoViewer.Libs.Implementation.Database.MFile
 {

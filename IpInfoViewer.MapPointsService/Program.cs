@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using IpInfoViewer.Libs.Implementation.Database.IpInfoViewer;
 using IpInfoViewer.Libs.Implementation.Database.MFile;
 using IpInfoViewer.Libs.Implementation.Map;
