@@ -104,8 +104,8 @@
 
         public override string ToString()
         {
-
-            return $"{Thursday.Year}-W{Convert.ToInt32(Math.Ceiling(Thursday.DayOfYear * 1.0 / 7))}";
+            int weekNr = Convert.ToInt32(Math.Ceiling(Thursday.DayOfYear * 1.0 / 7));
+            return $"{Thursday.Year}-W{(weekNr < 10? "0" : "") }{weekNr}";
         }
     }
 }
