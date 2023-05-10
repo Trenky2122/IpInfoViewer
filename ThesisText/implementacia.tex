@@ -170,4 +170,18 @@ spúšťať s Visual Studia a bol zahrnutý do jedného .sln súboru, čo nám z
 vygenerovaniu projektu pomocou príkazu \lstinline{ng new}.
 
 Jednou z hlavných výhod využitia frameworku ako napríklad Angular je, že aplikáciu je možné deliť na komponenty. Jeden komponent je možné si predstaviť ako istú podčasť zobrazenej stránky. 
-Každý komponent sa môže skladať s viacerých iných komponentov. 
+Každý komponent sa môže skladať s viacerých iných komponentov. Naša aplikácia obsahuje nasledovné komponenty:
+\begin{itemize}
+    \item app.component
+    - Základný komponent pre každú aplikáciu. Všetky ostatné komponenty sú jeho podkomponenty. Reprezentuje celé okno aplikácie. Framework Angular je defaultne nastavený aby vždy 
+    zobrazoval práve tento komponent. 
+    \item nav-menu.component
+    - Komponent reprezentujúci vrchný panel s menu aplikácie.
+    \item ip-address-map.component
+    - Komponent reprezentujúci mapu s vyznačenými ip adresami zoskupenými podľa geografických súradníc.
+    \item country-ping-map.component 
+    - Komponent reprezentujúci mau krajín zafarbených podľa pingu.
+\end{itemize}
+
+\section{Dôležité algoritmy a postupy riešenia}
+\label{postupy}

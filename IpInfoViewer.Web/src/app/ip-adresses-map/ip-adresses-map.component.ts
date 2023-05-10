@@ -36,7 +36,7 @@ export class IpAdressesMapComponent implements OnInit{
 
   getLayers(mapPoints: MapIpAddressRepresentation[], zoom: number): Leaflet.Layer[]{
     return [
-      new Leaflet.TileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png',
+      new Leaflet.TileLayer('http://localhost:8082/osm/{z}/{x}/{y}.png',
         {attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors', minZoom: 3}),
       ...this.getMarkers(mapPoints, zoom),
       ...this.getTooltips(mapPoints, zoom)

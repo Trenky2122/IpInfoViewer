@@ -1,10 +1,12 @@
 ﻿using System.Globalization;
+using System.Net;
 using System.Text;
 using Dapper;
 using IpInfoViewer.Libs.Models;
 using IpInfoViewer.Libs.Utilities;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
+using NpgsqlTypes;
 
 namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
 {
@@ -36,8 +38,8 @@ namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
 
         public async Task SeedTables()
         {
-
             await using var connection = CreateConnection();
+            
             connection.Open();
             await CreateIpTable(connection);
             await CreateMapIpRepresentationTable(connection);
@@ -101,9 +103,17 @@ namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
         public async Task SaveIpAddressInfo(IpAddressInfo address)
         {
             await using var connection = CreateConnection();
+            connection.Open();
             string sql = "INSERT INTO IpAddresses (IpValue, CountryCode, City, Latitude, Longitude) " +
                          "VALUES (@IpValue, @CountryCode, @City, @Latitude, @Longitude)";
-            await connection.ExecuteAsync(sql, address);
+            var command = connection.CreateCommand();
+            command.Parameters.AddWithValue("IpValue", NpgsqlDbType.Cidr, address.IpValue);
+            command.Parameters.AddWithValue("CountryCode", NpgsqlDbType.Varchar, address.CountryCode);
+            command.Parameters.AddWithValue("City", NpgsqlDbType.Varchar, address.City);
+            command.Parameters.AddWithValue("Latitude", NpgsqlDbType.Double, address.Latitude);
+            command.Parameters.AddWithValue("Longitude", NpgsqlDbType.Double, address.Longitude);
+            command.CommandText = sql;
+            await command.ExecuteNonQueryAsync();
         }
 
         public async Task SaveMapIpAddressRepresentation(MapPoint representation)

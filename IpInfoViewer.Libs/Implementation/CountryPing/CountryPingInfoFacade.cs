@@ -20,6 +20,25 @@ namespace IpInfoViewer.Libs.Implementation.CountryPing
             _mFileDb = mFileDb;
         }
 
+        public async Task ExecuteSeedingAsync(CancellationToken stoppingToken)
+        {
+            await _localDb.SeedTables();
+            var allAddresses = await _localDb.GetIpAddresses();
+            var addressesGroupedByLocation = allAddresses.GroupBy(address => address.CountryCode);
+            var lastProcessedDate = await _localDb.GetLastDateWhenCountriesAreProcessed() ?? new DateTime(2008, 4, 26); //first data from mfile database are by this date
+            Week lastProcessedWeek = new(lastProcessedDate);
+            // parallel foreach used in case of first run or first run after weeks
+            await Parallel.ForEachAsync(DateTimeUtilities.GetWeeksFromTo(lastProcessedWeek.Next().Monday, DateTime.Today.AddDays(-7) /* only already finished weeks*/),
+                stoppingToken,
+                async (week, token) =>
+                {
+                    await ProcessWeekAsync(week, addressesGroupedByLocation);
+
+                    Console.WriteLine($"{DateTime.Now} Week from {week.Monday} processed.");
+                }
+            );
+        }
+
         public async Task ProcessWeekAsync(Week week, IEnumerable<IGrouping<string, IpAddressInfo>> addressesGroupedByCountry)
         {
             var ipAveragePings = await _mFileDb.GetAverageRtTForIpForWeek(week);
@@ -48,7 +67,7 @@ namespace IpInfoViewer.Libs.Implementation.CountryPing
         public async Task<string> GetColoredSvgMapForWeek(string weekStr, bool fullScale)
         {
             Week week = new(weekStr);
-            var svg = GcSvgDocument.FromFile(@"/app/bin/debug/net6.0/Assets/world.svg");
+            var svg = GcSvgDocument.FromFile(@"Assets/world.svg");
             var countryPingInfo = await _localDb.GetCountryPingInfoForWeek(week);
             const int defaultUpperBound = 500;
             int upperBound = fullScale ? await _localDb.GetMaximumCountryPingForWeek(week) : defaultUpperBound;

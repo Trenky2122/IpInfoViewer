@@ -7,7 +7,7 @@ import {IpAdress, MapIpAddressRepresentation, StringResponse} from "./models";
   providedIn: 'root'
 })
 export class IpAddressInfoViewerService {
-  public baseUrl = "https://localhost:32770/";
+  public baseUrl = "https://localhost:8081/";
   constructor(private http: HttpClient) { }
 
   public GetIpAddresses(): Observable<IpAdress[]>{

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GrapeCity.Documents.Text;
 using IpInfoViewer.Libs.Implementation.Database.IpInfoViewer;
 using IpInfoViewer.Libs.Implementation.Database.MFile;
 using IpInfoViewer.Libs.Implementation.Map;
@@ -18,7 +19,7 @@ namespace IpInfoViewer.Test
         [InlineData(2024, 12, 31, "2025-W01")]
         [InlineData(2027, 1, 1, "2026-W53")]
         [InlineData(2027, 1, 4, "2027-W01")]
-        public async Task Test_GetMapPointsForDayOfWeek_Ok(int year, int month, int day, string expectedResult)
+        public async Task Test_GetLastDateWhenMapIsProcessed_Ok(int year, int month, int day, string expectedResult)
         {
             var mockDb = new Mock<IIpInfoViewerDbRepository>();
             mockDb.Setup(repository => repository.GetLastDateWhenMapIsProcessed()).ReturnsAsync(new DateTime(year, month, day));

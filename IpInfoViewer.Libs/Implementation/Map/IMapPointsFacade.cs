@@ -16,5 +16,6 @@ namespace IpInfoViewer.Libs.Implementation.Map
         Task<string> GetLastProcessedWeek();
         Task<IEnumerable<MapPoint>> GetMapPointsForDayOfWeek(DateTime dayFromWeek);
         Task<IEnumerable<MapPoint>> GetMapPoinsForWeek(string week);
+        Task ExecuteSeedingAsync(CancellationToken stoppingToken);
     }
 }

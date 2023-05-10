@@ -22,6 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Assets\dbip-city-lite-2022-11.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Assets\ipInfoLegend.svg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

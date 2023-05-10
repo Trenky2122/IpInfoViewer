@@ -16,6 +16,35 @@ namespace IpInfoViewer.Libs.Implementation.Map
             _localDb = localDb;
             _mFileDb = mFileDb;
         }
+
+        public async Task ExecuteSeedingAsync(CancellationToken stoppingToken)
+        {
+            await _localDb.SeedTables();
+            var allAddresses = await _localDb.GetIpAddresses();
+            var addressesGroupedByLocation = allAddresses.GroupBy(GetApproximateLocation);
+            var lastProcessedDate = await _localDb.GetLastDateWhenMapIsProcessed() ?? new DateTime(2008, 4, 26); //first data from mfile database are by this date
+            Week lastProcessedWeek = new(lastProcessedDate);
+            // parallel foreach used in case of first run or first run after weeks
+            await Parallel.ForEachAsync(DateTimeUtilities.GetWeeksFromTo(lastProcessedWeek.Next().Monday, DateTime.Today.AddDays(-7) /* only already finished weeks*/),
+                stoppingToken,
+                async (week, token) =>
+                {
+                    await ProcessWeekAsync(week, addressesGroupedByLocation);
+
+                    Console.WriteLine($"{DateTime.Now} Week from {week.Monday} processed.");
+                }
+            );
+        }
+
+        private static (int Latitude, int Longitude) GetApproximateLocation(IpAddressInfo ipAddressInfo)
+        {
+            int latitudeApproximation = 3;
+            int longitudeApproximation = 8; //the lesser, more approximate map
+            int roundedLatitude = Convert.ToInt32(ipAddressInfo.Latitude);
+            int roundedLongitude = Convert.ToInt32(ipAddressInfo.Longitude);
+            return (roundedLatitude - roundedLatitude % latitudeApproximation, roundedLongitude - roundedLongitude % longitudeApproximation);
+        }
+
         public async Task ProcessWeekAsync(Week week, IEnumerable<IGrouping<(int latitude, int longitude), IpAddressInfo>> addressesGroupedByLocation)
         {
             var ipAveragePings = await _mFileDb.GetAverageRtTForIpForWeek(week);
@@ -46,7 +75,7 @@ namespace IpInfoViewer.Libs.Implementation.Map
             List<(float Radius, int Count)> sizeInformation,
             int pingUpperBound)
         {
-            var svg = GcSvgDocument.FromFile(@"/app/bin/debug/net6.0/Assets/ipInfoLegend.svg");
+            var svg = GcSvgDocument.FromFile(@"Assets/ipInfoLegend.svg");
             var legendPingValues = GetLegendPingValues(pingUpperBound);
             for (int i = 1; i <= 5; i++)
             {
