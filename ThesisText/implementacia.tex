@@ -180,10 +180,92 @@ Každý komponent sa môže skladať s viacerých iných komponentov. Naša apli
     \item ip-address-map.component
     - Komponent reprezentujúci mapu s vyznačenými ip adresami zoskupenými podľa geografických súradníc.
     \item country-ping-map.component 
-    - Komponent reprezentujúci mau krajín zafarbených podľa pingu.
+    - Komponent reprezentujúci mapu krajín zafarbených podľa pingu.
 \end{itemize}
 
 \section{Dôležité algoritmy a postupy riešenia}
 \label{postupy}
 
-Pri implementácií aplikácie sme využívali niekoľko špecifických postupov a algoritmov, ktoré považujeme za vhodné vysvetliť a zdôvodniť.
+Pri implementácií aplikácie sme využívali niekoľko špecifických postupov a algoritmov, ktoré považujeme za vhodné vysvetliť a zdôvodniť. 
+
+\subsection{Zoskupovanie IP adries na domovskej stránke}
+Na domovskej stránke sa nachádza mapa sveta a na nej sú vyznačené body znázorňujúce skupiny IP adries zoskupené podľa geografickej blízkosti. 
+Adresy boli zoskupené podľa geografických súradníc takým spôsobom, aby skupín vzniklo co najviac, ale zároveň stránka zostala funkčná a responzívna. 
+Jedna skupina je ekvivalentná jednému sektoru na mape.
+Stránka sa stane neresponzívnou v prípade, ak je zobrazených príliš veľa skupín. Vtedy knižnica Leaflet nestíha skupiny dostatočne rýchlo prekresľovať pri 
+pohybe alebo zväčšovaní mapy. Dôležité bolo preto odhadnúť čo najväčši počet skupín tak, aby ich stránka bola stále schopná zobrazovať. Tento počet bol 
+systémom pokus-omyl odhadnutý na  . Na testovanie bola použitý kód v ukážke \ref{alg:Markers_Seed}. Najskôr sme skúsili vygenerovať jeden kruh na každú rovnobežku 
+a na každý poludník, čo znamená 64800 kruhov. To sa ukázalo ako priveľa a tak sme skúsili vygenerovať kruh len na každú desiatu rovnobežku a každý desiaty poludník, 
+čiže dokopy 648 kruhov, čo aplikácia v prehliadači zvládala. Skúsili sme preto každú piatku rovnobežku a každý piaty poludník, čiže 2592 kruhov. Aplikácia sa
+v prehliadači stále zvládala zobrazovať. Následne sme postupným pridávaním získali hodnotu približne 6000 kruhov, teda 6000 sektorov na mape. Toto číslo sme 
+následne vynásobili tromi, pretože približne dve tretiny zemského povrchu tvorí voda, v ktorej neočakávame takmer žiadne odpovedajúce IP adresy. Teda z 18000 
+sektorov bude približne 12000 prázdnych a teda sa zmestíme do 6000 vykreslených kruhov. 
+
+\begin{lstlisting}[float,language={TypeScript},caption={Ukážka kódu použitého na testovanie počtu možných skupín},label=alg:Markers_Seed]
+    getMarkers(mapPoints: MapIpAddressRepresentation[], zoom: number): Leaflet.CircleMarker[] {
+        let markers: Leaflet.CircleMarker[] = [];
+        for(let lat= -90; lat<=90; lat++){
+            for(let lon = -180; lon <=180; lon++){
+                markers.push(new Leaflet.CircleMarker(new Leaflet.LatLng(lat, lon)))
+            }
+        }
+    }
+\end{lstlisting}
+
+Máme teda niekoľko možností ako rozdeliť mapu na 18000 sektorov, my sme sa rozhodli pre zaokrúhlenie zemepisnej šírky a dĺžky na najbližšiu menšiu rovnobežku 
+deliteľnú tromi a na najbližší menší poludník deliteľný šiestimi. Aby body na mape vyzerali prirodzene, za ich stred sme určili aritmetický priemer všetkých 
+bodov v danej skupine namiesto príslušnej zaokrúhlenej hodnoty.
+
+Veľkosť daného kruhu znázorňuje počet IP adries patriacich do daného sektoru. Rozhodli sme sa, že závislosť medzi počtom adries a polomerom kruhu bude 
+logaritmická, pretože v rôznych sektoroch boli rozdiely medzi počtami niekedy rádovo aj desaťtisícnásobné, čo má za následok že menšie sektory by boli prakticky 
+neviditeľné. Vzorec na výpočet tiež obsahuje aj úroveň priblíženia, pretože pri nízkych úrovňach priblíženia sa kruhy príliš prelínali. Preto kruhy začínajú 
+menšie a rastú s úrovňou priblíženia. Konkrétny vzorec bol upravený tak, aby kruhy na mape vyzerali prirodzene. Vzorec je uvedený v 
+ukážke \ref{alg:Count_To_Size}.
+
+\begin{lstlisting}[float,language={TypeScript},caption={Ukážka kódu na výpočet veľkosti kruhu z počtu IP adries v sektore},label=alg:Count_To_Size]
+    ipCountToCircleRadius(ipCount: number, zoom: number): number{
+        return 0.5 * Math.log(ipCount) * zoom;
+    }
+\end{lstlisting}
+
+Farba kruhu je zase určená priemernou dobou odozvy v danom sektore pre daný týždeň. Rozhodli sme sa, že chceme nízke hodnoty doby odozvy reprezentovať 
+zelenou farbou a vysoké hodnoty doby odozvy červenou farbou. Všetko medzi má byť adekvátne na škále medzi týmito dvoma farbami. Ako vhodné sa preto ukázalo 
+určovať farbu pomocou RGB notácie (jazyk CSS podporuje aj HSL notáciu). Hodnotu B sme určili konštantne na 0. Cieľom je teda rovnomerne sa presunúť medzi 
+RGB hodnotami v HTML notácií \lstinline{#00FF00} do \lstinline{#FF0000} s rastúcou dobou odozvy. Ako hornú hranicu pre úplne červenú farbu sme zvolili 500 ms. 
+Túto hranicu sme zvolili preto, že odchýlky k najvyššej dobe odozvy pri niektorých týždňoch boli priveľké. Ako spodnú hranicuu pre absolútnu zelenú sme zvolili 
+hodnotu 5 ms, pretože menšie hodnoty považujeme za zanedbateľné z hľadiska odchýlky merania. Presný algoritmus je uvedený v ukážke \ref{alg:Ping_to_color}.
+
+\begin{lstlisting}[float,language={TypeScript},caption={Ukážka kódu na výpočet veľkosti kruhu z počtu IP adries v sektore},label=alg:Ping_to_color]
+    pingToColor(ping: number) {
+        const upperBound = 500;
+        const lowerBound = 5;
+        let pingInBounds = ping;
+        if(pingInBounds < lowerBound)
+        pingInBounds = lowerBound;
+        if(pingInBounds > upperBound)
+        pingInBounds = upperBound;
+        let percent = (pingInBounds - lowerBound)/(upperBound - lowerBound);
+        let r = Math.round(255*percent), g = Math.round((1-percent)*255), b = 0;
+        let h = r * 0x10000 + g * 0x100;
+        return '#' + ('000000' + h.toString(16)).slice(-6);
+    }
+\end{lstlisting}
+
+\subsection{Mapa krajín sveta zafarbených podľa priemernej doby odozvy}
+Keďže knižnica Leaflet nepodporuje jednoduchý spôsob zafarbovania celých krajín, namiesto toho sme sa rozhodli použiť iný postup. Pomocou vyhľadávača sme
+našli vzor mapy sveta vo fromáte SVG. Tento formát má tú výhodu, že ak vieme priradiť ku konkrétnej krajine daný objekt jej tvaru na obrázku, vieme v programe 
+jednoducho tento objekt uchopiť a prefarbiť. SVG vzor, ktorý sme použili \cite{svg_mapa} mal predpoklady na takéto priradenie, pre optimálne použitie 
+ho však bolo treba upraviť. Hlavný problém nezmeneného templatu bolo nekonzistenté pomenovávanie prvkov \lstinline{path}, kde boli náhodne pre rôzne prvky 
+pomenované ISO 2 kôdom v atribúte id, menom krajiny v atribúte name alebo menom krajiny v atribúte class či ľubovoľnou kombináciouv daných atribútov. 
+Pre nás bolo najvhodnejšie tento systém zjednotiť pre všetky prvky rovnako. Z toho dôvodu sme vylúčili možnosť ISO 2 kódu v atribúte id, pretože rôzne krajiny 
+sa môžu skladať z viacerých prvkov \lstinline{path} (napríklad rôzne ostrovy), no id musí byť jedinečné pre konkrétny SVG dokument. Atribút name je netypický 
+pre svg dokumenty a použitá knižnica v C\# s ním nevie pracovať, preto sme si zvolili identifikáciu podľa atribútu class. Ďaľší problém je, že niektoré krajiny 
+majú viacero dlhých názvov, no my potrebujeme jeden jednoznačný reťazec na identifikáciu. Preto sme sa rozhodli, že prvky \lstinline{path} budeme identifikovať 
+podľa ISO 2 kódu v atribúte class.
+\begin{figure}
+    \centerline{\includegraphics[width=0.8\textwidth]{images/world}}
+    %popis obrazku
+    \caption[Neupravený svg vzor]{Pôvodný vzor so SVG mapou sveta, ktorý sme upravili pre lepšie použitie. }
+    %id obrazku, pomocou ktoreho sa budeme na obrazok odvolavat
+    \label{obr:world}
+\end{figure}

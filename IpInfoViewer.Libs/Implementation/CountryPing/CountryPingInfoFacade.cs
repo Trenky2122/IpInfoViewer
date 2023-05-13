@@ -141,7 +141,7 @@ namespace IpInfoViewer.Libs.Implementation.CountryPing
 
         private List<int> GetLegendPingValues(int upperBound)
         {
-            const int lowerBound = 20;
+            const int lowerBound = 5;
             return new List<int>
             {
                 lowerBound, 

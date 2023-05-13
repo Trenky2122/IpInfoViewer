@@ -6,7 +6,6 @@
 %zapnutie fontov pre UTF8 kodovanie
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-
 %zapnutie slovenskeho delenia slov
 %a automatickych nadpisov ako Obsah, Obrázok a pod. v slovencine
 \usepackage[slovak]{babel} % vypnite pre prace v anglictine!
@@ -25,6 +24,22 @@
 % takisto sa da zapnut cislovanie riadkov
 \usepackage{color}
 \lstloadlanguages{C,C++,csh,Java}
+
+\lstdefinelanguage{TypeScript}{
+  keywords={typeof, new, true, false, catch, function, return, null, 
+catch, switch, var, if, in, while, do, else, case, break, let, number, boolean, string, any},
+  keywordstyle=\color{blue}\bfseries,
+  ndkeywords={class, export, boolean, throw, implements, import, this},
+  ndkeywordstyle=\color{darkgray}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=false,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{purple}\ttfamily,
+  stringstyle=\color{red}\ttfamily,
+  morestring=[b]',
+  morestring=[b]"
+}
 
 \definecolor{red}{rgb}{0.6,0,0} 
 \definecolor{blue}{rgb}{0,0,0.6}

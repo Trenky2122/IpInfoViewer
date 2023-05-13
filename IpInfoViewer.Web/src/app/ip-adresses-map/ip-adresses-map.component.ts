@@ -37,9 +37,9 @@ export class IpAdressesMapComponent implements OnInit{
   getLayers(mapPoints: MapIpAddressRepresentation[], zoom: number): Leaflet.Layer[]{
     return [
       new Leaflet.TileLayer('http://localhost:8082/osm/{z}/{x}/{y}.png',
-        {attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors', minZoom: 3}),
+        {attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors', minZoom: 3, maxZoom: 7}),
       ...this.getMarkers(mapPoints, zoom),
-      ...this.getTooltips(mapPoints, zoom)
+      //...this.getTooltips(mapPoints, zoom)
     ] as Leaflet.Layer[]
   };
 
@@ -81,8 +81,8 @@ export class IpAdressesMapComponent implements OnInit{
   }
 
   pingToColor(ping: number) {
-    let upperBound = 500;
-    let lowerBound = 20;
+    const upperBound = 500;
+    const lowerBound = 5;
     let pingInBounds = ping;
     if(pingInBounds < lowerBound)
       pingInBounds = lowerBound;

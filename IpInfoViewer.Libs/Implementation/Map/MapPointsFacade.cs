@@ -49,7 +49,7 @@ namespace IpInfoViewer.Libs.Implementation.Map
         private static (int Latitude, int Longitude) GetApproximateLocation(IpAddressInfo ipAddressInfo)
         {
             int latitudeApproximation = 3;
-            int longitudeApproximation = 8; //the lesser, more approximate map
+            int longitudeApproximation = 6; //the lesser, the more approximate map
             int roundedLatitude = Convert.ToInt32(ipAddressInfo.Latitude);
             int roundedLongitude = Convert.ToInt32(ipAddressInfo.Longitude);
             return (roundedLatitude - roundedLatitude % latitudeApproximation, roundedLongitude - roundedLongitude % longitudeApproximation);
@@ -87,7 +87,7 @@ namespace IpInfoViewer.Libs.Implementation.Map
             for (int i = 1; i <= 5; i++)
             {
                 var legendPlaceholderContent = svg.GetElementByID($"ph{i}").Children[0] as SvgContentElement;
-                legendPlaceholderContent.Content = $"Ping {legendPingValues[i - 1]} ms";
+                legendPlaceholderContent!.Content = $"Ping {legendPingValues[i - 1]} ms";
 
                 var circle = svg.GetElementByID($"size{i}") as SvgEllipseElement;
                 var radiusLength = new SvgLength(sizeInformation[i-1].Radius, SvgLengthUnits.Pixels);
@@ -122,7 +122,7 @@ namespace IpInfoViewer.Libs.Implementation.Map
 
         private List<int> GetLegendPingValues(int upperBound)
         {
-            const int lowerBound = 20;
+            const int lowerBound = 5;
             return new List<int>
             {
                 lowerBound,
