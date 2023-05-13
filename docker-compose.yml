@@ -17,7 +17,7 @@ services:
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
     volumes:
       - C:\Users\Peter\.aspnet\https:/https
-      - $APPDATA/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - $APPDATA\Microsoft\UserSecrets:/root/.microsoft/usersecrets:ro
   osm:
     image: andreimagic/openstreetmaps:v2
     ports:
@@ -35,3 +35,11 @@ services:
       interval    : 1s
       timeout: 5s
       retries: 10
+  country-ping-info:
+    build: 
+      context: .
+      dockerfile: .\IpInfoViewer.CountryPingInfoService\Dockerfile
+    environment:
+      - DOTNEt_ENVIRONMENT=Development
+    volumes:
+      - $APPDATA\Microsoft\UserSecrets:/root/.microsoft/usersecrets:ro

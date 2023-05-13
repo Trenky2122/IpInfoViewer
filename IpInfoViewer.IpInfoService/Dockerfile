@@ -6,6 +6,7 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["IpInfoViewer.IpInfoService/IpInfoViewer.IpInfoService.csproj", "IpInfoViewer.IpInfoService/"]
+COPY ["IpInfoViewer.Libs/IpInfoViewer.Libs.csproj", "IpInfoViewer.Libs/"]
 RUN dotnet restore "IpInfoViewer.IpInfoService/IpInfoViewer.IpInfoService.csproj"
 COPY . .
 WORKDIR "/src/IpInfoViewer.IpInfoService"

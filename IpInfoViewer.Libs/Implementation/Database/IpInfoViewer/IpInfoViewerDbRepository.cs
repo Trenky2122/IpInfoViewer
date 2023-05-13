@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Net;
+using System.Net.WebSockets;
 using System.Text;
 using Dapper;
 using IpInfoViewer.Libs.Models;
@@ -31,6 +32,12 @@ namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
             return new NpgsqlConnection(_connectionString);
         }
 
+        private static async Task<NpgsqlTransaction> CreateTransaction(NpgsqlConnection conn)
+        {
+            await conn.OpenAsync();
+            return await conn.BeginTransactionAsync();
+        }
+
         #endregion
 
         #region Create Tables
@@ -43,7 +50,6 @@ namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
             connection.Open();
             await CreateIpTable(connection);
             await CreateMapIpRepresentationTable(connection);
-            await CreateChartsTable(connection);
             await CreateCountryPingInfoTable(connection);
         }
 
@@ -71,17 +77,6 @@ namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
                          "ValidFrom Date, " +
                          "ValidTo Date);" +
                          "CREATE UNIQUE INDEX IF NOT EXISTS index2 ON MapIpRepresentation (Latitude, Longitude, ValidFrom, ValidTo);";
-            return connection.ExecuteAsync(sql);
-        }
-
-        private Task CreateChartsTable(NpgsqlConnection connection)
-        {
-            string sql = "CREATE TABLE IF NOT EXISTS Charts (" +
-                         "Id SERIAL PRIMARY KEY," +
-                         "Name Varchar(50)," +
-                         "XAxis Varchar(50)," +
-                         "YAxis Varchar(50)," +
-                         "ChartType int);";
             return connection.ExecuteAsync(sql);
         }
 
@@ -116,20 +111,30 @@ namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
             await command.ExecuteNonQueryAsync();
         }
 
-        public async Task SaveMapIpAddressRepresentation(MapPoint representation)
+        public async Task SaveMapIpAddressRepresentations(IEnumerable<MapPoint> representations)
         {
             await using var connection = CreateConnection();
-            string sql = "INSERT INTO MapIpRepresentation (Latitude, Longitude, IpAddressesCount, AveragePingRtT, ValidFrom, ValidTo) " +
-                         "VALUES (@Latitude, @Longitude, @IpAddressesCount, @AveragePingRtT, @ValidFrom, @ValidTo)";
-            await connection.ExecuteAsync(sql, representation);
+            var transaction = await CreateTransaction(connection);
+            foreach (var representation in representations)
+            {
+                string sql = "INSERT INTO MapIpRepresentation (Latitude, Longitude, IpAddressesCount, AveragePingRtT, ValidFrom, ValidTo) " +
+                             "VALUES (@Latitude, @Longitude, @IpAddressesCount, @AveragePingRtT, @ValidFrom, @ValidTo)";
+                await connection.ExecuteAsync(sql, representation, transaction);
+            }
+            await transaction.CommitAsync();
         }
 
-        public async Task SaveCountryPingInfo(CountryPingInfo countryPingInfo)
+        public async Task SaveCountryPingInfos(IEnumerable<CountryPingInfo> countryPingInfos)
         {
             await using var connection = CreateConnection();
-            string sql = "INSERT INTO CountryPingInfo (CountryCode, IpAddressesCount, AveragePingRtT, ValidFrom, ValidTo) " +
-                         "VALUES (@CountryCode, @IpAddressesCount, @AveragePingRtT, @ValidFrom, @ValidTo)";
-            await connection.ExecuteAsync(sql, countryPingInfo);
+            var transaction = await CreateTransaction(connection);
+            foreach (var countryPingInfo in countryPingInfos)
+            {
+                string sql = "INSERT INTO CountryPingInfo (CountryCode, IpAddressesCount, AveragePingRtT, ValidFrom, ValidTo) " +
+                             "VALUES (@CountryCode, @IpAddressesCount, @AveragePingRtT, @ValidFrom, @ValidTo)";
+                await connection.ExecuteAsync(sql, countryPingInfo, transaction);
+            }
+            await transaction.CommitAsync();
         }
 
         public async Task<IEnumerable<IpAddressInfo>> GetIpAddresses(int offset = 0, int limit = int.MaxValue)

@@ -4,6 +4,7 @@ using IpInfoViewer.Libs.Implementation.Database.IpInfoViewer;
 using IpInfoViewer.Libs.Implementation.Database.MFile;
 using IpInfoViewer.Libs.Models;
 using IpInfoViewer.Libs.Utilities;
+using Microsoft.Extensions.Logging;
 
 namespace IpInfoViewer.Libs.Implementation.Map
 {
@@ -11,10 +12,12 @@ namespace IpInfoViewer.Libs.Implementation.Map
     {
         private readonly IIpInfoViewerDbRepository _localDb;
         private readonly IMFileDbRepository _mFileDb;
-        public MapPointsFacade(IIpInfoViewerDbRepository localDb, IMFileDbRepository mFileDb)
+        private readonly ILogger<MapPointsFacade> _logger;
+        public MapPointsFacade(IIpInfoViewerDbRepository localDb, IMFileDbRepository mFileDb, ILogger<MapPointsFacade> logger)
         {
             _localDb = localDb;
             _mFileDb = mFileDb;
+            _logger = logger;
         }
 
         public async Task ExecuteSeedingAsync(CancellationToken stoppingToken)
@@ -29,9 +32,16 @@ namespace IpInfoViewer.Libs.Implementation.Map
                 stoppingToken,
                 async (week, token) =>
                 {
-                    await ProcessWeekAsync(week, addressesGroupedByLocation);
+                    try
+                    {
+                        await ProcessWeekAsync(week, addressesGroupedByLocation);
 
-                    Console.WriteLine($"{DateTime.Now} Week from {week.Monday} processed.");
+                        _logger.LogInformation("{now} Week from {week} processed.", DateTime.Now, week);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogError(e, "Failed to process week {week}.", week);
+                    }
                 }
             );
         }
@@ -65,10 +75,7 @@ namespace IpInfoViewer.Libs.Implementation.Map
                 };
                 return result;
             }).Where(x => x != null).ToList();
-            foreach (var point in mapPoints)
-            {
-                await _localDb.SaveMapIpAddressRepresentation(point);
-            }
+            await _localDb.SaveMapIpAddressRepresentations(mapPoints);
         }
 
         public string GetIpMapLegend(

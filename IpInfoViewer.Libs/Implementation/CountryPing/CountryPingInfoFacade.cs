@@ -5,6 +5,7 @@ using IpInfoViewer.Libs.Implementation.Database.IpInfoViewer;
 using IpInfoViewer.Libs.Implementation.Database.MFile;
 using IpInfoViewer.Libs.Models;
 using IpInfoViewer.Libs.Utilities;
+using Microsoft.Extensions.Logging;
 
 namespace IpInfoViewer.Libs.Implementation.CountryPing
 {
@@ -13,18 +14,20 @@ namespace IpInfoViewer.Libs.Implementation.CountryPing
 
         private readonly IIpInfoViewerDbRepository _localDb;
         private readonly IMFileDbRepository _mFileDb;
+        private readonly ILogger<CountryPingInfoFacade> _logger;
 
-        public CountryPingInfoFacade(IIpInfoViewerDbRepository localDb, IMFileDbRepository mFileDb)
+        public CountryPingInfoFacade(IIpInfoViewerDbRepository localDb, IMFileDbRepository mFileDb, ILogger<CountryPingInfoFacade> logger)
         {
             _localDb = localDb;
             _mFileDb = mFileDb;
+            _logger = logger;
         }
 
         public async Task ExecuteSeedingAsync(CancellationToken stoppingToken)
         {
             await _localDb.SeedTables();
             var allAddresses = await _localDb.GetIpAddresses();
-            var addressesGroupedByLocation = allAddresses.GroupBy(address => address.CountryCode);
+            var addressesGroupedByCountry = allAddresses.GroupBy(address => address.CountryCode);
             var lastProcessedDate = await _localDb.GetLastDateWhenCountriesAreProcessed() ?? new DateTime(2008, 4, 26); //first data from mfile database are by this date
             Week lastProcessedWeek = new(lastProcessedDate);
             // parallel foreach used in case of first run or first run after weeks
@@ -32,9 +35,16 @@ namespace IpInfoViewer.Libs.Implementation.CountryPing
                 stoppingToken,
                 async (week, token) =>
                 {
-                    await ProcessWeekAsync(week, addressesGroupedByLocation);
+                    try
+                    {
+                        await ProcessWeekAsync(week, addressesGroupedByCountry);
 
-                    Console.WriteLine($"{DateTime.Now} Week from {week.Monday} processed.");
+                        _logger.LogInformation("{now} Week from {week} processed.", DateTime.Now, week);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogError(e, "Failed to process week {week}.", week);
+                    }
                 }
             );
         }
@@ -42,7 +52,7 @@ namespace IpInfoViewer.Libs.Implementation.CountryPing
         public async Task ProcessWeekAsync(Week week, IEnumerable<IGrouping<string, IpAddressInfo>> addressesGroupedByCountry)
         {
             var ipAveragePings = await _mFileDb.GetAverageRtTForIpForWeek(week);
-            var mapPoints = addressesGroupedByCountry.Select(group =>
+            var countryPingInfos = addressesGroupedByCountry.Select(group =>
             {
                 var pings = group.Select(addr =>
                     ipAveragePings.FirstOrDefault(p => p.Item1.Item1.Equals(addr.IpValue.Item1))?.Item2).ToList();
@@ -58,10 +68,7 @@ namespace IpInfoViewer.Libs.Implementation.CountryPing
                 };
                 return result;
             }).Where(x => x != null).ToList();
-            foreach (var point in mapPoints)
-            {
-                await _localDb.SaveCountryPingInfo(point);
-            }
+            await _localDb.SaveCountryPingInfos(countryPingInfos);
         }
 
         public async Task<string> GetColoredSvgMapForWeek(string weekStr, bool fullScale)
@@ -71,6 +78,7 @@ namespace IpInfoViewer.Libs.Implementation.CountryPing
             var countryPingInfo = await _localDb.GetCountryPingInfoForWeek(week);
             const int defaultUpperBound = 500;
             int upperBound = fullScale ? await _localDb.GetMaximumCountryPingForWeek(week) : defaultUpperBound;
+            var countryPingDict = new Dictionary<string, float>();
             foreach (var country in countryPingInfo)
             {
                 var countriesSvg = svg.GetElementsByClass(country.CountryCode);
@@ -78,6 +86,23 @@ namespace IpInfoViewer.Libs.Implementation.CountryPing
                 foreach (var countrySvg in countriesSvg)
                 {
                     countrySvg.Fill = new SvgPaint(Color.FromArgb(color.Red, color.Green, 0));
+                }
+                countryPingDict.Add(country.CountryCode, country.AveragePingRtT);
+            }
+
+            foreach (var countryKvp in GeographicUtilities.CountryCodeToNameDictionary)
+            {
+                var countrySvgs = svg.GetElementsByClass(countryKvp.Key);
+                foreach (var svgPath in countrySvgs)
+                {
+                    bool pingFound = countryPingDict.TryGetValue(countryKvp.Key, out float ping);
+                    svgPath.Children.Clear();
+                    SvgTitleElement title = new();
+                    title.Children.Add(new SvgContentElement()
+                    {
+                        Content = countryKvp.Value + (pingFound ?$": {ping}":"") 
+                    });
+                    svgPath.Children.Add(title);
                 }
             }
 

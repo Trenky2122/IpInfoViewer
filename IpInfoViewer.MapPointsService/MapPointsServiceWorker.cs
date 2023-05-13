@@ -18,9 +18,12 @@ namespace IpInfoViewer.MapPointsService
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("MapPointsServiceWorker running at: {time}", DateTimeOffset.Now);
-            await _mapPointsFacade.ExecuteSeedingAsync(stoppingToken);
-            Environment.Exit(0);
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                _logger.LogInformation("MapPointsServiceWorker running at: {time}", DateTimeOffset.Now);
+                await _mapPointsFacade.ExecuteSeedingAsync(stoppingToken);
+                await Task.Delay(TimeSpan.FromDays(7), stoppingToken); // make sure program
+            }
         }
 
         

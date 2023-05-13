@@ -7,6 +7,7 @@ using GrapeCity.Documents.Text;
 using IpInfoViewer.Libs.Implementation.Database.IpInfoViewer;
 using IpInfoViewer.Libs.Implementation.Database.MFile;
 using IpInfoViewer.Libs.Implementation.Map;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace IpInfoViewer.Test
@@ -23,7 +24,7 @@ namespace IpInfoViewer.Test
         {
             var mockDb = new Mock<IIpInfoViewerDbRepository>();
             mockDb.Setup(repository => repository.GetLastDateWhenMapIsProcessed()).ReturnsAsync(new DateTime(year, month, day));
-            var facade = new MapPointsFacade(mockDb.Object, new Mock<IMFileDbRepository>().Object);
+            var facade = new MapPointsFacade(mockDb.Object, new Mock<IMFileDbRepository>().Object, Mock.Of<ILogger<MapPointsFacade>>());
             var result = await facade.GetLastProcessedWeek();
             Assert.NotNull(result);
             Assert.Equal(expectedResult, result);
