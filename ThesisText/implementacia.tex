@@ -53,7 +53,7 @@ Tento projekt je ASP.NET Core 6.0 aplikácia bežiaca na webovom serveri Kestrel
     To znamená, že v súbore Program.cs je vynechaná inicializácia triedy Program a metódy Main, nakoľko bola v každom 
     programe rovnaká. Vnútorne sú však tieto triedy stále používané, ide len o syntaktickú skratku. Používanie top-level statements 
     je dobrovoľné, vrámci čistoty kódu ich ale využívame.
-    \begin{lstlisting}[float,language={[Sharp]C},caption={Ukážka kódu triedy Program bez použitia top-level statements},label=alg:Program_Old]
+    \begin{lstlisting}[language={[Sharp]C},caption={Ukážka kódu triedy Program bez použitia top-level statements},label=alg:Program_Old]
         class Program 
         {
             public static void Main(string[] args) 
@@ -62,7 +62,7 @@ Tento projekt je ASP.NET Core 6.0 aplikácia bežiaca na webovom serveri Kestrel
             }
         }
     \end{lstlisting}
-    \begin{lstlisting}[float,language={[Sharp]C},caption={Ukážka kódu triedy Program s použitím top-level statements},label=alg:Program_New]
+    \begin{lstlisting}[language={[Sharp]C},caption={Ukážka kódu triedy Program s použitím top-level statements},label=alg:Program_New]
         System.Console.WriteLine("Hello World");
     \end{lstlisting}
     \item MapPointsController
@@ -138,6 +138,9 @@ konfiguračné súbory, preto ku konfliktu nedochádza. Knižnica IpInfoViewer.L
     \item DateTimeUtilities
     - Trieda zoskupujúca pomocné metódy na prácu s časom. Momentálne má len jednu metódu GetWeeksFromTo, ktorá prijme dva dátumy a vráti zoznam týždňov 
     medzi nimi.
+    \item GeographicUtilities
+    - Trieda zoskupujúca pomocné metódy na prácu s geografickými dátami. Momentálne obsahuje jeden konštantný slovník CountryCodeToNameDictionary, ktorý slúži 
+    na prevod ISO 3166-1 Alpha 2 kódu na ISO názov krajiny.
     \item Host
     - Model predstavujúci jednu IP adresu v zdrojovej databáze.
     \item Ping
@@ -201,7 +204,7 @@ v prehliadači stále zvládala zobrazovať. Následne sme postupným pridávan�
 následne vynásobili tromi, pretože približne dve tretiny zemského povrchu tvorí voda, v ktorej neočakávame takmer žiadne odpovedajúce IP adresy. Teda z 18000 
 sektorov bude približne 12000 prázdnych a teda sa zmestíme do 6000 vykreslených kruhov. 
 
-\begin{lstlisting}[float,language={TypeScript},caption={Ukážka kódu použitého na testovanie počtu možných skupín},label=alg:Markers_Seed]
+\begin{lstlisting}[language={TypeScript},caption={Ukážka kódu použitého na testovanie počtu možných skupín},label=alg:Markers_Seed]
     getMarkers(mapPoints: MapIpAddressRepresentation[], zoom: number): Leaflet.CircleMarker[] {
         let markers: Leaflet.CircleMarker[] = [];
         for(let lat= -90; lat<=90; lat++){
@@ -222,7 +225,7 @@ neviditeľné. Vzorec na výpočet tiež obsahuje aj úroveň priblíženia, pre
 menšie a rastú s úrovňou priblíženia. Konkrétny vzorec bol upravený tak, aby kruhy na mape vyzerali prirodzene. Vzorec je uvedený v 
 ukážke \ref{alg:Count_To_Size}.
 
-\begin{lstlisting}[float,language={TypeScript},caption={Ukážka kódu na výpočet veľkosti kruhu z počtu IP adries v sektore},label=alg:Count_To_Size]
+\begin{lstlisting}[language={TypeScript},caption={Ukážka kódu na výpočet veľkosti kruhu z počtu IP adries v sektore},label=alg:Count_To_Size]
     ipCountToCircleRadius(ipCount: number, zoom: number): number{
         return 0.5 * Math.log(ipCount) * zoom;
     }
@@ -235,7 +238,7 @@ RGB hodnotami v HTML notácií \lstinline{#00FF00} do \lstinline{#FF0000} s rast
 Túto hranicu sme zvolili preto, že odchýlky k najvyššej dobe odozvy pri niektorých týždňoch boli priveľké. Ako spodnú hranicuu pre absolútnu zelenú sme zvolili 
 hodnotu 5 ms, pretože menšie hodnoty považujeme za zanedbateľné z hľadiska odchýlky merania. Presný algoritmus je uvedený v ukážke \ref{alg:Ping_to_color}.
 
-\begin{lstlisting}[float,language={TypeScript},caption={Ukážka kódu na výpočet veľkosti kruhu z počtu IP adries v sektore},label=alg:Ping_to_color]
+\begin{lstlisting}[language={TypeScript},caption={Ukážka kódu na výpočet veľkosti kruhu z počtu IP adries v sektore},label=alg:Ping_to_color]
     pingToColor(ping: number) {
         const upperBound = 500;
         const lowerBound = 5;
@@ -253,15 +256,20 @@ hodnotu 5 ms, pretože menšie hodnoty považujeme za zanedbateľné z hľadiska
 
 \subsection{Mapa krajín sveta zafarbených podľa priemernej doby odozvy}
 Keďže knižnica Leaflet nepodporuje jednoduchý spôsob zafarbovania celých krajín, namiesto toho sme sa rozhodli použiť iný postup. Pomocou vyhľadávača sme
-našli vzor mapy sveta vo fromáte SVG. Tento formát má tú výhodu, že ak vieme priradiť ku konkrétnej krajine daný objekt jej tvaru na obrázku, vieme v programe 
-jednoducho tento objekt uchopiť a prefarbiť. SVG vzor, ktorý sme použili \cite{svg_mapa} mal predpoklady na takéto priradenie, pre optimálne použitie 
-ho však bolo treba upraviť. Hlavný problém nezmeneného templatu bolo nekonzistenté pomenovávanie prvkov \lstinline{path}, kde boli náhodne pre rôzne prvky 
-pomenované ISO 2 kôdom v atribúte id, menom krajiny v atribúte name alebo menom krajiny v atribúte class či ľubovoľnou kombináciouv daných atribútov. 
-Pre nás bolo najvhodnejšie tento systém zjednotiť pre všetky prvky rovnako. Z toho dôvodu sme vylúčili možnosť ISO 2 kódu v atribúte id, pretože rôzne krajiny 
+našli vzor mapy sveta vo fromáte SVG. Na prácu s dokumentmi SVG existuje v jazyku C\# niekoľko knižníc, my sme sa rozhodli pre knižnicu GrapeCity. 
+Formát SVG má tú výhodu, že ak vieme priradiť ku konkrétnej krajine daný objekt jej tvaru na obrázku, vieme v programe 
+jednoducho tento objekt uchopiť a prefarbiť. SVG vzor, ktorý sme použili \cite{svg_mapa} mal predpoklady na takéto priradenie, pre optimálne použitie ich 
+však bolo treba upraviť. Hlavný problém nezmeneného templatu bolo nekonzistenté pomenovávanie prvkov \lstinline{path}, kde boli náhodne pre rôzne prvky 
+pomenované ISO 3166-1 Alpha 2 kôdom v atribúte id, menom krajiny v atribúte name alebo menom krajiny v atribúte class či ľubovoľnou kombináciouv daných atribútov. 
+Pre nás bolo najvhodnejšie tento systém zjednotiť pre všetky prvky rovnako. Z toho dôvodu sme vylúčili možnosť ISO 3166-1 Alpha 2 kódu v atribúte id, pretože rôzne krajiny 
 sa môžu skladať z viacerých prvkov \lstinline{path} (napríklad rôzne ostrovy), no id musí byť jedinečné pre konkrétny SVG dokument. Atribút name je netypický 
-pre svg dokumenty a použitá knižnica v C\# s ním nevie pracovať, preto sme si zvolili identifikáciu podľa atribútu class. Ďaľší problém je, že niektoré krajiny 
+pre SVG dokumenty a použitá knižnica v C\# s ním nevie pracovať, preto sme si zvolili identifikáciu podľa atribútu class. Ďaľší problém je, že niektoré krajiny 
 majú viacero dlhých názvov, no my potrebujeme jeden jednoznačný reťazec na identifikáciu. Preto sme sa rozhodli, že prvky \lstinline{path} budeme identifikovať 
-podľa ISO 2 kódu v atribúte class.
+podľa ISO 3166-1 Alpha 2 kódu v atribúte class. Preto pri spracovávaní dát pre tento graf ukkladáme ISO 3166-1 Alpha 2 kód krajiny. Súbor sme programaticky 
+upravili tak, aby všetky prvky \lstinline{path} mali v atribúte class aj hodnotu adekvátneho ISO 3166-1 kôdu. Pôvodné triedy sme ponechali tiež, pretože jeden 
+prvok môže patriť do viacerých tried, stačí ich oddeliť medzerou. 
+
+
 \begin{figure}
     \centerline{\includegraphics[width=0.8\textwidth]{images/world}}
     %popis obrazku
@@ -269,3 +277,44 @@ podľa ISO 2 kódu v atribúte class.
     %id obrazku, pomocou ktoreho sa budeme na obrazok odvolavat
     \label{obr:world}
 \end{figure}
+
+\begin{lstlisting}[language={XML},caption={Ukážka kódu neupravenej SVG mapy.},label=alg:map_orig]
+    ...
+    <path class="Canada" d="M 665.9 203.6 669.3 204.5 674 204.3 670.7 206.9 668.7 207.3 663.2 204.6 662.6 202.5 665.1 200.6 665.9 203.6 Z">
+    </path>
+    ...
+    <path d="M1633.1 472.8l2.2-2.4 4.6-3.6-0.1 3.2-0.1 4.1-2.7-0.2-1.1 2.2-2.8-3.3z" id="BN" name="Brunei Darussalam">
+    </path>
+    ...
+    <path class="Azerbaijan" d="M 1229 253.2 1225.2 252.3 1222 249.4 1220.8 246.9 1221.8 246.8 1223.7 248.5 1226 248.5 1226.2 249.5 1229 253.2 Z">
+    </path>
+    ...
+\end{lstlisting}
+
+\begin{lstlisting}[language={XML},caption={Ukážka kódu upravenej SVG mapy.},label=alg:map_edited]
+    ...
+    <path class="Canada CA " d="M665.9,203.6 669.3,204.5 674,204.3 670.7,206.9 668.7,207.3 663.2,204.6 662.6,202.5 665.1,200.6 665.9,203.6Z"/>
+    ...
+    <path id="BN" class=" BN" d="M1633.1,472.8l2.2,-2.4 4.6,-3.6 -.1,3.2 -.1,4.1 -2.7,-.2 -1.1,2.2 -2.8,-3.3z" name="Brunei Darussalam"/>
+    ...
+    <path class="Azerbaijan AZ " d="M1229,253.2 1225.2,252.3 1222,249.4 1220.8,246.9 1221.8,246.8 1223.7,248.5H1226L1226.2,249.5 1229,253.2Z"/>
+    ...
+\end{lstlisting}
+
+
+Na základe upravených tried sme boli schopní identifikovať krajiny aj pri pridávaní prvkov \lstinline{title}. Tento prvok má za následok to, že pri podržaní 
+kurzora myši nad danou krajinou sa zobrazí vyskakovacie okno s informáciou o názve krajiny a konkrétnou hodnotou doby odozvy. Na prevod medzi ISO 3166-1 Alpha 2 kódom, 
+ktorý je v atribúte class a názvom krajiny používame slovník, ktorý sme zostavili ako konštantu v triede GeographicUtilities. Ako zdroj pre tento tento zoznam 
+sme použili voľný súbor vo formáte JSON \cite{country_codes}. Pre úpravu do formátu, v akom sa v jazyku C\# definujú slovníky, sme použili nástroj pre nájdenie 
+a nahradenie v programe Visual Studio, ktorým sme reťazce \lstinline{"Name": } a \lstinline{"Code": } nahradili prázdnym reťazcom. 
+
+\begin{lstlisting}[language={[Sharp]C},caption={Ukážka kódu CountryCodeToNameDictionary},label=alg:country_code_to_country_dict]
+    public static Dictionary<string, string> CountryCodeToNameDictionary = new Dictionary<string, string>()
+    {
+        { "AF", "Afghanistan" },
+        { "AX", "\u00c5land Islands" },
+        { "AL", "Albania" },
+        { "DZ", "Algeria" },
+    ...
+    };
+\end{lstlisting}

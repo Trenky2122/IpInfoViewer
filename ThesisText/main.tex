@@ -45,6 +45,7 @@ catch, switch, var, if, in, while, do, else, case, break, let, number, boolean, 
 \definecolor{blue}{rgb}{0,0,0.6}
 \definecolor{green}{rgb}{0,0.8,0}
 \definecolor{cyan}{rgb}{0.0,0.6,0.6}
+\definecolor{darkblue}{rgb}{0.0,0.0,0.6}
 
 \lstset{
 language=csh,
@@ -91,6 +92,17 @@ enum, namespace, string},
 emphstyle={\color{cyan}\bfseries},
 keywordstyle=\color{cyan},
 identifierstyle=\color{red},
+}
+
+\lstdefinelanguage{XML}
+{
+  morestring=[b]",
+  morestring=[s]{>}{<},
+  morecomment=[s]{<?}{?>},
+  stringstyle=\color{red},
+  identifierstyle=\color{darkblue},
+  keywordstyle=\color{cyan},
+  morekeywords={xmlns,version,type}% list your attributes here
 }
 
 

@@ -78,7 +78,7 @@ namespace IpInfoViewer.Libs.Implementation.CountryPing
             var countryPingInfo = await _localDb.GetCountryPingInfoForWeek(week);
             const int defaultUpperBound = 500;
             int upperBound = fullScale ? await _localDb.GetMaximumCountryPingForWeek(week) : defaultUpperBound;
-            var countryPingDict = new Dictionary<string, float>();
+            var countryPingDict = new Dictionary<string, (float Ping, int Count)>();
             foreach (var country in countryPingInfo)
             {
                 var countriesSvg = svg.GetElementsByClass(country.CountryCode);
@@ -87,7 +87,7 @@ namespace IpInfoViewer.Libs.Implementation.CountryPing
                 {
                     countrySvg.Fill = new SvgPaint(Color.FromArgb(color.Red, color.Green, 0));
                 }
-                countryPingDict.Add(country.CountryCode, country.AveragePingRtT);
+                countryPingDict.Add(country.CountryCode, (country.AveragePingRtT, country.IpAddressesCount));
             }
 
             foreach (var countryKvp in GeographicUtilities.CountryCodeToNameDictionary)
@@ -95,12 +95,12 @@ namespace IpInfoViewer.Libs.Implementation.CountryPing
                 var countrySvgs = svg.GetElementsByClass(countryKvp.Key);
                 foreach (var svgPath in countrySvgs)
                 {
-                    bool pingFound = countryPingDict.TryGetValue(countryKvp.Key, out float ping);
+                    bool pingFound = countryPingDict.TryGetValue(countryKvp.Key, out var countryData);
                     svgPath.Children.Clear();
                     SvgTitleElement title = new();
                     title.Children.Add(new SvgContentElement()
                     {
-                        Content = countryKvp.Value + (pingFound ?$": {ping}":"") 
+                        Content = countryKvp.Value + (pingFound ?$": {countryData.Ping} ms, {countryData.Count} addr. total":"") 
                     });
                     svgPath.Children.Add(title);
                 }
