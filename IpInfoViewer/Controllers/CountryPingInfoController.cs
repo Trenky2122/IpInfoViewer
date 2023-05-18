@@ -1,5 +1,6 @@
 ﻿using IpInfoViewer.Libs.Implementation.CountryPing;
 using IpInfoViewer.Libs.Models;
+using IpInfoViewer.Libs.Models.Enums;
 using IpInfoViewer.Libs.Utilities;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,9 +18,9 @@ namespace IpInfoViewer.Api.Controllers
         }
 
         [HttpGet("ColoredMap/{week}")]
-        public async Task<ContentResult> GetColoredSvgMapAsync(string week, bool fullScale)
+        public async Task<ContentResult> GetColoredSvgMapAsync(string week, RequestedDataEnum requestedData, ScaleMode scaleMode)
         {
-            return Content(await _countryFacade.GetColoredSvgMapForWeek(week, fullScale), "image/svg+xml");
+            return Content(await _countryFacade.GetColoredSvgMapForWeek(week, requestedData, scaleMode), "image/svg+xml");
         }
 
         [HttpGet("LastProcessedDate/")]

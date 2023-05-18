@@ -1,5 +1,21 @@
 <h1>Zobrazenie údajov za týždeň, zoskupených podľa geograficlej lokality</h1>
 <input type="week" [(ngModel)]="week" (change)="setMapPointsForWeek()">
+<mat-form-field appearance="fill">
+  <mat-label>Škála farieb</mat-label>
+  <mat-select [(value)]="scaleMode" (valueChange)="setMapPointsForWeek()">
+    <mat-option value="averageToAverage">Priemerná hodnota na priemer</mat-option>
+    <mat-option value="maximumToMaximum">Maximálna hodnota na maximum</mat-option>
+    <mat-option value="constantMaximum">Konštantná hodnota na maximum</mat-option>
+  </mat-select>
+</mat-form-field>
+<mat-form-field appearance="fill">
+  <mat-label>Hodnoty na zobrazenie</mat-label>
+  <mat-select [(value)]="requestedData" (valueChange)="setMapPointsForWeek()">
+    <mat-option value="maximum">Maximum</mat-option>
+    <mat-option value="minimum">Minimum</mat-option>
+    <mat-option value="average">Priemer</mat-option>
+  </mat-select>
+</mat-form-field>
 <div class="map" style="position: relative"
      leaflet
      [leafletOptions]="options"

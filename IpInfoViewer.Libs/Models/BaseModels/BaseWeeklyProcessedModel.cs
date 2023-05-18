@@ -2,7 +2,9 @@
 {
     public class BaseWeeklyProcessedModel: BaseModel
     {
-        public DateTime ValidFrom { get; set; }
-        public DateTime ValidTo { get; set; }
+        /// <summary>
+        /// Week in HTML (ISO_8601) format e.g. (2023-W25)
+        /// </summary>
+        public string Week { get; set; }
     }
 }

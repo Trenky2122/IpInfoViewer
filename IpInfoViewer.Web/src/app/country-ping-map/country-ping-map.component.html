@@ -1,4 +1,19 @@
 <h1>Zobrazenie údajov za týždeň, zoskupených podľa krajiny</h1>
 <input type="week" [(ngModel)]="week" (change)="changeWeek()">
-<mat-slide-toggle [(ngModel)]="fullScale" (change)="changeWeek()">Use full scale</mat-slide-toggle>
+<mat-form-field appearance="fill">
+  <mat-label>Škála farieb</mat-label>
+  <mat-select [(value)]="scaleMode" (valueChange)="changeWeek()">
+    <mat-option value="averageToAverage">Priemerná hodnota na priemer</mat-option>
+    <mat-option value="maximumToMaximum">Maximálna hodnota na maximum</mat-option>
+    <mat-option value="constantMaximum">Konštantná hodnota na maximum</mat-option>
+  </mat-select>
+</mat-form-field>
+<mat-form-field appearance="fill">
+  <mat-label>Hodnoty na zobrazenie</mat-label>
+  <mat-select [(value)]="requestedData" (valueChange)="changeWeek()">
+    <mat-option value="maximum">Maximum</mat-option>
+    <mat-option value="minimum">Minimum</mat-option>
+    <mat-option value="average">Priemer</mat-option>
+  </mat-select>
+</mat-form-field>
 <object [data]="svgLink | safe:'resourceUrl'" style="width: 100%" type="image/svg+xml"></object>

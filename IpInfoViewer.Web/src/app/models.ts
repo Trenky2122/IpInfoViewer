@@ -10,6 +10,8 @@ export interface IpAdress{
 export interface MapIpAddressRepresentation{
   id: number;
   averagePingRtT: number;
+  maximumPingRtT: number;
+  minimumPingRtT: number;
   ipAddressesCount: number;
   latitude: number;
   longitude: number;

@@ -1,9 +1,11 @@
 ﻿using System.Drawing;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using GrapeCity.Documents.Svg;
 using IpInfoViewer.Libs.Implementation.Database.IpInfoViewer;
 using IpInfoViewer.Libs.Implementation.Database.MFile;
 using IpInfoViewer.Libs.Models;
+using IpInfoViewer.Libs.Models.Enums;
 using IpInfoViewer.Libs.Utilities;
 using Microsoft.Extensions.Logging;
 
@@ -28,7 +30,7 @@ namespace IpInfoViewer.Libs.Implementation.CountryPing
             await _localDb.SeedTables();
             var allAddresses = await _localDb.GetIpAddresses();
             var addressesGroupedByCountry = allAddresses.GroupBy(address => address.CountryCode);
-            var lastProcessedDate = await _localDb.GetLastDateWhenCountriesAreProcessed() ?? new DateTime(2008, 4, 26); //first data from mfile database are by this date
+            var lastProcessedDate = await _localDb.GetLastDateWhenCountriesAreProcessed() ?? "2008-W16"; //first data from mfile database are by this date
             Week lastProcessedWeek = new(lastProcessedDate);
             // parallel foreach used in case of first run or first run after weeks
             await Parallel.ForEachAsync(DateTimeUtilities.GetWeeksFromTo(lastProcessedWeek.Next().Monday, DateTime.Today.AddDays(-7) /* only already finished weeks*/),
@@ -51,43 +53,52 @@ namespace IpInfoViewer.Libs.Implementation.CountryPing
 
         public async Task ProcessWeekAsync(Week week, IEnumerable<IGrouping<string, IpAddressInfo>> addressesGroupedByCountry)
         {
-            var ipAveragePings = await _mFileDb.GetAverageRtTForIpForWeek(week);
+            var ipAveragePings = await _mFileDb.GetWeekPingData(week);
             var countryPingInfos = addressesGroupedByCountry.Select(group =>
             {
                 var pings = group.Select(addr =>
-                    ipAveragePings.FirstOrDefault(p => p.Item1.Item1.Equals(addr.IpValue.Item1))?.Item2).ToList();
-                if (!pings.Any(p => p.HasValue))
+                    ipAveragePings.FirstOrDefault(p => p.IpAddress.Item1.Equals(addr.IpValue.Item1))).
+                    Where(p => p is not null)
+                    .ToList();
+                if (!pings.Any())
                     return null;
                 var result = new CountryPingInfo()
                 {
                     CountryCode = group.Key,
                     IpAddressesCount = group.Count(),
-                    AveragePingRtT = Convert.ToSingle(pings.Where(p => p is > 0).Average(p => p ?? 0)),
-                    ValidFrom = week.Monday,
-                    ValidTo = week.Next().Monday.AddTicks(-1)
+                    AveragePingRtT = Convert.ToSingle(pings.Average(p => p.Average)),
+                    MinimumPingRtT = Convert.ToSingle(pings.Min(p => p.Minimum)),
+                    MaximumPingRtT = Convert.ToSingle(pings.Max(p => p.Maximum)),
+                    Week = week.ToString()
                 };
                 return result;
             }).Where(x => x != null).ToList();
             await _localDb.SaveCountryPingInfos(countryPingInfos);
         }
 
-        public async Task<string> GetColoredSvgMapForWeek(string weekStr, bool fullScale)
+        public async Task<string> GetColoredSvgMapForWeek(string weekStr, RequestedDataEnum requestedData, ScaleMode scaleMode)
         {
             Week week = new(weekStr);
             var svg = GcSvgDocument.FromFile(@"Assets/world.svg");
-            var countryPingInfo = await _localDb.GetCountryPingInfoForWeek(week);
+            var countryPingInfo = (await _localDb.GetCountryPingInfoForWeek(week)).ToList();
             const int defaultUpperBound = 500;
-            int upperBound = fullScale ? await _localDb.GetMaximumCountryPingForWeek(week) : defaultUpperBound;
-            var countryPingDict = new Dictionary<string, (float Ping, int Count)>();
+            int upperBound = scaleMode switch
+            {
+                ScaleMode.ConstantMaximum => defaultUpperBound,
+                ScaleMode.MaximumToMaximum => GetMaximumPingValueForWeekForRequestedData(countryPingInfo, requestedData),
+                ScaleMode.AverageToAverage => GetAveragePingValueForRequestedData(countryPingInfo, requestedData) * 2,
+                _ => throw new NotImplementedException()
+            };
+            var countryPingDict = new Dictionary<string, (float PingAvg, float PingMin, float PingMax, int Count)>();
             foreach (var country in countryPingInfo)
             {
                 var countriesSvg = svg.GetElementsByClass(country.CountryCode);
-                var color = CalculateColor(country.AveragePingRtT, upperBound);
+                var color = CalculateColor(GetRequestedPingValue(country, requestedData), upperBound);
                 foreach (var countrySvg in countriesSvg)
                 {
                     countrySvg.Fill = new SvgPaint(Color.FromArgb(color.Red, color.Green, 0));
                 }
-                countryPingDict.Add(country.CountryCode, (country.AveragePingRtT, country.IpAddressesCount));
+                countryPingDict.Add(country.CountryCode, (country.AveragePingRtT, country.MinimumPingRtT, country.MaximumPingRtT, country.IpAddressesCount));
             }
 
             foreach (var countryKvp in GeographicUtilities.CountryCodeToNameDictionary)
@@ -100,7 +111,8 @@ namespace IpInfoViewer.Libs.Implementation.CountryPing
                     SvgTitleElement title = new();
                     title.Children.Add(new SvgContentElement()
                     {
-                        Content = countryKvp.Value + (pingFound ?$": {countryData.Ping} ms, {countryData.Count} addr. total":"") 
+                        Content = countryKvp.Value + (pingFound ?$": {countryData.PingAvg} ms avg, {countryData.PingMin} ms min, " +
+                                                                 $"{countryData.PingMax} ms max, {countryData.Count} addr. total":"") 
                     });
                     svgPath.Children.Add(title);
                 }
@@ -117,12 +129,57 @@ namespace IpInfoViewer.Libs.Implementation.CountryPing
             return resultBuilder.ToString();
         }
 
-        public async Task<string?> GetLastProcessedWeek()
+        private static float GetRequestedPingValue(CountryPingInfo countryPingInfo, RequestedDataEnum requestedData)
         {
-            DateTime? lastProcessedDate = await _localDb.GetLastDateWhenCountriesAreProcessed();
-            if (!lastProcessedDate.HasValue)
-                return null;
-            return new Week(lastProcessedDate.Value).ToString();
+            switch (requestedData)
+            {
+                case RequestedDataEnum.Average:
+                    return countryPingInfo.AveragePingRtT;
+                case RequestedDataEnum.Maximum:
+                    return countryPingInfo.MaximumPingRtT;
+                case RequestedDataEnum.Minimum:
+                    return countryPingInfo.MinimumPingRtT;
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        private static int GetMaximumPingValueForWeekForRequestedData(IList<CountryPingInfo> countryPingInfos,
+            RequestedDataEnum requestedData)
+        {
+            if(!countryPingInfos.Any())
+                return 0;
+            switch (requestedData)
+            {
+                case RequestedDataEnum.Maximum:
+                    return Convert.ToInt32(countryPingInfos.MaxBy(cpi => cpi.MaximumPingRtT).MaximumPingRtT);
+                case RequestedDataEnum.Minimum:
+                    return Convert.ToInt32(countryPingInfos.MaxBy(cpi => cpi.MinimumPingRtT).MinimumPingRtT);
+                case RequestedDataEnum.Average:
+                    return Convert.ToInt32(countryPingInfos.MaxBy(cpi => cpi.AveragePingRtT).AveragePingRtT);
+                default: throw new NotImplementedException();
+            }
+        }
+        private static int GetAveragePingValueForRequestedData(IList<CountryPingInfo> countryPingInfos,
+            RequestedDataEnum requestedData)
+        {
+            if (!countryPingInfos.Any())
+                return 0;
+            switch (requestedData)
+            {
+                case RequestedDataEnum.Maximum:
+                    return Convert.ToInt32(countryPingInfos.Average(cpi => cpi.MaximumPingRtT));
+                case RequestedDataEnum.Minimum:
+                    return Convert.ToInt32(countryPingInfos.Average(cpi => cpi.MinimumPingRtT));
+                case RequestedDataEnum.Average:
+                    return Convert.ToInt32(countryPingInfos.Average(cpi => cpi.AveragePingRtT));
+                default: throw new NotImplementedException();
+            }
+        }
+
+        public Task<string?> GetLastProcessedWeek()
+        {
+            return _localDb.GetLastDateWhenCountriesAreProcessed();
         }
 
         private (int Red, int Green) CalculateColor(double ping, int upperBound)

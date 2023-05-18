@@ -43,3 +43,11 @@ services:
       - DOTNEt_ENVIRONMENT=Development
     volumes:
       - $APPDATA\Microsoft\UserSecrets:/root/.microsoft/usersecrets:ro
+  map-points-info:
+    build: 
+      context: .
+      dockerfile: .\IpInfoViewer.MapPointsService\Dockerfile
+    environment:
+      - DOTNEt_ENVIRONMENT=Development
+    volumes:
+      - $APPDATA\Microsoft\UserSecrets:/root/.microsoft/usersecrets:ro

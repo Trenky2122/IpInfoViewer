@@ -18,8 +18,8 @@ export class IpAddressInfoViewerService {
     return this.http.get<MapIpAddressRepresentation[]>(this.baseUrl + "MapPoints/ForWeek/" + week);
   }
 
-  public GetCountryPingInfoMapLink(week: string, fullScale: boolean): string{
-    return this.baseUrl + "CountryPingInfo/ColoredMap/" + week +"?fullScale="+fullScale;
+  public GetCountryPingInfoMapLink(week: string, scaleMode: string, requestedData: string): string{
+    return this.baseUrl + "CountryPingInfo/ColoredMap/" + week +"?scaleMode="+scaleMode+"&requestedData=" + requestedData;
   }
 
   public GetMapPointsLegendLink(counts: number[], radii: number[], pingUpperBound: number): string{

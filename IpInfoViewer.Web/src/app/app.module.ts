@@ -15,6 +15,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import {NgOptimizedImage} from "@angular/common";
 import {SafePipeModule} from "safe-pipe";
+import {MatSelectModule} from "@angular/material/select";
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import {SafePipeModule} from "safe-pipe";
     BrowserAnimationsModule,
     MatSlideToggleModule,
     NgOptimizedImage,
-    SafePipeModule
+    SafePipeModule,
+    MatSelectModule
   ],
   providers: [],
   bootstrap: [AppComponent],

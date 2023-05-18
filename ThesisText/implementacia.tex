@@ -265,7 +265,7 @@ Pre nás bolo najvhodnejšie tento systém zjednotiť pre všetky prvky rovnako.
 sa môžu skladať z viacerých prvkov \lstinline{path} (napríklad rôzne ostrovy), no id musí byť jedinečné pre konkrétny SVG dokument. Atribút name je netypický 
 pre SVG dokumenty a použitá knižnica v C\# s ním nevie pracovať, preto sme si zvolili identifikáciu podľa atribútu class. Ďaľší problém je, že niektoré krajiny 
 majú viacero dlhých názvov, no my potrebujeme jeden jednoznačný reťazec na identifikáciu. Preto sme sa rozhodli, že prvky \lstinline{path} budeme identifikovať 
-podľa ISO 3166-1 Alpha 2 kódu v atribúte class. Preto pri spracovávaní dát pre tento graf ukkladáme ISO 3166-1 Alpha 2 kód krajiny. Súbor sme programaticky 
+podľa ISO 3166-1 Alpha 2 kódu v atribúte class. Preto pri spracovávaní dát pre tento graf ukkladáme ISO 3166-1 Alpha 2 kód krajiny. Súbor sme programom 
 upravili tak, aby všetky prvky \lstinline{path} mali v atribúte class aj hodnotu adekvátneho ISO 3166-1 kôdu. Pôvodné triedy sme ponechali tiež, pretože jeden 
 prvok môže patriť do viacerých tried, stačí ich oddeliť medzerou. 
 
@@ -318,3 +318,31 @@ a nahradenie v programe Visual Studio, ktorým sme reťazce \lstinline{"Name": }
     ...
     };
 \end{lstlisting}
+
+\subsection{Priebeh priebežného spracovávania dát}
+Súčasťou nášho systému sú aj dve služby, ktoré majú za úlohu na pozadí priebežne spracovávať dáta pribúdajúce do tabuľky. Tieto služby sa spustia raz za týždeň 
+pomocou zabudovaného Linuxového nástroja cron, ktorý slúži ako plánovač úloh. Pre spustenie služby stačí spustiť kontainer príslušnej služby, služba sa spustí 
+spolu s ním. Po dokončení spracovávania sa služba sama ukončí. 
+
+Dáta sa pri každom novom spustení len doplnia, spracovanie sa nerobí odznova. Programy dopĺňajú dáta nasledovným spôsobom:
+\begin{itemize}
+    \item Program skontroluje, či existujú všetky potrebné tabuľky v databáze, ak nie tak ich vytvorí.
+    \item Program získa dátum posledných spracovaných dát. Ak tabuľka neobsahuje žiadne dáta, za posledný dátum sa určí 19.4.2008, čo je týždeň pred začatím
+    meraní, aby sa dáta začali spracovávať od prvého týždňa.
+    \item Z databázy sa vytiahne zoznam všetkých platných IP adries, pre ktoré máme geografické dáta.
+    \item Tieto adresy sa následne zoskupia podľa určených parametrov pre daný program pomocou metódy \lstinline{GroupBy} zo vstavanej C\# knižnice LinQ. To znamená,
+    že služba CountryPingInfoService zoskupí IP adresy podľa ISO 3166-1 Alpha 2 kódu príslušnej krajiny, kým služba MapPointsService zoskupí adresy podľa 
+    dvojice najbližšieho vyhovujúceho poludníka a najbližšej vyhovujúcej rovnobežky.
+    \item Zavolá sa funkcia enumerujúca týždne od posledného spracovania po súčasnosť.
+    \item Následne sa cez tieto týždne paralelne iteruje pomocou vstavanej metódy \lstinline{Paralel.ForEachAsync}, ktorá podporuje iteráciu na viacerych 
+    vláknach naraz, čo má z následok výrazne skrátenú dobu spracovávania, pretože dáta pre jednotlivé týždne nie sú od seba závislé.
+    \item Vrámci jednotlivej iterácie sa pre konkrétny týždeň vyberie zoznam všetkých meraní doby odozvy pomocou príkazu ping ktoré prebehli v daný týždeň. 
+    \item Následne sa vykoná projekcia pre všetky skupiny, pri ktorej sa na každú skupinu premietne jej výpočet priemernej doby odozvy v daný týždeň.
+    \item Výpočet pre jednotlivú skupinu prebieha tak, že sa pre každú IP adresu v skupine nájde jej príslušná doba odozvy pre daný týždeň zo zoznamu 
+    všetkých meraní.
+    \item Parametre danej skupiny a vypočítané hodnoty sa následne použijú na zostavenie výsledného objektu, teda CountryPingInfo alebo MapPoint.
+    \item Výsledné objekty sa nakoniec vrámci jednej transakcie zapíšu do databázy. To má za následok, že pre daný týždeň sa dáta buď uložia všetky alebo 
+    v prípade chyby neuložia žiadne. Vďaka tomu sa vyhneme nekonzistencii dáta pre daný týždeň.
+    \item Po dokončení behu sa aplikácia sama ukončí volaním príkazu \lstinline{Environment.Exit(0)}. Služby v C\# sa totiž bez zavolania tohto príkazu same 
+    neukončia.
+\end{itemize}

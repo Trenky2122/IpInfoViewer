@@ -16,6 +16,9 @@ export class IpAdressesMapComponent implements OnInit{
   public currentWeekData: MapIpAddressRepresentation[] = [];
   public radii: number[] = [0, 0, 0, 0, 0];
   public counts: number[] = [0, 0, 0, 0, 0];
+  private osmAddress: string = 'http://localhost:8082/osm/{z}/{x}/{y}.png';
+  protected scaleMode: string = "averageToAverage";
+  protected requestedData = "average";
   constructor(private service: IpAddressInfoViewerService) {
     this.week = "2022-W45"
   }
@@ -36,7 +39,7 @@ export class IpAdressesMapComponent implements OnInit{
 
   getLayers(mapPoints: MapIpAddressRepresentation[], zoom: number): Leaflet.Layer[]{
     return [
-      new Leaflet.TileLayer('http://localhost:8082/osm/{z}/{x}/{y}.png',
+      new Leaflet.TileLayer(this.osmAddress,
         {attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors', minZoom: 3, maxZoom: 7}),
       ...this.getMarkers(mapPoints, zoom),
       //...this.getTooltips(mapPoints, zoom)
@@ -44,14 +47,17 @@ export class IpAdressesMapComponent implements OnInit{
   };
 
   getMarkers(mapPoints: MapIpAddressRepresentation[], zoom: number): Leaflet.CircleMarker[] {
-    return mapPoints?.map(point => new Leaflet.CircleMarker(new Leaflet.LatLng(point.latitude, point.longitude), {
-      fillColor:  this.pingToColor(point.averagePingRtT),
-      color:  this.pingToColor(point.averagePingRtT),
-      fillOpacity: 1,
-      radius: this.ipCountToCircleRadius(point.ipAddressesCount, zoom),
-      className: "mapPoint " + point.id,
-      interactive: true,
-    }));
+    let upperBound = this.getUpperBound(mapPoints);
+    return mapPoints?.map(point => {
+      let color = this.pingToColor(this.getRequestedPingValuesForRequestedData(point, this.requestedData), upperBound);
+      return new Leaflet.CircleMarker(new Leaflet.LatLng(point.latitude, point.longitude), {
+        fillColor:  color,
+        color: color,
+        fillOpacity: 1,
+        radius: this.ipCountToCircleRadius(point.ipAddressesCount, zoom),
+        className: "mapPoint " + point.id,
+        interactive: true,
+    })});
   }
 
   getTooltips(mapPoints: MapIpAddressRepresentation[], zoom: number): Leaflet.Tooltip[] {
@@ -70,6 +76,7 @@ export class IpAdressesMapComponent implements OnInit{
   setMapPointsForWeek(){
     this.service.GetMapPointsForWeek(this.week).subscribe(value => {
       this.currentWeekData = value;
+      console.log(value);
       this.redrawLayers();
     })
   }
@@ -80,8 +87,7 @@ export class IpAdressesMapComponent implements OnInit{
     console.log(this.counts, this.radii);
   }
 
-  pingToColor(ping: number) {
-    const upperBound = 500;
+  pingToColor(ping: number, upperBound: number) {
     const lowerBound = 5;
     let pingInBounds = ping;
     if(pingInBounds < lowerBound)
@@ -94,9 +100,55 @@ export class IpAdressesMapComponent implements OnInit{
     return '#' + ('000000' + h.toString(16)).slice(-6);
   }
 
+  getUpperBound(data: MapIpAddressRepresentation[]):number{
+    switch (this.scaleMode){
+      case "constantMaximum":
+        return 500;
+      case "maximumToMaximum":
+        return this.getMaximumForRequestedData(data);
+      case "averageToAverage":
+        return this.getAverageForRequestedData(data);
+    }
+    return 0;
+  }
+
+  getMaximumForRequestedData(data: MapIpAddressRepresentation[]): number{
+    switch (this.requestedData){
+      case "average":
+        return Math.max(...data.map(x=>x.averagePingRtT));
+      case "maximum":
+        return Math.max(...data.map(x=>x.maximumPingRtT));
+      case "minimum":
+        return Math.max(...data.map(x=>x.minimumPingRtT));
+    }
+    return 0;
+  }
+
+  getAverageForRequestedData(data: MapIpAddressRepresentation[]): number{
+    switch (this.requestedData){
+      case "average":
+        return this.avg(data.map(x=>x.averagePingRtT));
+      case "maximum":
+        return this.avg(data.map(x=>x.maximumPingRtT));
+      case "minimum":
+        return this.avg(data.map(x=>x.minimumPingRtT));
+    }
+    return 0;
+  }
+
   zoomChanged(value: LeafletEvent){
     this.zoom = value.sourceTarget._zoom;
     this.redrawLayers();
+  }
+
+  avg(data: number[]):number{
+    if(data.length === 0)
+      return 0;
+    let sum = 0;
+    for(let i = 0; i<data.length; i++ ){
+      sum += data[i];
+    }
+    return sum/data.length;
   }
 
   redrawLayers(){
@@ -107,5 +159,17 @@ export class IpAdressesMapComponent implements OnInit{
 
   ipCountToCircleRadius(ipCount: number, zoom: number): number{
     return 0.5 * Math.log(ipCount) * zoom;
+  }
+
+  getRequestedPingValuesForRequestedData(mapPoint: MapIpAddressRepresentation, requestedData: string): number{
+    switch (requestedData){
+      case "average":
+        return mapPoint.averagePingRtT;
+      case "minimum":
+        return mapPoint.minimumPingRtT;
+      case "maximum":
+        return  mapPoint.maximumPingRtT;
+    }
+    return 0;
   }
 }

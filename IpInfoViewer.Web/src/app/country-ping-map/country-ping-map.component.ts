@@ -9,7 +9,8 @@ import {IpAddressInfoViewerService} from "../ip-address-info-viewer.service";
 export class CountryPingMapComponent {
   protected week: string = "2022-W04";
   protected svgLink: string = "";
-  protected fullScale: boolean = false;
+  protected scaleMode: string = "averageToAverage";
+  protected requestedData: string = "average";
   constructor(private ipAddressInfoService: IpAddressInfoViewerService) {
   }
 
@@ -22,6 +23,7 @@ export class CountryPingMapComponent {
     )
   }
   changeWeek(){
-    this.svgLink = this.ipAddressInfoService.GetCountryPingInfoMapLink(this.week, this.fullScale);
+    console.log("change");
+    this.svgLink = this.ipAddressInfoService.GetCountryPingInfoMapLink(this.week, this.scaleMode, this.requestedData);
   }
 }

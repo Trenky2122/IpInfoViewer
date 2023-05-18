@@ -74,9 +74,10 @@ namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
                          "Longitude float," +
                          "IpAddressesCount int, " +
                          "AveragePingRtT int, " +
-                         "ValidFrom Date, " +
-                         "ValidTo Date);" +
-                         "CREATE UNIQUE INDEX IF NOT EXISTS index2 ON MapIpRepresentation (Latitude, Longitude, ValidFrom, ValidTo);";
+                         "MaximumPingRtT int, " +
+                         "MinimumPingRtT int, " +
+                         "Week varchar(8));" +
+                         "CREATE UNIQUE INDEX IF NOT EXISTS index2 ON MapIpRepresentation (Latitude, Longitude, Week);";
             return connection.ExecuteAsync(sql);
         }
 
@@ -87,9 +88,10 @@ namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
                          "CountryCode varchar(2)," +
                          "IpAddressesCount int, " +
                          "AveragePingRtT int, " +
-                         "ValidFrom Date, " +
-                         "ValidTo Date);" +
-                         "CREATE UNIQUE INDEX IF NOT EXISTS index3 ON CountryPingInfo (CountryCode, ValidFrom, ValidTo);";
+                         "MaximumPingRtT int, " +
+                         "MinimumPingRtT int, " +
+                         "Week varchar(8));" +
+                         "CREATE UNIQUE INDEX IF NOT EXISTS index3 ON CountryPingInfo (CountryCode, Week);";
             return connection.ExecuteAsync(sql);
         }
 
@@ -117,8 +119,8 @@ namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
             var transaction = await CreateTransaction(connection);
             foreach (var representation in representations)
             {
-                string sql = "INSERT INTO MapIpRepresentation (Latitude, Longitude, IpAddressesCount, AveragePingRtT, ValidFrom, ValidTo) " +
-                             "VALUES (@Latitude, @Longitude, @IpAddressesCount, @AveragePingRtT, @ValidFrom, @ValidTo)";
+                string sql = "INSERT INTO MapIpRepresentation (Latitude, Longitude, IpAddressesCount, AveragePingRtT, MinimumPingRtT, MaximumPingRtT, Week) " +
+                             "VALUES (@Latitude, @Longitude, @IpAddressesCount, @AveragePingRtT, @MinimumPingRtT, @MaximumPingRtT, @Week)";
                 await connection.ExecuteAsync(sql, representation, transaction);
             }
             await transaction.CommitAsync();
@@ -130,8 +132,8 @@ namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
             var transaction = await CreateTransaction(connection);
             foreach (var countryPingInfo in countryPingInfos)
             {
-                string sql = "INSERT INTO CountryPingInfo (CountryCode, IpAddressesCount, AveragePingRtT, ValidFrom, ValidTo) " +
-                             "VALUES (@CountryCode, @IpAddressesCount, @AveragePingRtT, @ValidFrom, @ValidTo)";
+                string sql = "INSERT INTO CountryPingInfo (CountryCode, IpAddressesCount, AveragePingRtT, MinimumPingRtT, MaximumPingRtT, Week) " +
+                             "VALUES (@CountryCode, @IpAddressesCount, @AveragePingRtT, @MinimumPingRtT, @MaximumPingRtT, @Week)";
                 await connection.ExecuteAsync(sql, countryPingInfo, transaction);
             }
             await transaction.CommitAsync();
@@ -146,30 +148,30 @@ namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
         public async Task<IEnumerable<MapPoint>> GetMapForWeek(Week week)
         {
             await using var connection = CreateConnection();
-            return await connection.QueryAsync<MapPoint>("SELECT * FROM MapIpRepresentation WHERE @Tuesday BETWEEN ValidFrom AND ValidTo", new { tuesday = week.Tuesday });
+            return await connection.QueryAsync<MapPoint>("SELECT * FROM MapIpRepresentation WHERE Week = @Week", new { week = week.ToString() });
         }
 
-        public async Task<DateTime?> GetLastDateWhenMapIsProcessed()
+        public async Task<string?> GetLastDateWhenMapIsProcessed()
         {
             await using var connection = CreateConnection();
-            return await connection.QueryFirstOrDefaultAsync<DateTime?>("SELECT ValidTo FROM MapIpRepresentation ORDER BY ValidTo DESC LIMIT 1");
+            return await connection.QueryFirstOrDefaultAsync<string?>("SELECT Week FROM MapIpRepresentation ORDER BY Week DESC LIMIT 1");
         }
 
-        public async Task<DateTime?> GetLastDateWhenCountriesAreProcessed()
+        public async Task<string?> GetLastDateWhenCountriesAreProcessed()
         {
             await using var connection = CreateConnection();
-            return await connection.QueryFirstOrDefaultAsync<DateTime?>("SELECT ValidTo FROM CountryPingInfo ORDER BY ValidTo DESC LIMIT 1");
+            return await connection.QueryFirstOrDefaultAsync<string?>("SELECT Week FROM CountryPingInfo ORDER BY Week DESC LIMIT 1");
         }
         public async Task<IEnumerable<CountryPingInfo>> GetCountryPingInfoForWeek(Week week)
         {
             await using var connection = CreateConnection();
-            return await connection.QueryAsync<CountryPingInfo>("SELECT * FROM CountryPingInfo WHERE @Tuesday BETWEEN ValidFrom AND ValidTo", new { tuesday = week.Tuesday });
+            return await connection.QueryAsync<CountryPingInfo>("SELECT * FROM CountryPingInfo WHERE Week = @Week", new { week = week.ToString() });
         }
 
-        public async Task<int> GetMaximumCountryPingForWeek(Week week)
+        public async Task<int> GetMaximumAverageCountryPingForWeek(Week week)
         {
             await using var connection = CreateConnection();
-            return await connection.QuerySingleAsync<int>("SELECT MAX(AveragePingRtT) FROM CountryPingInfo WHERE @Tuesday BETWEEN ValidFrom AND ValidTo", new { tuesday = week.Tuesday });
+            return await connection.QuerySingleAsync<int>("SELECT MAX(AveragePingRtT) FROM CountryPingInfo WHERE Week = @Week", new { week = week.ToString() });
         }
 
         static string RemoveDiacritics(string text)

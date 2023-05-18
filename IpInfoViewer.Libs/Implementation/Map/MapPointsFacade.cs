@@ -25,7 +25,7 @@ namespace IpInfoViewer.Libs.Implementation.Map
             await _localDb.SeedTables();
             var allAddresses = await _localDb.GetIpAddresses();
             var addressesGroupedByLocation = allAddresses.GroupBy(GetApproximateLocation);
-            var lastProcessedDate = await _localDb.GetLastDateWhenMapIsProcessed() ?? new DateTime(2008, 4, 26); //first data from mfile database are by this date
+            var lastProcessedDate = await _localDb.GetLastDateWhenMapIsProcessed() ?? "2008-W16"; //first data from mfile database are by this date
             Week lastProcessedWeek = new(lastProcessedDate);
             // parallel foreach used in case of first run or first run after weeks
             await Parallel.ForEachAsync(DateTimeUtilities.GetWeeksFromTo(lastProcessedWeek.Next().Monday, DateTime.Today.AddDays(-7) /* only already finished weeks*/),
@@ -57,21 +57,24 @@ namespace IpInfoViewer.Libs.Implementation.Map
 
         public async Task ProcessWeekAsync(Week week, IEnumerable<IGrouping<(int latitude, int longitude), IpAddressInfo>> addressesGroupedByLocation)
         {
-            var ipAveragePings = await _mFileDb.GetAverageRtTForIpForWeek(week);
-            var mapPoints = addressesGroupedByLocation.Select(x =>
+            var ipWeekData = await _mFileDb.GetWeekPingData(week);
+            var mapPoints = addressesGroupedByLocation.Select(addressGroup =>
             {
-                var pings = x.Select(addr =>
-                    ipAveragePings.FirstOrDefault(p => p.Item1.Item1.Equals(addr.IpValue.Item1))?.Item2).ToList();
-                if (!pings.Any(p => p.HasValue))
+                var pings = addressGroup.Select(addr =>
+                    ipWeekData.FirstOrDefault(p => p.IpAddress.Item1.Equals(addr.IpValue.Item1))).
+                    Where(p => p is not null)
+                    .ToList();
+                if (!pings.Any())
                     return null;
                 var result = new MapPoint()
                 {
-                    Latitude = x.Average(x => x.Latitude),
-                    Longitude = x.Average(x => x.Longitude),
-                    IpAddressesCount = x.Count(),
-                    AveragePingRtT = Convert.ToSingle(pings.Where(p => p is > 0).Average(p => p ?? 0)),
-                    ValidFrom = week.Monday,
-                    ValidTo = week.Next().Monday.AddTicks(-1)
+                    Latitude = addressGroup.Average(x => x.Latitude),
+                    Longitude = addressGroup.Average(x => x.Longitude),
+                    IpAddressesCount = addressGroup.Count(),
+                    AveragePingRtT = Convert.ToSingle(pings.Average(p => p.Average)),
+                    MaximumPingRtT = Convert.ToSingle(pings.Max(p => p.Maximum)),
+                    MinimumPingRtT = Convert.ToSingle(pings.Min(p => p.Minimum)),
+                    Week = week.ToString()
                 };
                 return result;
             }).Where(x => x != null).ToList();
@@ -102,12 +105,9 @@ namespace IpInfoViewer.Libs.Implementation.Map
             return resultBuilder.ToString();
         }
 
-        public async Task<string?> GetLastProcessedWeek()
+        public Task<string?> GetLastProcessedWeek()
         {
-            DateTime? lastProcessedDate = await _localDb.GetLastDateWhenMapIsProcessed();
-            if (!lastProcessedDate.HasValue)
-                return null;
-            return new Week(lastProcessedDate.Value).ToString();
+            return _localDb.GetLastDateWhenMapIsProcessed();
         }
 
         public async Task<IEnumerable<MapPoint>> GetMapPointsForDayOfWeek(DateTime dayFromWeek)
