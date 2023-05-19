@@ -4,8 +4,7 @@
 
 \section{Analýza požiadaviek}
 
-Požiadavky na aplikáciu vznikli po dohode s Ing. Dušanom Bernátom, PhD. Cieľom je vytvoriť webovú 
-aplikáciu ktorá bude schopná vizualizovať výsledky meraní internetu v grafickej forme pomocou diagramov, 
+Cieľom je vytvoriť webovú aplikáciu ktorá bude schopná vizualizovať výsledky meraní internetu v grafickej forme pomocou diagramov, 
 grafov a máp. 
 
 \subsection{Požiadavky na beh aplikácie}
@@ -35,6 +34,20 @@ jedenkrát týždenne. Systém bude bežať v niekoľkých kontaineroch v platfo
 dátam, nginx server pre klientskú aplikáciu, každý background worker a Open Street Maps tile server. Ako údaje na lokalizáciu ip adries bola 
 použitá voľná databáza DB-IP lite \cite{ip_city_db}.
 
-Klientská časť bude implementovaná pomocou frameworku Angular 15.0. API bude volané pomocou vstavanej knižnice httpClient. Na zobrazenie 
+Klientská časť bude implementovaná pomocou systému Angular 15.0. API bude volané pomocou vstavanej knižnice httpClient. Na zobrazenie 
 presnej geografickej mapy sveta budú použité Open Street Maps pomocou knižnice Leaflet a jej wrapperu pre Angular ngx-leaflet. Na zobrazenie 
 mapy sveta po krajinách je použitý mierne upravený verejne voľný svg template \cite{svg_mapa}. Na zobrazenie diagramov bude použitá knižnica ngx-charts. 
+
+\section{Používateľské scenáre}
+Keďže služby bežiace na pozadí nebudú mať žadneho používateľa a budú fungovať samy bez vstupu od používateľa, je potrebné navrhnúť len scenáre 
+pre frontendovú aplikáciu.
+
+\subsection{Používateľské scenáre pre frontendovú aplikáciu}
+Aplikácia bude mať len jeden typ používateľa. Keďže celá webová čast je len na čítanie, nie je pootrebné obmedzovať práva pre niektorých používateľov. 
+Z tohto dôvodu sme sa rozhodli vynechať autentifikáciu a aplikáciu sprístupniť bez mena a hesla.
+
+\begin{itemize}
+    \item Bežný používateľ - Po spustení aplikácie bude vidieť domovskú obrazovku. Tá bude pozostávať z navigačného menu, mapy sveta s vyznačenými skupinami 
+    uzlov IP adries na základe ich geografickej polohy. Na stránke bude prepínač týždňov, ktorým sa bude ovládať voľba týždňa, pre ktorý chceme, aby sa 
+    dáta zobrazili. Tiež sa na stránke bude nachádzať výberový zoznam na výber medzi prezeraním maximálnych, priemerných alebo minimálnych dôb odozvy.
+\end{itemize}

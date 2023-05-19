@@ -72,7 +72,7 @@ namespace IpInfoViewer.Libs.Implementation.Database.MFile
                          " AND ip_addr NOT BETWEEN '172.16.0.0' AND '172.31.255.255'" +
                          " AND ip_addr NOT BETWEEN '192.168.0.0' AND '192.168.255.255'" +
                          " AND (EXISTS (SELECT * FROM topology t WHERE t.ip_addr=h.ip_addr AND t_status<>'E' LIMIT 1)" +
-                         " OR EXISTS (SELECT * FROM ping p WHERE p.ip_addr = h.ip_addr AND ping_ploss BETWEEN 0 AND 100))";
+                         " OR EXISTS (SELECT * FROM ping p WHERE p.ip_addr = h.ip_addr AND ping_ploss BETWEEN 0 AND 99))";
             ;
             await using var connection = CreateConnection();
             return await connection.QueryAsync<Host>(sql);

@@ -1,0 +1,35 @@
+\chapter{Testovanie}
+
+\label{kap:testovanie}
+
+Aplikáciu sme testovali dvoma spôsobmi. Najskôr sme nappísali a spustili unit testy pomocou knižnice xUnit. Následne sme sa pozreli na ručné používanie 
+samotnej aplikácie a testovanie používateľského rozhrania.
+
+\section{Testovanie unit testami}
+Unit testy sú metóda testovania softvéru, kedy je softvér rozdelený na veľa malých jednotiek (z anglického units), a každá časť je otestovaná 
+samostatne \cite{unit_tests}. V našom kóde sme ako jednotky brali public metódy tried. 
+
+Pre unit testovanie v jazyku C\# sa najčastejšie používajú riešenia MSTest, NUnit a xUnit \cite{unit_test_comparison}. Každá z nich ponúka 
+všetky pre nás dôležité funkcionality, takže výber je možné spraviť podľa osobnej preferencie. Vybrali sme si knižnicu xUnit pretože nám 
+najviac vyhovoval spôsob overovania výsledkov (všetky knižnice používajú triedu s názvom Assert, každá je však inako implementovaná).
+
+Pri písaní unit testov sa najčastejšie postupuje tak, že triedam vložíme namiesto skutočných objektov sprostredkúvajúcich dáta, napríklad inštancie 
+IpInfoViewerDbRepository, objekty vracajúce vymyslené, nami definované dáta. Tetno proces sa nazýva mockovanie. Mockovanie je možné vďaka použitiu návrhového 
+vzoru vkladanie závislosti. Tento vzor určuje, že trieda by nemala vytvárať inštanciu inej triedy a teda byť od nej závislá, ale namiesto toho by mala len 
+prijímať inštancie spĺňajúce definované rozhranie \cite{dependency_injection}. Vytváranie mockovacích objektov zabezpečjeme pomocou knižnice Moq. Tá nám šetrí 
+prácu, pretože nemusíme pre každý mockup vytvárať novú triedu, ale len zadefinujeme dáta, ktoré chceme aby nám inštancia vrátila. Knižnica Moq nám 
+takúto inštanciu spĺňajúcu potrebné rozhranie vytvorí \cite{moq}.
+
+Pri písaní unit testov pomocou knižnice xUnit sa testovacie metódy označujú atribútmi \lstinline{Fact} a \lstinline{Theory}. Kým metódy s atribútom 
+\lstinline{Fact} slúžia ako testy bez parametrov, metódy s atribútom \lstinline{Theory} doplnené parametrom \lstinline{InlineData} prijímajú aj parametre 
+\cite{xunit_docs}.
+
+Naším cieľom bolo vytvoriť sadu unit testov pre každú metódu z tried, ktoré sa starajú o logickú časť backendovej časti, teda \lstinline{Week}, 
+\lstinline{DateTimeUtilities}, \lstinline{GeographicUtilities}, \lstinline{CountryPingInfoFacade}, \lstinline{IpAddressInfoFacade} a \lstinline{MapPointsFacade}.
+Triedy \lstinline{MFileDbRepository} a \lstinline{IpInfoViewerDbRepository} úmyselne netestujeme pretože v jazyku C\# neexistuje dobrý spôsob na simuláciu 
+volania SQL databázy. Taktiež nepíšeme testy na kontrolery, pretože tie v našej implementácií dáta čisto len predávajú z nižšej vrstvy, preto nie je potrebné 
+ich testovať unit testami. Chyby v takomto predávaní dát by sa v každom prípade rýchlo prejavili pri používaní webovej aplikácie, čomu sa venujeme v sekcii 
+\ref{test_interface}.
+
+\section{Testovanie používateľského rozhrania}
+\label{test_interface}
