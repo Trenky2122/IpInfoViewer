@@ -17,16 +17,27 @@ namespace IpInfoViewer.Api.Controllers
             _countryFacade = countryFacade;
         }
 
+        /// <summary>
+        /// Gets map points for week
+        /// </summary>
+        /// <param name="week">Week in HTML (ISO_8601) format e.g. (2023-W25)</param>
+        /// <returns>Map points</returns>
+        [HttpGet("ForWeek/{week}")]
+        public async Task<ActionResult<IEnumerable<CountryPingInfo>>> GetCountryPingInfoAsync(string week)
+        {
+            return Ok(await _countryFacade.GetCountryPingInfoForWeekAsync(week));
+        }
+
         [HttpGet("ColoredMap/{week}")]
         public async Task<ContentResult> GetColoredSvgMapAsync(string week, RequestedDataEnum requestedData, ScaleMode scaleMode)
         {
-            return Content(await _countryFacade.GetColoredSvgMapForWeek(week, requestedData, scaleMode), "image/svg+xml");
+            return Content(await _countryFacade.GetColoredSvgMapForWeekAsync(week, requestedData, scaleMode), "image/svg+xml");
         }
 
         [HttpGet("LastProcessedDate/")]
         public async Task<ActionResult<StringResponse?>> GetLatestProcessedWeekCountryPing()
         {
-            return Ok(new StringResponse(await _countryFacade.GetLastProcessedWeek()));
+            return Ok(new StringResponse(await _countryFacade.GetLastProcessedWeekAsync()));
         }
     }
 }

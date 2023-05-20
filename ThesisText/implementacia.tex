@@ -76,7 +76,7 @@ Projekt je konzolová aplikácia bežiaca ako servis na pozadí. Obsahuje nasled
 \begin{itemize}
     \item Program
     \item IpInfoServiceWorker
-    - Treida reprezentujúca samotný servis. Trieda je zadefinovaná v triede Program ako "Hosted Service", teda pri spustení sa vykoná jej metóda ExecuteAsync. 
+    - Treida reprezentujúca samotný servis. Trieda je zadefinovaná v triede Program ako \uv{Hosted Service}, teda pri spustení sa vykoná jej metóda ExecuteAsync. 
     Načíta súbor s priradením medzi IP adresou a geografickými dátami a paralelne pošle každý jeho riadok na spracovanie.
 \end{itemize}
 \subsection{IpInfoViewer.CountryPingInfoService}
@@ -131,7 +131,7 @@ konfiguračné súbory, preto ku konfliktu nedochádza. Knižnica IpInfoViewer.L
     - Keďže dáta spracovávame po týždňoch, potrebovali sme si vedieť takýto týždeň znázorniť. Ako jeden týždeň sme si určili obdobie začínajúce v pondelok o polnoci a končiace 
     v nedeľu toho istého týždňa tesne pred polnocou ako je definované v štandarde ISO 8601. Tento štandard určuje spôsob, ako vyjadriť konkrétny týždeň ako textový reťazec, 
     a to vo formáte YYYY-'W'WW, teda napríklad deviaty týždeň roku 2023 by bol vyjadrený ako 2023-W09. Tento formát zápisu týždňa je podporovaný ako formát výstupu pre 
-    HTML input typu "week", preto je pre našu aplikáciu veľmi užitočný. V jazyku C\# však neexistuje žiadna vstavaná trieda reprezentujúca takýto týždeň, jednu sme napísali 
+    HTML input typu \uv{week}, preto je pre našu aplikáciu veľmi užitočný. V jazyku C\# však neexistuje žiadna vstavaná trieda reprezentujúca takýto týždeň, jednu sme napísali 
     podľa našich potrieb. Trieda podporuje dva rôzne konštruktory, teda dva rôzne spôsoby ako definovať týždeň. Prvý spôsob je podľa už zmieneného ISO 8601 formátu. Druhý spôsob 
     si vezme na vstup ľubovoľný čas reprezentovaný štandardnou triedou DateTime a určí týždeň, do ktorého daný čas patrí. Na základe definície ISO 8601 každý čas patrí do práve jedného 
     dňa a každý deň patrí do práve jedného týždňa. 
@@ -190,6 +190,11 @@ Každý komponent sa môže skladať s viacerých iných komponentov. Naša apli
 \label{postupy}
 
 Pri implementácií aplikácie sme využívali niekoľko špecifických postupov a algoritmov, ktoré považujeme za vhodné vysvetliť a zdôvodniť. 
+
+\subsection{CORS}
+\uv{Cross-Origin Resource Sharing} je mechanizmus na zdieľanie obsahu stránok z rôznych domén pracujúci na základe HTTP hlavičiek. Tento mechanizmus je nutné použiť na zdieľanie dát medzi
+frontendovou a backendovou časťou aplikácie. V systéme ASP.NET Core 6.0 je možnosť zadefinovať \uv{CORS} hlavičky pre všetky endpointy naraz v triede Program. 
+definovať 
 
 \subsection{Zoskupovanie IP adries na domovskej stránke}
 Na domovskej stránke sa nachádza mapa sveta a na nej sú vyznačené body znázorňujúce skupiny IP adries zoskupené podľa geografickej blízkosti. 

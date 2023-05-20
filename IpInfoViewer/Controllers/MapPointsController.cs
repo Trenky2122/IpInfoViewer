@@ -15,16 +15,6 @@ namespace IpInfoViewer.Api.Controllers
         {
             _mapPointsFacade = mapPointsFacade;
         }
-        /// <summary>
-        /// Gets map points for week of input date
-        /// </summary>
-        /// <param name="dayFromWeek">Date from wanted week</param>
-        /// <returns>Map points</returns>
-        [HttpGet("ForDayOfWeek/{dayFromWeek}")]
-        public async Task<ActionResult<IEnumerable<MapPoint>>> GetMapPointsForDayOfWeek(DateTime dayFromWeek)
-        {
-            return Ok(await _mapPointsFacade.GetMapPointsForDayOfWeek(dayFromWeek));
-        }
 
         /// <summary>
         /// Gets map points for week
@@ -34,7 +24,7 @@ namespace IpInfoViewer.Api.Controllers
         [HttpGet("ForWeek/{week}")]
         public async Task<ActionResult<IEnumerable<MapPoint>>> GetMapPoinsForWeek(string week)
         {
-            return Ok(await _mapPointsFacade.GetMapPoinsForWeek(week));
+            return Ok(await _mapPointsFacade.GetMapPointsForWeek(week));
         }
 
         /// <summary>

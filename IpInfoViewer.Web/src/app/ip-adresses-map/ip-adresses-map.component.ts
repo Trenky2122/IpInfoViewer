@@ -40,9 +40,9 @@ export class IpAdressesMapComponent implements OnInit{
   getLayers(mapPoints: MapIpAddressRepresentation[], zoom: number): Leaflet.Layer[]{
     return [
       new Leaflet.TileLayer(this.osmAddress,
-        {attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors', minZoom: 3, maxZoom: 7}),
+        {attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors', minZoom: 3, maxZoom: 6}),
       ...this.getMarkers(mapPoints, zoom),
-      //...this.getTooltips(mapPoints, zoom)
+      ...(this.zoom >= 6 ? this.getTooltips(mapPoints, zoom) : [])
     ] as Leaflet.Layer[]
   };
 
@@ -56,16 +56,19 @@ export class IpAdressesMapComponent implements OnInit{
         fillOpacity: 1,
         radius: this.ipCountToCircleRadius(point.ipAddressesCount, zoom),
         className: "mapPoint " + point.id,
-        interactive: true,
+        interactive: true
     })});
   }
 
   getTooltips(mapPoints: MapIpAddressRepresentation[], zoom: number): Leaflet.Tooltip[] {
     return mapPoints?.map(point => new Leaflet.Tooltip(new Leaflet.LatLng(point.latitude, point.longitude), {
       content: "<strong>lat</strong>: " + point.latitude.toFixed(4)
-        + "<br><strong>long</strong>: " + point.longitude.toFixed(4) + "<br>" +
-        "<strong>total</strong>: " + point.ipAddressesCount,
-      permanent: false,
+        + "<br><strong>long</strong>: " + point.longitude.toFixed(4)
+        +"<br><strong>average</strong>: " + point.averagePingRtT
+        +"<br><strong>minimum</strong>: " + point.minimumPingRtT
+        +"<br><strong>maximum</strong>: " + point.maximumPingRtT
+        +"<br><strong>total</strong>: " + point.ipAddressesCount,
+      permanent: true,
       className: "mapPointLabel " + point.id,
       interactive: true,
       direction: "auto",

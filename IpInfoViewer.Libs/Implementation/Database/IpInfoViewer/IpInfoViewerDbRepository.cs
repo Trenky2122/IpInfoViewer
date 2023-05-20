@@ -43,17 +43,17 @@ namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
         #region Create Tables
 
 
-        public async Task SeedTables()
+        public async Task SeedTablesAsync()
         {
             await using var connection = CreateConnection();
             
             connection.Open();
-            await CreateIpTable(connection);
-            await CreateMapIpRepresentationTable(connection);
-            await CreateCountryPingInfoTable(connection);
+            await CreateIpTableAsync(connection);
+            await CreateMapIpRepresentationTableAsync(connection);
+            await CreateCountryPingInfoTableAsync(connection);
         }
 
-        private Task CreateIpTable(NpgsqlConnection connection)
+        private Task CreateIpTableAsync(NpgsqlConnection connection)
         {
             string sql = "CREATE TABLE IF NOT EXISTS IpAddresses (" +
                          "Id SERIAL PRIMARY KEY," +
@@ -66,7 +66,7 @@ namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
             return connection.ExecuteAsync(sql);
         }
 
-        private Task CreateMapIpRepresentationTable(NpgsqlConnection connection)
+        private Task CreateMapIpRepresentationTableAsync(NpgsqlConnection connection)
         {
             string sql = "CREATE TABLE IF NOT EXISTS MapIpRepresentation (" +
                          "Id SERIAL PRIMARY KEY," +
@@ -77,11 +77,12 @@ namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
                          "MaximumPingRtT int, " +
                          "MinimumPingRtT int, " +
                          "Week varchar(8));" +
-                         "CREATE UNIQUE INDEX IF NOT EXISTS index2 ON MapIpRepresentation (Latitude, Longitude, Week);";
+                         "CREATE UNIQUE INDEX IF NOT EXISTS index2 ON MapIpRepresentation (Latitude, Longitude, Week); " +
+                         "CREATE INDEX IF NOT EXISTS index4 ON MapIpRepresentation (Week);";
             return connection.ExecuteAsync(sql);
         }
 
-        private Task CreateCountryPingInfoTable(NpgsqlConnection connection)
+        private Task CreateCountryPingInfoTableAsync(NpgsqlConnection connection)
         {
             string sql = "CREATE TABLE IF NOT EXISTS CountryPingInfo (" +
                          "Id SERIAL PRIMARY KEY," +
@@ -91,13 +92,14 @@ namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
                          "MaximumPingRtT int, " +
                          "MinimumPingRtT int, " +
                          "Week varchar(8));" +
-                         "CREATE UNIQUE INDEX IF NOT EXISTS index3 ON CountryPingInfo (CountryCode, Week);";
+                         "CREATE UNIQUE INDEX IF NOT EXISTS index3 ON CountryPingInfo (CountryCode, Week); " +
+                         "CREATE INDEX IF NOT EXISTS index5 ON CountryPingInfo (Week);";
             return connection.ExecuteAsync(sql);
         }
 
         #endregion
 
-        public async Task SaveIpAddressInfo(IpAddressInfo address)
+        public async Task SaveIpAddressInfoAsync(IpAddressInfo address)
         {
             await using var connection = CreateConnection();
             connection.Open();
@@ -113,7 +115,7 @@ namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
             await command.ExecuteNonQueryAsync();
         }
 
-        public async Task SaveMapIpAddressRepresentations(IEnumerable<MapPoint> representations)
+        public async Task SaveMapIpAddressRepresentationsAsync(IEnumerable<MapPoint> representations)
         {
             await using var connection = CreateConnection();
             var transaction = await CreateTransaction(connection);
@@ -126,7 +128,7 @@ namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
             await transaction.CommitAsync();
         }
 
-        public async Task SaveCountryPingInfos(IEnumerable<CountryPingInfo> countryPingInfos)
+        public async Task SaveCountryPingInfosAsync(IEnumerable<CountryPingInfo> countryPingInfos)
         {
             await using var connection = CreateConnection();
             var transaction = await CreateTransaction(connection);
@@ -139,58 +141,35 @@ namespace IpInfoViewer.Libs.Implementation.Database.IpInfoViewer
             await transaction.CommitAsync();
         }
 
-        public async Task<IEnumerable<IpAddressInfo>> GetIpAddresses(int offset = 0, int limit = int.MaxValue)
+        public async Task<IEnumerable<IpAddressInfo>> GetIpAddressesAsync(int offset = 0, int limit = int.MaxValue)
         {
             await using var connection = CreateConnection();
             return await connection.QueryAsync<IpAddressInfo>("SELECT * FROM IpAddresses LIMIT @limit OFFSET @offset", new { limit, offset });
         }
         
-        public async Task<IEnumerable<MapPoint>> GetMapForWeek(Week week)
+        public async Task<IEnumerable<MapPoint>> GetMapForWeekAsync(Week week)
         {
             await using var connection = CreateConnection();
             return await connection.QueryAsync<MapPoint>("SELECT * FROM MapIpRepresentation WHERE Week = @Week", new { week = week.ToString() });
         }
 
-        public async Task<string?> GetLastDateWhenMapIsProcessed()
+        public async Task<string?> GetLastDateWhenMapIsProcessedAsync()
         {
             await using var connection = CreateConnection();
-            return await connection.QueryFirstOrDefaultAsync<string?>("SELECT Week FROM MapIpRepresentation ORDER BY Week DESC LIMIT 1");
+            return await connection.QueryFirstOrDefaultAsync<string>("SELECT Week FROM MapIpRepresentation ORDER BY Week DESC LIMIT 1");
         }
 
-        public async Task<string?> GetLastDateWhenCountriesAreProcessed()
+        public async Task<string?> GetLastDateWhenCountriesAreProcessedAsync()
         {
             await using var connection = CreateConnection();
-            return await connection.QueryFirstOrDefaultAsync<string?>("SELECT Week FROM CountryPingInfo ORDER BY Week DESC LIMIT 1");
+            return await connection.QueryFirstOrDefaultAsync<string>("SELECT Week FROM CountryPingInfo ORDER BY Week DESC LIMIT 1");
         }
-        public async Task<IEnumerable<CountryPingInfo>> GetCountryPingInfoForWeek(Week week)
+
+        public async Task<IEnumerable<CountryPingInfo>> GetCountryPingInfoForWeekAsync(Week week)
         {
             await using var connection = CreateConnection();
             return await connection.QueryAsync<CountryPingInfo>("SELECT * FROM CountryPingInfo WHERE Week = @Week", new { week = week.ToString() });
         }
 
-        public async Task<int> GetMaximumAverageCountryPingForWeek(Week week)
-        {
-            await using var connection = CreateConnection();
-            return await connection.QuerySingleAsync<int>("SELECT MAX(AveragePingRtT) FROM CountryPingInfo WHERE Week = @Week", new { week = week.ToString() });
-        }
-
-        static string RemoveDiacritics(string text)
-        {
-            var normalizedString = text.Normalize(NormalizationForm.FormD);
-            var stringBuilder = new StringBuilder(capacity: normalizedString.Length);
-
-            foreach (var c in normalizedString)
-            {
-                var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
-                if (unicodeCategory != UnicodeCategory.NonSpacingMark)
-                {
-                    stringBuilder.Append(c);
-                }
-            }
-
-            return stringBuilder
-                .ToString()
-                .Normalize(NormalizationForm.FormC);
-        }
     }
 }

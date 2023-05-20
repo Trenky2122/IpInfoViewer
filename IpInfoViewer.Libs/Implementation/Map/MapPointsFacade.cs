@@ -22,10 +22,10 @@ namespace IpInfoViewer.Libs.Implementation.Map
 
         public async Task ExecuteSeedingAsync(CancellationToken stoppingToken)
         {
-            await _localDb.SeedTables();
-            var allAddresses = await _localDb.GetIpAddresses();
+            await _localDb.SeedTablesAsync();
+            var allAddresses = await _localDb.GetIpAddressesAsync();
             var addressesGroupedByLocation = allAddresses.GroupBy(GetApproximateLocation);
-            var lastProcessedDate = await _localDb.GetLastDateWhenMapIsProcessed() ?? "2008-W16"; //first data from mfile database are by this date
+            var lastProcessedDate = await _localDb.GetLastDateWhenMapIsProcessedAsync() ?? "2008-W16"; //first data from mfile database are by this date
             Week lastProcessedWeek = new(lastProcessedDate);
             // parallel foreach used in case of first run or first run after weeks
             await Parallel.ForEachAsync(DateTimeUtilities.GetWeeksFromTo(lastProcessedWeek.Next().Monday, DateTime.Today.AddDays(-7) /* only already finished weeks*/),
@@ -78,7 +78,7 @@ namespace IpInfoViewer.Libs.Implementation.Map
                 };
                 return result;
             }).Where(x => x != null).ToList();
-            await _localDb.SaveMapIpAddressRepresentations(mapPoints);
+            await _localDb.SaveMapIpAddressRepresentationsAsync(mapPoints);
         }
 
         public string GetIpMapLegend(
@@ -107,17 +107,17 @@ namespace IpInfoViewer.Libs.Implementation.Map
 
         public Task<string?> GetLastProcessedWeek()
         {
-            return _localDb.GetLastDateWhenMapIsProcessed();
+            return _localDb.GetLastDateWhenMapIsProcessedAsync();
         }
 
-        public async Task<IEnumerable<MapPoint>> GetMapPointsForDayOfWeek(DateTime dayFromWeek)
+        public Task<IEnumerable<MapPoint>> GetMapPointsForDayOfWeek(DateTime dayFromWeek)
         {
-            return await _localDb.GetMapForWeek(new Week(dayFromWeek));
+            return _localDb.GetMapForWeekAsync(new Week(dayFromWeek));
         }
 
-        public async Task<IEnumerable<MapPoint>> GetMapPoinsForWeek(string week)
+        public Task<IEnumerable<MapPoint>> GetMapPointsForWeek(string week)
         {
-            return await _localDb.GetMapForWeek(new Week(week));
+            return _localDb.GetMapForWeekAsync(new Week(week));
         }
 
         private List<int> GetLegendPingValues(int upperBound)

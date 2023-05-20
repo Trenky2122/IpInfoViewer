@@ -27,10 +27,10 @@ namespace IpInfoViewer.Libs.Implementation.CountryPing
 
         public async Task ExecuteSeedingAsync(CancellationToken stoppingToken)
         {
-            await _localDb.SeedTables();
-            var allAddresses = await _localDb.GetIpAddresses();
+            await _localDb.SeedTablesAsync();
+            var allAddresses = await _localDb.GetIpAddressesAsync();
             var addressesGroupedByCountry = allAddresses.GroupBy(address => address.CountryCode);
-            var lastProcessedDate = await _localDb.GetLastDateWhenCountriesAreProcessed() ?? "2008-W16"; //first data from mfile database are by this date
+            var lastProcessedDate = await _localDb.GetLastDateWhenCountriesAreProcessedAsync() ?? "2008-W16"; //first data from mfile database are by this date
             Week lastProcessedWeek = new(lastProcessedDate);
             // parallel foreach used in case of first run or first run after weeks
             await Parallel.ForEachAsync(DateTimeUtilities.GetWeeksFromTo(lastProcessedWeek.Next().Monday, DateTime.Today.AddDays(-7) /* only already finished weeks*/),
@@ -73,14 +73,19 @@ namespace IpInfoViewer.Libs.Implementation.CountryPing
                 };
                 return result;
             }).Where(x => x != null).ToList();
-            await _localDb.SaveCountryPingInfos(countryPingInfos);
+            await _localDb.SaveCountryPingInfosAsync(countryPingInfos);
         }
 
-        public async Task<string> GetColoredSvgMapForWeek(string weekStr, RequestedDataEnum requestedData, ScaleMode scaleMode)
+        public Task<IEnumerable<CountryPingInfo>> GetCountryPingInfoForWeekAsync(string week)
+        {
+            return _localDb.GetCountryPingInfoForWeekAsync(new Week(week));
+        }
+
+        public async Task<string> GetColoredSvgMapForWeekAsync(string weekStr, RequestedDataEnum requestedData, ScaleMode scaleMode)
         {
             Week week = new(weekStr);
             var svg = GcSvgDocument.FromFile(@"Assets/world.svg");
-            var countryPingInfo = (await _localDb.GetCountryPingInfoForWeek(week)).ToList();
+            var countryPingInfo = (await _localDb.GetCountryPingInfoForWeekAsync(week)).ToList();
             const int defaultUpperBound = 500;
             int upperBound = scaleMode switch
             {
@@ -177,9 +182,9 @@ namespace IpInfoViewer.Libs.Implementation.CountryPing
             }
         }
 
-        public Task<string?> GetLastProcessedWeek()
+        public Task<string?> GetLastProcessedWeekAsync()
         {
-            return _localDb.GetLastDateWhenCountriesAreProcessed();
+            return _localDb.GetLastDateWhenCountriesAreProcessedAsync();
         }
 
         private (int Red, int Green) CalculateColor(double ping, int upperBound)

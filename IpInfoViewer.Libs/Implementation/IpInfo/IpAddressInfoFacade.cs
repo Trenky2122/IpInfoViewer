@@ -24,7 +24,7 @@ namespace IpInfoViewer.Libs.Implementation.IpInfo
 
         public async Task ExecuteSeedingAsync(CancellationToken stoppingToken)
         {
-            await _localDb.SeedTables();
+            await _localDb.SeedTablesAsync();
             int ipAddressesSeeded = 1;
             int linesPassed = 0;
             await Parallel.ForEachAsync(
@@ -63,7 +63,7 @@ namespace IpInfoViewer.Libs.Implementation.IpInfo
                     Latitude = Convert.ToDouble(fields[6], CultureInfo.InvariantCulture),
                     Longitude = Convert.ToDouble(fields[7], CultureInfo.InvariantCulture),
                 };
-                await _localDb.SaveIpAddressInfo(ipInfo);
+                await _localDb.SaveIpAddressInfoAsync(ipInfo);
             }
 
             return pingsInRange.Count;
