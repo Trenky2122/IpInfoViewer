@@ -3,7 +3,7 @@ services:
   web:
     build: ./IpInfoViewer.Web
     ports:
-      - "443:80"
+      - "444:80"
   api:
     build:
         context: .
