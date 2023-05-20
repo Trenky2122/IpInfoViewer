@@ -23,7 +23,6 @@ export class CountryPingMapComponent {
     )
   }
   changeWeek(){
-    console.log("change");
     this.svgLink = this.ipAddressInfoService.GetCountryPingInfoMapLink(this.week, this.scaleMode, this.requestedData);
   }
 }

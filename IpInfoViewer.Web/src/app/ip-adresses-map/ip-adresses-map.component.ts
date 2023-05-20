@@ -16,7 +16,7 @@ export class IpAdressesMapComponent implements OnInit{
   public currentWeekData: MapIpAddressRepresentation[] = [];
   public radii: number[] = [0, 0, 0, 0, 0];
   public counts: number[] = [0, 0, 0, 0, 0];
-  private osmAddress: string = 'http://localhost:8082/osm/{z}/{x}/{y}.png';
+  private osmAddress: string = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
   protected scaleMode: string = "averageToAverage";
   protected requestedData = "average";
   constructor(private service: IpAddressInfoViewerService) {
@@ -79,7 +79,6 @@ export class IpAdressesMapComponent implements OnInit{
   setMapPointsForWeek(){
     this.service.GetMapPointsForWeek(this.week).subscribe(value => {
       this.currentWeekData = value;
-      console.log(value);
       this.redrawLayers();
     })
   }
@@ -87,7 +86,6 @@ export class IpAdressesMapComponent implements OnInit{
   setLegendValuesForCurrentZoom(){
     this.counts = [5, 50, 500, 5000, 50000];
     this.counts.forEach((c, i) => this.radii[i] = Math.round(this.ipCountToCircleRadius(c, this.zoom)));
-    console.log(this.counts, this.radii);
   }
 
   pingToColor(ping: number, upperBound: number) {
