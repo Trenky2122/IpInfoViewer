@@ -33,12 +33,12 @@ services:
   country-ping-info:
     build: 
       context: .
-      dockerfile: ./IpInfoViewer.CountryPingInfoService\Dockerfile
+      dockerfile: ./IpInfoViewer.CountryPingInfoService/Dockerfile
     environment:
       - DOTNEt_ENVIRONMENT=Development
   map-points-info:
     build: 
       context: .
-      dockerfile: ./IpInfoViewer.MapPointsService\Dockerfile
+      dockerfile: ./IpInfoViewer.MapPointsService/Dockerfile
     environment:
       - DOTNEt_ENVIRONMENT=Development
