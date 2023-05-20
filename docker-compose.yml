@@ -1,21 +1,18 @@
 version: "3.9"
 services:
   web:
-    build: .\IpInfoViewer.Web
+    build: ./IpInfoViewer.Web
     ports:
       - "443:80"
   api:
     build:
         context: .
-        dockerfile: .\IpInfoViewer\Dockerfile
+        dockerfile: ./IpInfoViewer/Dockerfile
     ports:
       - "8081:80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
-    volumes:
-      - C:\Users\Peter\.aspnet\https:/https
-      - $APPDATA\Microsoft\UserSecrets:/root/.microsoft/usersecrets:ro
   osm:
     image: andreimagic/openstreetmaps:v2
     ports:
@@ -36,16 +33,12 @@ services:
   country-ping-info:
     build: 
       context: .
-      dockerfile: .\IpInfoViewer.CountryPingInfoService\Dockerfile
+      dockerfile: ./IpInfoViewer.CountryPingInfoService\Dockerfile
     environment:
       - DOTNEt_ENVIRONMENT=Development
-    volumes:
-      - $APPDATA\Microsoft\UserSecrets:/root/.microsoft/usersecrets:ro
   map-points-info:
     build: 
       context: .
-      dockerfile: .\IpInfoViewer.MapPointsService\Dockerfile
+      dockerfile: ./IpInfoViewer.MapPointsService\Dockerfile
     environment:
       - DOTNEt_ENVIRONMENT=Development
-    volumes:
-      - $APPDATA\Microsoft\UserSecrets:/root/.microsoft/usersecrets:ro
