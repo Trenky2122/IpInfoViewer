@@ -4,6 +4,10 @@
     {
         public static IEnumerable<Week> GetWeeksFromTo(DateTime from, DateTime to)
         {
+            if (from > to)
+            {
+                yield break;
+            }
             var current = new Week(from);
             var final = new Week(to);
             while (current < final)

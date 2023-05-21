@@ -2,25 +2,40 @@
 \addcontentsline{toc}{chapter}{Záver} % rucne pridanie do obsahu
 \markboth{Záver}{Záver} % vyriesenie hlaviciek
 
-Na záver už len odporúčania k samotnej kapitole Záver v bakalárskej
-práci podľa smernice \cite{smernica}:  \uv{V závere je potrebné v
-stručnosti zhrnúť dosiahnuté výsledky vo vzťahu k stanoveným
-cieľom. Rozsah záveru je minimálne dve strany. Záver ako kapitola sa
-nečísluje.}
+Výsledkom práce je webová aplikácia, ktorá umožňuje vizualizovať 
+výsledky meraní internetu v grafickej forme pomocou máp. Tento systém 
+by mal pomôcť používateľom lepšie pochopiť dlhodobé trendy a charakteristiky 
+vývoja rýchlosti a dostupnosti internetu.
 
-Všimnite si správne písanie slovenských úvodzoviek okolo
-predchádzajúceho citátu, ktoré sme dosiahli príkazom \verb'\uv'.
+V úvodnej kapitole sme zhrnuli teóriu potrebnú k pochopeniu meraných dát. 
+Ukázali sme si štruktúru meraní a definovali sme si ktoré merania sa dajú
+považovať za platné. Nakoniec sme sa pozreli na iné práce v podobnej oblasti.
 
-V informatických prácach niekedy býva záver kratší ako dve strany, ale
-stále by to mal byť rozumne dlhý text, v rozsahu aspoň jednej strany.
-Okrem dosiahnutých cieľov sa zvyknú rozoberať aj otvorené problémy a
-námety na ďalšiu prácu v oblasti.
+V ďalšej časti sme navrhli, ako by mala aplikácia vyzerať. Navrhli sme, čo 
+všetko by mal používateľ vedieť v aplikácií robiť a ako presne by mala 
+aplikácia fungovať na architektonickej úrovni. Určili sme základné funkčné
+požiadavky z používateľskej strany, navrhli sme rozhranie, ktoré by malo 
+byť používané na komunikáciu medzi frontendovou a backendovou časťou.
+Tiež sme navrhli štruktúru databázových tabuliek a ich indexáciu.
 
-Abstrakt, úvod a záver práce obsahujú podobné informácie. Abstrakt je
-kratší text, ktorý má pomôcť čitateľovi sa rozhodnúť, či vôbec prácu
-chce čítať. Úvod má umožniť zorientovať sa v práci skôr než ju začne
-čítať a záver sumarizuje najdôležitejšie veci po tom, ako prácu
-prečítal, môže sa teda viac zamerať na detaily a využívať pojmy
-zavedené v práci.
+V ďaľšej časti sme si prešli možnosti spôsobu implementácie. Prešli sme 
+si výberom programovacieho jazyka zvlášť pre backendovú a frontendovú časť a 
+procesom výberu databázového poskytovateľa.
+Tiež sme sa zamysleli nad možnosťami výberu použitých knižníc a všeobecnou 
+architektúrou programu.
 
+V kapitole \ref{kap:implementacia} sme riešenie implementovali podľá návrhu. 
+V kapitole sme rozobrali detaily implementácie od štruktúry programového systému,
+cez detaily tried backdendového riešenia, analýzu použitých techník a algoritmov 
+až po opis frontendových komponentov. V poslednej kapitole sme aplikáciu otestovali 
+automatickými unit testami aj ručným skontrolovaním podľa špecifikácie.
 
+V práci sa nám podarilo splniť cieľ vybudovania aplikácie na vizualizáciu dlhodobých 
+meraní internetu. Aplikáciu sme prezentačne nasdili do používania a je možné ju použiť na analýzu 
+nameraných hodnôt. K aplikácii je dodaný návod na inštaláciu na ľubovoľnom počítači spĺňajúcom minimálne kritériá 
+a tiež používateľská príučka. 
+
+Ako možné budúce rozšírenie práce sa naskytá možnosť zobraziť dáta o dobe odozvy vo forme grafov.
+Aplikáciu je možné rozšíriť aj o analýzu meraní topológie siete. Aplikácia by sa tiež dala rozšíriť 
+o možnosť definície chcených zobrazení zo strany používateľa. Momentálne sa dá aplikácia jednoducho rozšíriť 
+implementáciou spracovávacieho servisu v ľubovoľnom jazyku a dodefinovaním zobrazenia vo frontendovej časti.

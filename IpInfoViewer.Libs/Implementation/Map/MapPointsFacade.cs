@@ -110,11 +110,6 @@ namespace IpInfoViewer.Libs.Implementation.Map
             return _localDb.GetLastDateWhenMapIsProcessedAsync();
         }
 
-        public Task<IEnumerable<MapPoint>> GetMapPointsForDayOfWeek(DateTime dayFromWeek)
-        {
-            return _localDb.GetMapForWeekAsync(new Week(dayFromWeek));
-        }
-
         public Task<IEnumerable<MapPoint>> GetMapPointsForWeek(string week)
         {
             return _localDb.GetMapForWeekAsync(new Week(week));
