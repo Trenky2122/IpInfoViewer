@@ -32,5 +32,54 @@ ich testovať unit testami. Chyby v takomto predávaní dát by sa v každom pr�
 \ref{test_interface}.
 
 \section{Testovanie používateľského rozhrania}
-V tejto časti otestujeme používanie aplikácie podľa scenárov definovaných v kapitole \ref{scenare}.
+V tejto časti otestujeme používanie aplikácie podľa scenárov definovaných v kapitole \ref{scenare}. Pre testovcie účely sme aplikáciu nasadili na adrese 
+\href{https://bp.trencansky.com/}{https://bp.trencansky.com}. Podľa scenára sa po otvorení stránky zobrazí aplikácia s mapou a bodmi na nej ako vidno 
+na obrázku \ref{obr:uvod_stranka}, čím je splnený bod 1. v zozname. Tiež je vidno slektor týždňov, voľba škály, a voľba zobrazených dát pre daný týždeň, čím sú 
+splnené body 2, 3, a 4.   
+\begin{figure}
+    \centerline{\includegraphics[width=0.8\textwidth]{images/uvodna_stranka}}
+    %popis obrazku
+    \caption[Úvodná stránka aplikácie]{Úvodná stránka aplikácie}
+    %id obrazku, pomocou ktoreho sa budeme na obrazok odvolavat
+    \label{obr:uvod_stranka}
+\end{figure}
 \label{test_interface}
+
+Pokračujeme testovaním automatického prekresľovania po prepnutí selektorov. Tento test prebehne úspešne, dáta sú prekreslené po každom prepnutí selektorov.
+Splnený je teda aj bod 5. Na stránke je tiež viditeľná legenda, čo spĺňa aj bod 6. Bod 7 vidíme zobrazený na obrázku \ref{obr:max_zoom}. 
+
+Obrázok \ref{obr:country_ping_info} nám ukazuje zobrazenie mapy krajín zafarbených podľa priemernej doby odozvy, čím sa potvrdzuje bod 8 z používateľských
+scenárov. Taktiež podľa bodu 9 vidíme selektory týždňov, škály a zvolených dát, ktoré tiež okamžite reagujú na zmenu, čím sa potvrdzuje bod 10. 
+Bod 11 sme otestovali na väčšine krajín a vždy fungoval. Príklad môžme vidieť v obrázku \ref{obr:country_ping_tooltip}.
+
+Keďže sme otestovali všetky scenáre bez nájdenia nedostatku, test považujeme za úspešný.
+
+\begin{figure}
+    \centerline{\includegraphics[width=0.8\textwidth]{images/max_zoom}}
+    %popis obrazku
+    \caption[Zobrazenie detailných informácií pri maximálnej úrovni priblíženia]{Zobrazenie detailných informácií pri maximálnej úrovni priblíženia}
+    %id obrazku, pomocou ktoreho sa budeme na obrazok odvolavat
+    \label{obr:max_zoom}
+\end{figure}
+\label{test_interface}
+
+
+
+\begin{figure}
+    \centerline{\includegraphics[width=0.8\textwidth]{images/country-ping-info}}
+    %popis obrazku
+    \caption[Mapa krajín zafarbených podľa priemernej doby odozvy]{Mapa krajín zafarbených podľa priemernej doby odozvy. Na podstránke je vidno hlavné menu, 
+    taktiež pod ním selektor týždňov, selektor škály a samotnú mapu s legendou.}
+    %id obrazku, pomocou ktoreho sa budeme na obrazok odvolavat
+    \label{obr:country_ping_info}
+\end{figure}
+
+
+\begin{figure}
+    \centerline{\includegraphics[width=0.8\textwidth]{images/country_ping_tooltip}}
+    %popis obrazku
+    \caption[Zobrazenie vyskakovacieho okna pri podržaní myšou nad krajinou]{Zobrazenie vyskakovacieho okna pri podržaní myšou nad krajinou. Názov krajiny dopĺňa
+    počet IP adries, maximálna, minimálna a priemerná doba odozvy.}
+    %id obrazku, pomocou ktoreho sa budeme na obrazok odvolavat
+    \label{obr:country_ping_tooltip}
+\end{figure}

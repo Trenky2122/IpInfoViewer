@@ -48,16 +48,26 @@ pre frontendovú aplikáciu.
 Aplikácia bude mať len jeden typ používateľa. Keďže celá webová čast je len na čítanie, nie je pootrebné obmedzovať práva pre niektorých používateľov. 
 Z tohto dôvodu sme sa rozhodli vynechať autentifikáciu a aplikáciu sprístupniť bez mena a hesla.
 
-Po spustení aplikácie bude vidieť domovskú obrazovku. Tá bude pozostávať z navigačného menu, mapy sveta s vyznačenými skupinami 
-uzlov IP adries na základe ich geografickej polohy. Menu bude obsahovať dve položky, domovská obrazovka a mapa krajín. Na stránke bude prepínač týždňov, 
-ktorým sa bude ovládať voľba týždňa, pre ktorý chceme, aby sa dáta zobrazili. Tiež sa na stránke bude nachádzať výberový zoznam na výber medzi prezeraním 
-maximálnych, priemerných alebo minimálnych dôb odozvy. Po zmene stavu prepínačov sa zmeny v dátach prejavia okamžite pri všetkých troch selektoroch. 
-V mape sa tiež bude nachádzať legenda podľa ktorej sa bude dať určiť hodnota odozvy podľa farby kruhu znázorňujúceho uzol a počet IP adries reprezentovaných 
-kruhom podľa veľkosti priemeru kruhu. Pri maximálnom priblížení sa pri kruhoch zobrazia detailné informácie o údajoch nameraných v daný týždeň.
-
-Po kliknutí na mapu krajín v menu sa zobrazí druhá stránka. Tá bude obshovať rovnaké menu ako domovská stránka. V hlavnej časti bude mapa krajín sveta. 
-Krajiny budú zafarbené podľa doby odozvy pre danú krajinu. Nad mapou sa bude nachádzať prepínač týždňov a rovnaké výberové zoznamy ako na domovskej stránke. 
-V mape sa tiež bude nachádzať legenda na priradenie doby odozvy k farbe.
+\begin{enumerate}
+    \item Po spustení aplikácie bude vidieť domovskú obrazovku. Tá bude pozostávať z navigačného menu, mapy sveta s vyznačenými skupinami 
+    uzlov IP adries na základe ich geografickej polohy. Menu bude obsahovať dve položky, domovská obrazovka a mapa krajín.
+    \item  Na stránke bude prepínač týždňov, 
+    ktorým sa bude ovládať voľba týždňa, pre ktorý chceme, aby sa dáta zobrazili.
+    \item Tiež sa na stránke bude nachádzať výberový zoznam na výber medzi prezeraním 
+    maximálnych, priemerných alebo minimálnych dôb odozvy.
+    \item Stránka bude obsahovať aj výberový zoznam na výber škály farieb. Podporované by mali byť možnosti konštantnej hodnoty pre maximálnu intenitu červenej,
+    maximálnej hodnoty pre daný týždeň pre maximálnu intenitu červenej a priemernej hodnoty pre daný týždeň pre strednú intenzitu červenj (teda priemerná 
+    hodnota presne v strede škály).
+    \item Po zmene hodnoty prepínačov sa dáta okamžite prekreslia.
+    \item V mape sa tiež bude nachádzať legenda podľa ktorej sa bude dať určiť hodnota odozvy podľa farby kruhu znázorňujúceho uzol a počet IP adries reprezentovaných 
+    kruhom podľa veľkosti priemeru kruhu.
+    \item Pri maximálnom priblížení sa pri kruhoch zobrazia detailné informácie o údajoch nameraných v daný týždeň.
+    \item Po kliknutí na mapu krajín v menu sa zobrazí druhá stránka. Tá bude obshovať rovnaké menu ako domovská stránka. V hlavnej časti bude mapa krajín sveta. 
+    Krajiny budú zafarbené podľa doby odozvy pre danú krajinu.
+    \item Nad mapou sa bude nachádzať prepínač týždňov a rovnaké výberové zoznamy ako na domovskej stránke.
+    \item V mape sa tiež bude nachádzať legenda na priradenie doby odozvy k farbe.
+    \item Pri podržaní myšou nad krajinou sa zobrazí vyskakovacie okno s podrobnými informáciami o meraniach v danej krajine pre daný týždeň.
+\end{enumerate}
 
 \subsection{Návrh rozhrania na komunikáciu so serverovou časťou}
 Rozhranie by malo fungovať podľa architektonického štýlu \uv{REST}. To určuje niekoľko pravidiel, medzi nimi napríklad oddelenosť backendu od frontendu, 
