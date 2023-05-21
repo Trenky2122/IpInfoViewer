@@ -46,7 +46,7 @@ namespace IpInfoViewer.Libs.Implementation.Map
             );
         }
 
-        private static (int Latitude, int Longitude) GetApproximateLocation(IpAddressInfo ipAddressInfo)
+        public static (int Latitude, int Longitude) GetApproximateLocation(IpAddressInfo ipAddressInfo)
         {
             int latitudeApproximation = 3;
             int longitudeApproximation = 6; //the lesser, the more approximate map

@@ -157,7 +157,7 @@ export class IpAdressesMapComponent implements OnInit{
   redrawLayers(){
     this.layers = this.getLayers(this.currentWeekData, this.zoom);
     this.setLegendValuesForCurrentZoom();
-    this.legendLink = this.service.GetMapPointsLegendLink(this.counts, this.radii, 500);
+    this.legendLink = this.service.GetMapPointsLegendLink(this.counts, this.radii, Math.round(this.getUpperBound(this.currentWeekData)));
   }
 
   ipCountToCircleRadius(ipCount: number, zoom: number): number{

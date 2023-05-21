@@ -33,11 +33,11 @@ projekty:
     \item IpInfoViewer.Api
     - projekt slúžiaci ako API pre komunikáciu medzi backendom a frontendom
     \item IpInfoViewer.IpInfoService
-    - projekt, ktorý slúži ako servis bežiaci na pozadí ktorý vytvorí v lokálnom dátovom sklade zoznam všetkých ip adries s ich lokalitami a krajinami
+    - projekt, ktorý slúži ako služba bežiaca na pozadí ktorá vytvorí v lokálnom dátovom sklade zoznam všetkých ip adries s ich lokalitami a krajinami
     \item IpInfoViewer.CountryPingInfoService
-    - projekt, ktorý slúži ako servis bežiaci na pozadí spracovávajúci údaje v týždenných intervaloch o priemernom pingu pre danú krajinu
+    - projekt, ktorý slúži ako služba bežiaca na pozadí spracovávajúca údaje v týždenných intervaloch o dobe odozvy pre danú krajinu
     \item IpInfoViewer.MapPointsService
-    - projekt, ktorý slúži ako servis bežiaci na pozadí spracovávajúci údaje v týždenných intervaloch o priemernom pingu pre dané geografické 
+    - projekt, ktorý slúži ako služba bežiaci na pozadí spracovávajúca údaje v týždenných intervaloch o dobe odozvy pre dané geografické 
     okolie (zemepisnú šírku a dĺžku)
     \item IpInfoViewer.Libs
     - knižnica obsahujúca väčšinu aplikačnej logiky, tak aby bola zahrnuteľná zo všetkých ostatných projektov
@@ -49,11 +49,11 @@ Tento projekt je ASP.NET Core 6.0 aplikácia bežiaca na webovom serveri Kestrel
     \item Program
     - Základná trieda každého spustiteľného programu. Jej metóda Main je vstupným bodom každého C\# programu, teda po spustení programu sa automaticky 
     začne vykonávať. Registrujú sa v nej triedy do DI kontainera (Dependency Injection), z ktorého sa potom vyberajú z iných tried vrámci behu programu. 
-    Tiež tu prebieha inicializácia potrebných nastavení programu. Od verzie .NET 6.0 je podporovaná upravená syntax tejto triedy na tzv. top-level statements. 
+    Tiež tu prebieha inicializácia potrebných nastavení programu. Od verzie .NET 6.0 je podporovaná upravená syntax tejto triedy na tzv. \uv{top-level statements}. 
     To znamená, že v súbore Program.cs je vynechaná inicializácia triedy Program a metódy Main, nakoľko bola v každom 
     programe rovnaká. Vnútorne sú však tieto triedy stále používané, ide len o syntaktickú skratku. Používanie top-level statements 
     je dobrovoľné, vrámci čistoty kódu ich ale využívame.
-    \begin{lstlisting}[language={[Sharp]C},caption={Ukážka kódu triedy Program bez použitia top-level statements},label=alg:Program_Old]
+    \begin{lstlisting}[language={[Sharp]C},caption={Ukážka kódu triedy Program bez použitia \uv{top-level statements}},label=alg:Program_Old]
         class Program 
         {
             public static void Main(string[] args) 
@@ -62,7 +62,7 @@ Tento projekt je ASP.NET Core 6.0 aplikácia bežiaca na webovom serveri Kestrel
             }
         }
     \end{lstlisting}
-    \begin{lstlisting}[language={[Sharp]C},caption={Ukážka kódu triedy Program s použitím top-level statements},label=alg:Program_New]
+    \begin{lstlisting}[language={[Sharp]C},caption={Ukážka kódu triedy Program s použitím \uv{top-level statements}},label=alg:Program_New]
         System.Console.WriteLine("Hello World");
     \end{lstlisting}
     \item MapPointsController
@@ -72,29 +72,29 @@ Tento projekt je ASP.NET Core 6.0 aplikácia bežiaca na webovom serveri Kestrel
     - Súbor metód volateľných cez HTTP. Obsahuje metódy pre dáta zoskupené podľa krajiny.
 \end{itemize}
 \subsection{IpInfoViewer.IpInfoService}
-Projekt je konzolová aplikácia bežiaca ako servis na pozadí. Obsahuje nasledovné triedy:
+Projekt je konzolová aplikácia bežiaca ako služba na pozadí. Obsahuje nasledovné triedy:
 \begin{itemize}
     \item Program
     \item IpInfoServiceWorker
-    - Treida reprezentujúca samotný servis. Trieda je zadefinovaná v triede Program ako \uv{Hosted Service}, teda pri spustení sa vykoná jej metóda ExecuteAsync. 
+    - Treida reprezentujúca samotnú službu. Trieda je zadefinovaná v triede Program ako \uv{Hosted Service}, teda pri spustení sa vykoná jej metóda ExecuteAsync. 
     Načíta súbor s priradením medzi IP adresou a geografickými dátami a paralelne pošle každý jeho riadok na spracovanie.
 \end{itemize}
 \subsection{IpInfoViewer.CountryPingInfoService}
-Projekt je rovnako konzolová aplikácia bežiaca ako servis na pozadí. Obsahuje nasledovné triedy:
+Projekt je rovnako konzolová aplikácia bežiaca ako služba na pozadí. Obsahuje nasledovné triedy:
 \begin{itemize}
     \item Program
     \item CountryPingInfoServiceWorker
-    - Hosted service tohto servisu.
-    Načita všetky známe IP adresy spracované servisom IpInfoService. Následne ich zoskupí podľa krajín prislúchajúcich daným adresám. 
+    - \uv{Hosted Service} tejto služby.
+    Načita všetky známe IP adresy spracované službou IpInfoService. Následne ich zoskupí podľa krajín prislúchajúcich daným adresám. 
     Nakoniec ešte zistí, kedy boli dáta naposledy spracovávané a pošle na spracovanie dáta paralelne pre každý týždeň od posledného spracovania 
     až po súčasnosť.
 \end{itemize}
 \subsection{IpInfoViewer.MapPointsService}
-Taktiež servis na pozadí. Obsahuje nasledovné triedy:
+Taktiež služba na pozadí. Obsahuje nasledovné triedy:
 \begin{itemize}
     \item Program
     \item MapPointsServiceWorker
-    - Hosted service tohto servisu.
+    - \uv{Hosted Service} tejto služby.
     Funguje rovnako ako CountryPingInfoServiceWorker, ale adresy zoskupuje podľa geografických súradníc. Adresy sú rozdelené do stabilných sektorov 
     na mape. Mapa je rozdelená do 23x60 sektorov rovnomerne podľa geografickej šírky a dĺžky. 
 \end{itemize}
@@ -112,11 +112,12 @@ konfiguračné súbory, preto ku konfliktu nedochádza. Knižnica IpInfoViewer.L
     - Abstraktná trieda z ktorej dedia všetky modely, teda triedy predstavujúce dáta. Obsahuje všetky parametre ktoré by mali zdieľať všetky modely v riešení. V súčasnosti 
     je jediným takýmto parametrom Id, teda primárny kľúč v databázovej tabuľke, v našom riešení znázornené ako 64-bitové celé číslo.
     \item BaseWeeklyProcessedModel
-    - Abstraktná trieda, ktorá je rozšírením triedy BaseModel o vlastnosti ValidFrom a ValidTo reprezentované časovou pečiatkou. Tieto vlastnosti 
-    sa opakovali vo všetkých časovo spracovávaných triedach.
+    - Abstraktná trieda, ktorá je rozšírením triedy BaseModel o vlastnosť Week reprezentovanú reťazcom. Táto vlastnosť 
+    sa opakovala vo všetkých časovo spracovávaných triedach.
     \item BaseMapModel 
-    - Abstraktná trieda ktorá je rozšírením BaseMapModel o vlastnosti IpAddressesCount a AveragePingRtT. Ide o pre nás zaujímavé vlastnosti ktoré sa vyskytovali vo 
-    viacerých modeloch. Prvá znázorňuje počet IP adries ktoré daný záznam znázorňuje, druhá ich priemerný ping v milisekundách.
+    - Abstraktná trieda ktorá je rozšírením BaseMapModel o vlastnosti IpAddressesCount, AveragePingRtT, MinimumPingRtT, MaximumPingRtT. 
+    Ide o pre nás zaujímavé vlastnosti ktoré sa vyskytovali vo 
+    viacerých modeloch. Prvá znázorňuje počet IP adries ktoré daný záznam znázorňuje, zvyšné ich priemernú, minimálnu a maximálnu dobu odozvy v milisekundách.
     \item CountryPingInfo
     - Model predstavujúci dáta pre konkétnu krajinu v konkrétny týždeň. Rozširuje BaseMapModel o vlastnosť CountryCode, ktorá predstavuje ISO skratku konkrétnej
     krajiny.
@@ -126,12 +127,12 @@ konfiguračné súbory, preto ku konfliktu nedochádza. Knižnica IpInfoViewer.L
     - Model predstavujúci dáta pre konkrétny geografický sektor v konkrétnom čase. Rozširuje BaseMapModel o geografickú šírku a dĺžku.
     \item String response
     - Model prestavujúci HTTP odpoveď pozostávajúcu z jediného reťazca. Takýto model je potrebný, pretože po správnosti by sa nemal vracať 
-    samotný reťazec ako telo odpovede, ale mal by byť zabalený do rodičovského objektu, pretože niektoré kižnice takéto odpovede nepodporujú.
+    samotný reťazec ako telo odpovede, ale mal by byť zabalený do rodičovského objektu, pretože niektoré knižnice takéto odpovede nepodporujú.
     \item Week
     - Keďže dáta spracovávame po týždňoch, potrebovali sme si vedieť takýto týždeň znázorniť. Ako jeden týždeň sme si určili obdobie začínajúce v pondelok o polnoci a končiace 
     v nedeľu toho istého týždňa tesne pred polnocou ako je definované v štandarde ISO 8601. Tento štandard určuje spôsob, ako vyjadriť konkrétny týždeň ako textový reťazec, 
     a to vo formáte YYYY-'W'WW, teda napríklad deviaty týždeň roku 2023 by bol vyjadrený ako 2023-W09. Tento formát zápisu týždňa je podporovaný ako formát výstupu pre 
-    HTML input typu \uv{week}, preto je pre našu aplikáciu veľmi užitočný. V jazyku C\# však neexistuje žiadna vstavaná trieda reprezentujúca takýto týždeň, jednu sme napísali 
+    HTML input typu \uv{week}, preto je pre našu aplikáciu veľmi užitočný. V jazyku C\# však neexistuje žiadna vstavaná trieda reprezentujúca takýto týždeň, jednu sme preto napísali 
     podľa našich potrieb. Trieda podporuje dva rôzne konštruktory, teda dva rôzne spôsoby ako definovať týždeň. Prvý spôsob je podľa už zmieneného ISO 8601 formátu. Druhý spôsob 
     si vezme na vstup ľubovoľný čas reprezentovaný štandardnou triedou DateTime a určí týždeň, do ktorého daný čas patrí. Na základe definície ISO 8601 každý čas patrí do práve jedného 
     dňa a každý deň patrí do práve jedného týždňa. 
@@ -173,7 +174,7 @@ spúšťať s Visual Studia a bol zahrnutý do jedného .sln súboru, čo nám z
 vygenerovaniu projektu pomocou príkazu \lstinline{ng new}.
 
 Jednou z hlavných výhod využitia frameworku ako napríklad Angular je, že aplikáciu je možné deliť na komponenty. Jeden komponent je možné si predstaviť ako istú podčasť zobrazenej stránky. 
-Každý komponent sa môže skladať s viacerých iných komponentov. Naša aplikácia obsahuje nasledovné komponenty:
+Každý komponent sa môže skladať z viacerých iných komponentov. Naša aplikácia obsahuje nasledovné komponenty:
 \begin{itemize}
     \item app.component
     - Základný komponent pre každú aplikáciu. Všetky ostatné komponenty sú jeho podkomponenty. Reprezentuje celé okno aplikácie. Framework Angular je defaultne nastavený aby vždy 
@@ -193,8 +194,8 @@ Pri implementácií aplikácie sme využívali niekoľko špecifických postupov
 
 \subsection{CORS}
 \uv{Cross-Origin Resource Sharing} je mechanizmus na zdieľanie obsahu stránok z rôznych domén pracujúci na základe HTTP hlavičiek. Tento mechanizmus je nutné použiť na zdieľanie dát medzi
-frontendovou a backendovou časťou aplikácie. V systéme ASP.NET Core 6.0 je možnosť zadefinovať \uv{CORS} hlavičky pre všetky endpointy naraz v triede Program. 
-definovať 
+frontendovou a backendovou časťou aplikácie. V systéme ASP.NET Core 6.0 je možnosť zadefinovať \uv{CORS} hlavičky pre všetky endpointy naraz v triede Program. Náš systém dovoľuje všetky 
+zdroje, hlavičky aj metódy.
 
 \subsection{Zoskupovanie IP adries na domovskej stránke}
 Na domovskej stránke sa nachádza mapa sveta a na nej sú vyznačené body znázorňujúce skupiny IP adries zoskupené podľa geografickej blízkosti. 
@@ -270,7 +271,7 @@ Pre nás bolo najvhodnejšie tento systém zjednotiť pre všetky prvky rovnako.
 sa môžu skladať z viacerých prvkov \lstinline{path} (napríklad rôzne ostrovy), no id musí byť jedinečné pre konkrétny SVG dokument. Atribút name je netypický 
 pre SVG dokumenty a použitá knižnica v C\# s ním nevie pracovať, preto sme si zvolili identifikáciu podľa atribútu class. Ďaľší problém je, že niektoré krajiny 
 majú viacero dlhých názvov, no my potrebujeme jeden jednoznačný reťazec na identifikáciu. Preto sme sa rozhodli, že prvky \lstinline{path} budeme identifikovať 
-podľa ISO 3166-1 Alpha 2 kódu v atribúte class. Preto pri spracovávaní dát pre tento graf ukkladáme ISO 3166-1 Alpha 2 kód krajiny. Súbor sme programom 
+podľa ISO 3166-1 Alpha 2 kódu v atribúte class. Preto pri spracovávaní dát pre tento graf ukladáme ISO 3166-1 Alpha 2 kód krajiny. Súbor sme programom 
 upravili tak, aby všetky prvky \lstinline{path} mali v atribúte class aj hodnotu adekvátneho ISO 3166-1 kôdu. Pôvodné triedy sme ponechali tiež, pretože jeden 
 prvok môže patriť do viacerých tried, stačí ich oddeliť medzerou. 
 

@@ -1,13 +1,39 @@
 \chapter*{Príloha B: Používateľská príručka}
 \addcontentsline{toc}{chapter}{Príloha B}
 
-V tejto prílohe uvádzame používateľskú príručku k nášmu softvéru. Tu
-by ďalej pokračoval text príručky. V práci nie je potrebné uvádzať
-používateľskú príručku, pokiaľ je používanie softvéru intuitívne
-alebo ak výsledkom práce nie je ucelený softvér určený pre
-používateľov.
+V tejto prílohe uvádzame používateľskú príručku k nášmu softvéru. Po otvorení aplikácie sa ako prvá zobrazí stránka obahujúca nástroje na 
+zobrazovanie mapy sveta s bodmi označujúcimi IP adresy zoskupené podľa lokality. Vo vrchnej časti aplikácie sa nachádza menu pomocou 
+ktorého je možné prechádzať medzi podstránkami aplikácie. Pod ním sa nachádza nadpis popisujúci dané zobrazenie. Vľavo pod nadpisom je umiestnený 
+selektor týždňov, pomocou ktorého je možné určiť týždeň, pre ktorý chceme dáta zobraziť. 
+Vedľa selektora týždňov sa nachádza výberové menu na výber škály farieb. Toto menu obsahuje možnosti pre naškálovanie spektra farieb podľa rôznych údajov.
+Prvá možnosť nastaví škálu tak, aby priemer zobrazených hodnôt bol priemernou farbou medzi zelenou a červenou. Druhá možnosť nastaví maximálnu zobrazenú hodnotu 
+na červenú a tretia nastaví hodnotu 500 ms za hornú hranicu pre úplne červenú farbu. Vedľa sa nachádza selektor, ktorý prepína medzi zobrazením minimálnych,
+priemerných a maximálnych hodnôt pre daný týždeň. Všetky zmeny v selektoroch s na dátach prejavia hneď.
+Prednastavená hodnota pri zobrazení aplikácie je posledný týždeň, pre ktorý existujú spracované dáta. V hlavnej sekcii aplikácie vidíme samotné 
+zobrazenie dát pomocou mapy. V mape v ľavo dole sa tiež nachádza legenda, ktorá bližšie opisuje koľko konkrétne IP adries je znázornených kruhom 
+určenej veľkosti a aká doba odozvy príkazu ping je zobrazená danou farbou. Detaily výpočtu sú opísané v kapitole \ref{postupy}. 
 
-V prílohách môžete uviesť aj ďalšie materiály, ktoré by mohli pôsobiť
-rušivo v hlavnom texte, ako napríklad rozsiahle tabuľky a
-podobne. Materiály, ktoré sú príliš dlhé na ich tlač, odovzdajte len v
-electronickej prílohe.
+\begin{figure}
+    \centerline{\includegraphics[width=0.8\textwidth]{images/uvodna_stranka}}
+    %popis obrazku
+    \caption[Úvodná strana s mapou]{Na úvodnej stránke aplikácie vidíme menu, pod ním nadpis a selektor týždňa. Nakoniec vidíme mapu s bodmi 
+    znázorňujúcimi IP adresy ktoré úspešne odpovedali na ping v danom týždni zoskupené podľa lokality. V ľavo dole je legenda znázorňujúca prevod veľkosti
+    kruhu na počet IP adries a farby kruhu na ping v milisekundách.}
+    %id obrazku, pomocou ktoreho sa budeme na obrazok odvolavat
+    \label{obr:map_points}
+\end{figure}
+
+\section*{Mapa krajín zafarbených podľa doby trvania odozvy}
+
+Po kliknutí na podstránku Country Ping Map sa zobrazí mapa sveta s krajinami zafarbenými podľa priemernej doby pingu pre zvolený týždeň. Vo vrchnej časti 
+zostalo nezmenené menu a rovnako aj selektor týždňov. Vedľa selektora zostali nezmené selektory škály a zobrazených dát. V hlavnej časti sa nachádza samotná mapa s legendou,
+tentoraz opisujúcou len prevod farieb na konkrétnu 
+dobu odozvy. Po prejdení myšou nad krajinu sa zobrazí okno s názvom krajiny a konkrétnou hodnotou doby odozvy.
+\begin{figure}
+    \centerline{\includegraphics[width=0.8\textwidth]{images/country-ping-info}}
+    %popis obrazku
+    \caption[Mapa krajín zafarbených podľa priemernej doby odozvy]{Na podstránke je vidno hlavné menu, taktiež pod ním selektor týždňov a samotnú mapu. Oproti 
+    domovskej stránke pribudol prepínač škály. }
+    %id obrazku, pomocou ktoreho sa budeme na obrazok odvolavat
+    \label{obr:cpi}
+\end{figure}

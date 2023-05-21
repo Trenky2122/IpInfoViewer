@@ -2,10 +2,47 @@
 \addcontentsline{toc}{chapter}{Príloha A}
 
 V elektronickej prílohe priloženej k práci sa nachádza zdrojový kód
-programu a súbory s výsledkami experimentov. Zdrojový kód je
+aplikácie. Zdrojový kód je
 zverejnený aj na stránke \url{https://github.com/Trenky2122/IpInfoViewer}.
 
-Ak uznáte za vhodné, môžete tu aj podrobnejšie rozpísať obsah tejto
-prílohy, prípadne poskytnúť návod na inštaláciu programu. Alternatívou
-je tieto informácie zahrnúť do samotnej prílohy, alebo ich uviesť na
-obidvoch miestach.
+\section*{Spustenie aplikácie}
+
+Pre spustenie aplikácie je potrebné spraviť nasledujúce kroky:
+\begin{itemize}
+    \item Do konfigurácie je nutné doplniť pripájacie reťazce pre databázy.
+    Reťazce sa musia doplniť do súboru appsetting.json a musia byť pridané do koreňa json súboru.
+    Príklad správne doplneného súboru je v ukážke \ref{alg:appsettings}. Do vzoru je potrebné doplniť
+    heslo do reťazca \lstinline{MFileConnectionString} a adresu pre pripojenie sa do lokálnej databázy,
+    teda IP adresu servera, kde sa server spúšťa. Tiež odporúčame zmeniť heslo na pripojenie k lokálnej 
+    databáze, ale musí byť zhodné s parametrom POSTGRES\_PASSWORD v súbore docker-compose.yml.
+    \item Pre spustenie databázy otvorte príkazový riadok v priečinkui IpInfoViewer a spustite 
+    príkaz \lstinline{docker-compose up db -d}
+    \item Prvý je nutné spustiť program IpInfoViewer.IpInfoService. Pre úspešné spustenie je potrebné dokopírovať
+    do cesty IpInfoViewer/IpInfoViewer.Libs/Assets súbor s menom dbip-city-lite-2022-11.csv. Tento súbor nie je 
+    súčasťou prílohy pretože je priveľký, ale je možné ho získať na adrese \cite{ip_city_db}. Môže byť použitá 
+    aj novšia verzia súboru, ale meno musí zostať zachované. Pre spustenie otvorte terminál v priečinku 
+    IpInfoViewer/IpInfoViewer.IpInfoService a zadajte príkaz \lstinline{docker build -t ipservice Dockerfile ..}. Po
+    vybuduvaní obrazu spustite príkaz \lstinline{docker run ipservice}.
+    \item Prvotný seeding môže trvať aj pol dňa. Ďaľšie spracovanie dát však môže začať až po konci 
+    behu IpInfoViewer.IpInfoService.
+    \item Po skončení otvorte terminál v priečinku IpInfoViewer a spustite príkaz \lstinline{docker-compose build}
+    a po ňom \lstinline{docker-compose up -d}. Spustí sa frontendová aj backendová aplikácia, služby IpInfoViewer.MapPointsService
+    aj IpInfoViewer.CountryPingInfoService. Tiež sa spustí OSM tile server. Aplikácia ho však predvolene nepoužíva a používa dáta z 
+    verejnej inštancie, pretože sú vo vyššejk kvalite.
+\end{itemize}
+\begin{lstlisting}[language={TypeScript},caption={Vzorový výstup z endpointu},label=alg:appsettings]
+    {
+        "Logging": {
+            "LogLevel": {
+            "Default": "Information",
+            "Microsoft.AspNetCore": "Warning"
+            }
+        },
+        "AllowedHosts": "*",
+        "MFileConnectionString": "Server=felix.seclab.dcs.fmph.uniba.sk;Port=5432;Database=mfile;User Id=reader1;Password=****;Include Error Detail=true;",
+        "IpInfoViewerProcessedConnectionString": "Server=addr;Port=5433;Database=ipinfoviewerprocesseddb;User Id=postgres;Password=0000;Include Error Detail=true"
+    }
+\end{lstlisting}
+
+\section*{Prezeranie kódu}
+Pre prezeranie kódu odporúčam použiť program Visual Studio 2022 alebo Rider alebo Visual Studio Code s rozšíreniami pre jazyk C\# a TypeScript.

@@ -11,25 +11,50 @@ samostatne \cite{unit_tests}. V našom kóde sme ako jednotky brali public metó
 
 Pre unit testovanie v jazyku C\# sa najčastejšie používajú riešenia MSTest, NUnit a xUnit \cite{unit_test_comparison}. Každá z nich ponúka 
 všetky pre nás dôležité funkcionality, takže výber je možné spraviť podľa osobnej preferencie. Vybrali sme si knižnicu xUnit pretože nám 
-najviac vyhovoval spôsob overovania výsledkov (všetky knižnice používajú triedu s názvom Assert, každá je však inako implementovaná).
+najviac vyhovoval spôsob overovania výsledkov (všetky knižnice používajú triedu s názvom Assert, každá je však rôzne implementovaná).
 
 Pri písaní unit testov sa najčastejšie postupuje tak, že triedam vložíme namiesto skutočných objektov sprostredkúvajúcich dáta, napríklad inštancie 
 IpInfoViewerDbRepository, objekty vracajúce vymyslené, nami definované dáta. Tetno proces sa nazýva mockovanie. Mockovanie je možné vďaka použitiu návrhového 
 vzoru vkladanie závislosti. Tento vzor určuje, že trieda by nemala vytvárať inštanciu inej triedy a teda byť od nej závislá, ale namiesto toho by mala len 
 prijímať inštancie spĺňajúce definované rozhranie \cite{dependency_injection}. Vytváranie mockovacích objektov zabezpečjeme pomocou knižnice Moq. Tá nám šetrí 
 prácu, pretože nemusíme pre každý mockup vytvárať novú triedu, ale len zadefinujeme dáta, ktoré chceme aby nám inštancia vrátila. Knižnica Moq nám 
-takúto inštanciu spĺňajúcu potrebné rozhranie vytvorí \cite{moq}.
+takúto inštanciu spĺňajúcu potrebné rozhranie vytvorí \cite{moq}. Testy sa spúšťajú príkazom \lstinline{dotnet test}.
 
 Pri písaní unit testov pomocou knižnice xUnit sa testovacie metódy označujú atribútmi \lstinline{Fact} a \lstinline{Theory}. Kým metódy s atribútom 
 \lstinline{Fact} slúžia ako testy bez parametrov, metódy s atribútom \lstinline{Theory} doplnené parametrom \lstinline{InlineData} prijímajú aj parametre 
 \cite{xunit_docs}.
 
 Naším cieľom bolo vytvoriť sadu unit testov pre každú metódu z tried, ktoré sa starajú o logickú časť backendovej časti, teda \lstinline{Week}, 
-\lstinline{DateTimeUtilities}, \lstinline{GeographicUtilities}, \lstinline{CountryPingInfoFacade}, \lstinline{IpAddressInfoFacade} a \lstinline{MapPointsFacade}.
+\lstinline{DateTimeUtilities}, \lstinline{CountryPingInfoFacade}, \lstinline{IpAddressInfoFacade} a \lstinline{MapPointsFacade}.
 Triedy \lstinline{MFileDbRepository} a \lstinline{IpInfoViewerDbRepository} úmyselne netestujeme pretože v jazyku C\# neexistuje dobrý spôsob na simuláciu 
 volania SQL databázy. Taktiež nepíšeme testy na kontrolery, pretože tie v našej implementácií dáta čisto len predávajú z nižšej vrstvy, preto nie je potrebné 
 ich testovať unit testami. Chyby v takomto predávaní dát by sa v každom prípade rýchlo prejavili pri používaní webovej aplikácie, čomu sa venujeme v sekcii 
 \ref{test_interface}.
+
+\begin{lstlisting}[language={[Sharp]C},caption={Ukážka testu pre triedu Week},label=alg:test_ex]
+    [Theory]
+    [InlineData(2023, 1, 1, "2022-W52")]
+    [InlineData(2023, 1, 2, "2023-W01")]
+    [InlineData(2024, 12, 31, "2025-W01")]
+    [InlineData(2027, 1, 1, "2026-W53")]
+    [InlineData(2027, 1, 4, "2027-W01")]
+    public void Test_Week(int year, int month, int day, string expectedResult)
+    {
+        DateTime date = new(year, month, day);
+        Week week = new(date);
+        string result = week.ToString();
+        Assert.NotNull(result);
+        Assert.Equal(expectedResult, result);
+    }
+\end{lstlisting}
+
+\begin{figure}
+    \centerline{\includegraphics[width=0.8\textwidth]{images/test}}
+    %popis obrazku
+    \caption[Úspešné testy]{Všetky testy zbehli úspešne}
+    %id obrazku, pomocou ktoreho sa budeme na obrazok odvolavat
+    \label{obr:test}
+\end{figure}
 
 \section{Testovanie používateľského rozhrania}
 V tejto časti otestujeme používanie aplikácie podľa scenárov definovaných v kapitole \ref{scenare}. Pre testovcie účely sme aplikáciu nasadili na adrese 

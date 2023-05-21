@@ -17,7 +17,7 @@ Požiadavky na beh serverovej časti:
     \item Systém musí byť schopný priebežne predspracovávať namerané dáta po týždňoch, 
     aby boli vizualizácie zobrziteľné ihneď (bez dlhého čakania)
     \item Systém nesmie byť závislý od vonkajších služieb iných, ako databáza s meraniami 
-    (lokalizačné servisy aj mapové servery musia bežať vrámci systému)
+    (lokalizačné služby aj mapové servery musia bežať vrámci systému)
     \item Spracovanie dát pre jeden týždeň nesmie trvať viac ako jeden týždeň (nutné preto, aby spracovanie niekedy dobehlo)
 \end{itemize}
 Požiadavky na beh klientskej časti:
@@ -55,8 +55,8 @@ Z tohto dôvodu sme sa rozhodli vynechať autentifikáciu a aplikáciu sprístup
     ktorým sa bude ovládať voľba týždňa, pre ktorý chceme, aby sa dáta zobrazili.
     \item Tiež sa na stránke bude nachádzať výberový zoznam na výber medzi prezeraním 
     maximálnych, priemerných alebo minimálnych dôb odozvy.
-    \item Stránka bude obsahovať aj výberový zoznam na výber škály farieb. Podporované by mali byť možnosti konštantnej hodnoty pre maximálnu intenitu červenej,
-    maximálnej hodnoty pre daný týždeň pre maximálnu intenitu červenej a priemernej hodnoty pre daný týždeň pre strednú intenzitu červenj (teda priemerná 
+    \item Stránka bude obsahovať aj výberový zoznam na výber škály farieb. Podporované by mali byť možnosti konštantnej hodnoty pre maximálnu intenzitu červenej,
+    maximálnej hodnoty pre daný týždeň pre maximálnu intenzitu červenej a priemernej hodnoty pre daný týždeň pre strednú intenzitu červenj (teda priemerná 
     hodnota presne v strede škály).
     \item Po zmene hodnoty prepínačov sa dáta okamžite prekreslia.
     \item V mape sa tiež bude nachádzať legenda podľa ktorej sa bude dať určiť hodnota odozvy podľa farby kruhu znázorňujúceho uzol a počet IP adries reprezentovaných 
@@ -73,7 +73,9 @@ Z tohto dôvodu sme sa rozhodli vynechať autentifikáciu a aplikáciu sprístup
 Rozhranie by malo fungovať podľa architektonického štýlu \uv{REST}. To určuje niekoľko pravidiel, medzi nimi napríklad oddelenosť backendu od frontendu, 
 komunikáciu pomocou protokolu HTTP alebo nezávislosť dopytov jeden od druhého \cite{rest}. Rozhranie by malo obsahovať tieto metódy:
 \begin{itemize}
-    \item \verb|GET /CountryPingInfo/ForWeek/{week}| (parameter week - ISO 8601 reprezentácia týždňa) - Metóda, ktorá vráti dáta o dobe odozvy pre všetky odmerané krajiny pre daný týždeň. 
+    \item \verb|GET /CountryPingInfo/ForWeek/{week}| (parameter week - ISO 8601 reprezentácia týždňa, parameter requestedData - \lstinline{minimum},
+     \lstinline{maximum} alebo \lstinline{average}, parameter scaleMode - \lstinline{averageToAverage}, \lstinline{maximumToMaximum}, \lstinline{constantMaximum})
+      - Metóda, ktorá vráti dáta o dobe odozvy pre všetky odmerané krajiny pre daný týždeň. 
     \begin{lstlisting}[language={TypeScript},caption={Vzorový výstup z endpointu},label=alg:get_country_ping_info_example]
         [
             {
@@ -117,7 +119,7 @@ komunikáciu pomocou protokolu HTTP alebo nezávislosť dopytov jeden od druhéh
             }
         ]
     \end{lstlisting}
-    \item \verb|GET /MapPoints/LastProcessedDate| - Metóda, ktorá vráti posledný týždeň, pre ktorý sú spracované dáta o dobe odozvy pre geograficcké lokality.
+    \item \verb|GET /MapPoints/LastProcessedDate| - Metóda, ktorá vráti posledný týždeň, pre ktorý sú spracované dáta o dobe odozvy pre geografické lokality.
     Vzorový výstup je zhodný s ukážkou \ref{alg:last_date_example}.
     \item \verb|GET /MapPoints/MapPointsMapLegend| - Metóda, ktorá vráti svg obrázok legendy vykreslený podľa zadaných parametrov. Parametre by mali obsahovať 
     definíciu piatich dvojíc veľkosť-počet, ktoré budú znázorňovať veľkosť kruhu a počet adries znázorňujúci túto veľkosť.
@@ -146,9 +148,9 @@ o ich geografickej lokalite. Bude naplnená ako prvá, skôr ako zvyšné 2 tabu
     \item id - celé číslo - primárny kľúč
     \item ipvalue - IPV4 adresa vo formáte cidr - konkrétna hodnota IP adresy na ktorú sa riadok vzťahuje
     \item countrycode - reťazec o dĺžke maximálne 2 znakov - ISO 3166-1 Alpha 2 kód krajiny, v ktorej sa nachádza IP adresa
-    \item city - reťazec o dĺžke maximálne 80 znakov - názov mesta, v ktorom sa nachádza IP adresami
-    \item latitude - reálne číslo - zemepisná šírka IP adresy
-    \item longitude - reálne číslo - zemepisná dĺžka IP adresy
+    \item city - reťazec o dĺžke maximálne 80 znakov - názov mesta, v ktorom sa nachádza IP adresa
+    \item latitude - reálne číslo - zemepisná šírka, na ktorej sa nachádza IP adresa
+    \item longitude - reálne číslo - zemepisná dĺžka, na ktorej sa nachádza IP adresa   
 \end{itemize}
 
 Tabuľka \lstinline{countrypinginfo} bude obsahovať 
@@ -179,7 +181,7 @@ meraných dát. Entitno-relačný diagram je viditeľný na obrázku \ref{obr:en
 
 Databáza bude obsahovať aj indexy. Indexy sú štruktúra, ktorá umnožňuje zrýchliť vyhľadávanie v databáze na úkor spomalenia zápisu \cite{db_index}. 
 Čas nás v násom systéme zaujíma hlavne z hľadiska používania webovej aplikácie. Tá z databázy výlučne číta. Zápis budeme naopak robiť len raz do týždňa 
-a na čase pri ňom príliš nezáleží (jediné obmedzenie je, že spracovanie týždňa musí trvať menej ako týždeň, čo je veľmi štedrý čas). Vzhľadom na to je 
+a na čase pri zápise príliš nezáleží (jediné obmedzenie je, že spracovanie týždňa musí trvať menej ako týždeň, čo je veľmi štedrý čas). Vzhľadom na to je 
 takáto optimalizácia v našom systéme veľmi vítaná. Keďže systém môže bežať dlhý čas, spracované údaje sa môžu stať priveľké a vyhľadávanie v nich bez 
 indexácie by bolo veľmi pomalé. Zároveň jednoznačné indexy vedia zaručiť väčšiu konzistentnosť dát, keďže vedia zaručiť, že kombinácie niektorých údajov 
 sa môžu v tabuľke vyskytnúť maximálne raz \cite{index_strategy}.

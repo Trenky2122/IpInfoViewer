@@ -50,7 +50,6 @@ namespace IpInfoViewer.Libs.Implementation.IpInfo
 
         public async Task<int> ProcessLine(string line)
         {
-            if (line.Contains("\"")) return 0;
             var fields = line.Split(',');
             var pingsInRange = (await _mFileDb.GetHostsInRange(IPAddress.Parse(fields[0]), IPAddress.Parse(fields[1]))).ToList();
             foreach (var ping in pingsInRange)

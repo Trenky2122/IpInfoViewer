@@ -3,7 +3,7 @@
 \label{kap:uvod_teoria}
 
 \section{Spôsob merania}
-Dáta sú výsledkom dlhodobého merania. Vrámci merania sa v pravidelných intervaloch opakovane volali príkazy \lstinline{ping} a \lstinline{tracert} na postupne 
+Dáta sú výsledkom dlhodobého merania. Vrámci merania sa v pravidelných intervaloch opakovane volali príkazy \lstinline{ping} a \lstinline{traceroute} na postupne 
 rozširujúcu sa množinu IP adries. Výsledky meraní boli zapisované do PostgreSQL 8.1.9 databázy. Databáza má nasledujúcu štruktúru:
 
 Tabuľka \lstinline{h_types} - Tabuľka obshujúca zoznam všetkých poznaných typov serverov na ktorých sa vykonávajú merania:
@@ -48,7 +48,7 @@ bity, čím sa odlišuje od typu inet. Podporuje zoraďovanie podľa hodnoty a k
 
 Príkaz \lstinline{ping} zmeria dostupnosť a dobu odozvy servera. Príkaz pošle nastaviteľný počet paketov (predvolene 4) a sleduje, 
 ktoré sa vrátia a za aký čas. Príkaz funguje v systéme Windows \cite{ping_windows} aj na Linuxových systémoch \cite{ping_linux}.
-Príkaz \lstinline{tracert} podobne ako \lstinline{ping} sleduje cestu paketov skrz uzly siete. Jeho výstupom je zoznam IP adries uzlov, ktorými paket prešiel 
+Príkaz \lstinline{traceroute} podobne ako \lstinline{ping} sleduje cestu paketov skrz uzly siete. Jeho výstupom je zoznam IP adries uzlov, ktorými paket prešiel 
 na ceste k serveru s cieľovou IP adresou \cite{tracert}. 
 
 \section{Prehľad súvisiacich projektov a existujúcich riešení}
@@ -62,7 +62,7 @@ Dlhodobým meraním podobného charakteru a jeho vizualizácií sa venuje projek
 v Kalifornii v San Diegu. V článku \cite{caida} sa zaoberajú dlhodobým meraním a vizualizáciou topológie siete. Podobnému meraniu a vizualizácii, 
 ako napríklad zobrazeniu nameranej doby odozvy v mapách sa tiež venuje projekt RIPE Atlas \cite{atlas_ripe}.
 
-\subsection{Riešenia zaoberajúce sa predspracovávaním a agregovaním údajov}
+\subsection{Riešenia zaoberajúce sa predspracovávaním a agregáciou údajov}
 
 Dátový sklad (anglicky data warehouse) je systém, ktorý v pravidelných intervaloch zhromažďuje údaje z rôznych zdrojov, 
 spracováva ich a vytvára medzi nimi vzťahy a tým pôsobí ako prehľadnejší zdroj užitočnejších dát ako pôvodné dáta \cite{data_warehouse}. 
